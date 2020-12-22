@@ -4,8 +4,9 @@ import { PLATFORM_NAME, PLUGIN_NAME, DeviceURL } from './settings';
 import { Humidifier } from './Devices/Humidifier';
 import {
   irdevices,
-  devices,
+  device,
   SwitchBotPlatformConfig,
+  deviceResponses,
 } from './configTypes';
 
 /**
@@ -93,9 +94,13 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
     if (this.config.options) {
       this.config.options ?.humidifier;
     }
+    
+    if (this.config.options!.ttl! < 120) {
+      throw new Error('TTL must be above 120 (2 minutes).');
+    }
 
     if (!this.config.options.ttl) {
-      this.config.options!.ttl! = 300;
+      this.config.options!.ttl! = 120;
       this.log.warn('TTL not provided, using default TTL.');
     }
 
@@ -112,21 +117,34 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
    */
   async discoverDevices() {
     const devices = (await this.axios.get(DeviceURL)).data;
+    this.log.warn(JSON.stringify(devices));
     for (const device of devices.body.deviceList) {
       this.log.info(`Total Devices Found: ${device.length}`);
-      this.log.debug(JSON.stringify(device));
+      this.log.warn(JSON.stringify(device));
+
+      /* switch (this.device.operationStatus.mode) {
+        case 'Heat':
+          this.CurrentHeatingCoolingState = 1;
+          break;
+        case 'Cool':
+          this.CurrentHeatingCoolingState = 2;
+          break;
+        default:
+          this.CurrentHeatingCoolingState = 0;
+      }*/
+
       if (device.deviceType.startsWith('Humidifier')) {
         // this.deviceinfo(device);
-        this.log.info('Discovered %s %s - %s', device.deviceType, device.deviceModel, device.userDefinedDeviceName);
+        this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
         this.createHumidifier(device, devices);
-      } else if (!device.DeviceModel) {
-        this.log.info('A LLC Device has been discovered with a deviceModel that does not start with T5, D6 or T9');
+      } else {
+        this.log.info(`A SwitchBot Device has been discovered with a deviceType that is currently not supported. ${device.deviceType}`);
       }
     }
   }
 
-  private async createHumidifier(device, devices) {
-    const uuid = this.api.hap.uuid.generate(`${device.name}-${device.deviceID}-${device.deviceModel}`);
+  private async createHumidifier(device: device, devices: deviceResponses) {
+    const uuid = this.api.hap.uuid.generate(`${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`);
 
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
@@ -143,19 +161,19 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
         await new Humidifier(this, existingAccessory, device);
-        this.log.debug(`T9 UDID: ${device.name}-${device.deviceID}-${device.deviceModel}`);
+        this.log.debug(`Humidifier UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`);
       } else {
         this.unregisterPlatformAccessories(existingAccessory);
       }
     } else {
       // the accessory does not yet exist, so we need to create it
-      this.log.info('Adding new accessory:', `${device.name} ${device.deviceModel} ${device.deviceType}`);
+      this.log.info('Adding new accessory:', `${device.deviceName} ${device.deviceType}`);
       this.log.debug(
-        `Registering new device: ${device.name} ${device.deviceModel} ${device.deviceType} - ${device.deviceID}`,
+        `Registering new device: ${device.deviceName} ${device.deviceType} - ${device.deviceId}`,
       );
 
       // create a new accessory
-      const accessory = new this.api.platformAccessory(`${device.name} ${device.deviceType}`, uuid);
+      const accessory = new this.api.platformAccessory(`${device.deviceName} ${device.deviceType}`, uuid);
 
       // store a copy of the device object in the `accessory.context`
       // the `context` property can be used to store any data about the accessory you may need
@@ -165,7 +183,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       // create the accessory handler for the newly create accessory
       // this is imported from `platformAccessory.ts`
       new Humidifier(this, accessory, device);
-      this.log.debug(`T9 UDID: ${device.name}-${device.deviceID}-${device.deviceModel}`);
+      this.log.debug(`Humidifier UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`);
 
       // link the accessory to your platform
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
@@ -179,7 +197,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
     this.log.info('Removing existing accessory from cache:', existingAccessory.displayName);
   }
 
-  public deviceinfo(device: irdevices | devices) {
+  public deviceinfo(device: irdevices | device) {
     if (this.config.devicediscovery) {
       this.log.warn(JSON.stringify(device));
     }

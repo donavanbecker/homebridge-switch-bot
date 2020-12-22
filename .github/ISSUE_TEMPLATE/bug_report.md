@@ -26,7 +26,7 @@ assignees: ''
 
 ```
 Show the Homebridge logs here. If using Homebridge Config-UI-X, you can easly downlaod your log by visiting the log page on the UI and Clicking the Download Icon in the top right.
-Remove any sensitive information, such as your homebridge-switch-bot token.
+Remove any sensitive information, such as your homebridge-switchbot-openapi token.
 
 Please Turn on Debug Mode before submitting your Issue so more logs can be shared to fix the issue being submitted.
 
@@ -39,7 +39,7 @@ There is a hidden `"devicediscovery: true"` option that you can add to your conf
 
 ```json
 Paste your homebridge config.json here.
-Remove any sensitive information, such as your homebridge-switch-bot token.
+Remove any sensitive information, such as your homebridge-switchbot-openapi token.
 
 ***Read and Paste over this Text the Text Above^^^^^^
 ```

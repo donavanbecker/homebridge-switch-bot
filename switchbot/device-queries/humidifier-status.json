@@ -1,0 +1,16 @@
+{
+  "statusCode": 100,
+  "body": {
+    "deviceId": "63F4GT12345U",
+    "deviceType": "Humidifier",
+    "hubDeviceId": "63F4GT12345U",
+    "nebulizationEfficiency": 0,
+    "humidity": 52,
+    "auto": true,
+    "childLock": false,
+    "sound": false,
+    "power": "on",
+    "temperature": 19.8
+  },
+  "message": "success"
+}

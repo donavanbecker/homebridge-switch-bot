@@ -3,6 +3,6 @@ contact_links:
   - name: Homebridge Discord Channel for SwitchBot
     url: https://discord.gg/5wYTbwP4ha
     about: Please ask and answer questions here.
-  - name: Homebridge-Switch-Bot - Pull Requests
-    url: https://github.com/donavanbecker/homebridge-switch-bot/pulls
+  - name: Homebridge Switchbot Openapi - Pull Requests
+    url: https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/pulls
     about: Please report security vulnerabilities here.

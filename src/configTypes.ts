@@ -30,10 +30,10 @@ export type deviceResponses = {
 
 //a list of physical devices.
 export type deviceList = {
-  device: Array<devices>;
+  device: Array<device>;
 };
 
-export type devices = {
+export type device = {
   deviceId: string;   //device ID.
   deviceName: string;   //device name.
   deviceType: string;   //device type.
@@ -61,7 +61,7 @@ export type irdevices = {
 export type deviceStatusResponse = {
   statusCode: number;
   message: string;
-  body: Record<string, unknown>;
+  body: deviceStatus;
 };
 
 export type deviceStatus = {

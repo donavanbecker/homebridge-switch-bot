@@ -3,14 +3,14 @@
   "name": "homebridge-switchbot-openapi",
   "version": "0.1.0",
   "description": "The [Homebridge](https://homebridge.io) Switch-Bot plugin allows you to access your [SwitchBot](https://www.switch-bot.com) devices from HomeKit.",
-  "author": "donavanbecker",
+  "author": "SwitchBot <support@wondertechlabs.com> (https://github.com/SwitchBot)",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/donavanbecker/homebridge-switch-bot.git"
+    "url": "git://github.com/OpenWonderLabs/homebridge-switchbot-openapi.git"
   },
   "bugs": {
-    "url": "https://github.com/donavanbecker/homebridge-switch-bot/issues"
+    "url": "https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/issues"
   },
   "engines": {
     "node": ">=14.15.3",
