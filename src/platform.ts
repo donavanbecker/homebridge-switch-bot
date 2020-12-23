@@ -101,7 +101,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
     if (!this.config.options.ttl) {
       this.config.options!.ttl! = 120;
-      this.log.warn('TTL not provided, using default TTL.');
+      this.log.warn('Using Default Refresh Rate.');
     }
 
     if (!this.config.credentials) {

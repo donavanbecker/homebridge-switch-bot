@@ -265,7 +265,7 @@ export class Humidifier {
         `${payload.parameter}, commandType:`,
         `${payload.commandType}`,
       );
-      this.platform.log.debug('Humidifier %s pushChanges -', this.accessory.displayName, JSON.stringify(payload));
+      this.platform.log.debug('Humidifier %s pushAutoChanges -', this.accessory.displayName, JSON.stringify(payload));
 
       // Make the API request
       const pushAuto = (await this.platform.axios.post(`${DeviceURL}/${this.device.deviceId}/commands`, payload));
@@ -345,7 +345,6 @@ export class Humidifier {
    */
   async handleActiveSet(value, callback) {
     this.platform.log.debug('Humidifier %s -', this.accessory.displayName, `Set Active: ${value}`);
-    await this.pushActiveChanges();
     this.Active = value;
     this.service.updateCharacteristic(this.platform.Characteristic.Active, this.Active);
     this.doHumidifierUpdate.next();
