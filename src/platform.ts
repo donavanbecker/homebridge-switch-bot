@@ -117,14 +117,14 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
    */
   async discoverDevices() {
     const devices = (await this.axios.get(DeviceURL)).data;
-    this.log.warn(JSON.stringify(devices));
+    this.log.debug(JSON.stringify(devices));
     for (const device of devices.body.deviceList) {
       this.log.info(`Total Devices Found: ${device.length}`);
       this.log.debug(JSON.stringify(device));
       // For Future Devices
-      switch (device.deviceType.startsWith) {
+      switch (device.deviceType) {
         case 'Humidifier':
-          // this.deviceinfo(device);
+          this.deviceinfo(device);
           this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
           this.createHumidifier(device, devices);
           break;
