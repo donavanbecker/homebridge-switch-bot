@@ -114,6 +114,7 @@ export class Humidifier {
 
     // Retrieve initial values and updateHomekit
     //this.refreshStatus();
+    this.updateHomeKitCharacteristics();
 
     // Start an update interval
     interval(this.platform.config.options!.ttl! * 1000)
@@ -221,6 +222,7 @@ export class Humidifier {
    */
   async pushAutoChanges() {
     if (this.devicestatus.body.auto) {
+      await this.pushActiveChanges();
       this.platform.log.warn('Pushing Auto!!!');
       const payload = {
         commandType: 'command',
@@ -282,6 +284,7 @@ export class Humidifier {
    */
   async pushChanges() {
     if (this.TargetHumidifierDehumidifierState === 1) {
+      await this.pushActiveChanges();
       this.platform.log.warn(`Pushing ${this.RelativeHumidityHumidifierThreshold}!!!`);
       const payload = {
         commandType: 'command',
@@ -351,8 +354,11 @@ export class Humidifier {
    * Handle requests to set the "Active" characteristic
    */
   async handleActiveSet(value, callback) {
-    this.platform.log.debug('Triggered SET Active:', value);
+    this.platform.log.debug('Humidifier %s -', this.accessory.displayName, `Set Active: ${value}`);
     await this.pushActiveChanges();
+    this.Active = value;
+    this.service.updateCharacteristic(this.platform.Characteristic.Active, this.Active);
+    this.doHumidifierUpdate.next();
     callback(null);
   }
 

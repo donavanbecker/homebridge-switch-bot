@@ -120,26 +120,24 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
     this.log.warn(JSON.stringify(devices));
     for (const device of devices.body.deviceList) {
       this.log.info(`Total Devices Found: ${device.length}`);
-      this.log.warn(JSON.stringify(device));
-
-      /* switch (this.device.operationStatus.mode) {
-        case 'Heat':
-          this.CurrentHeatingCoolingState = 1;
-          break;
-        case 'Cool':
-          this.CurrentHeatingCoolingState = 2;
+      this.log.debug(JSON.stringify(device));
+      // For Future Devices
+      switch (device.deviceType.startsWith) {
+        case 'Humidifier':
+          // this.deviceinfo(device);
+          this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
+          this.createHumidifier(device, devices);
           break;
         default:
-          this.CurrentHeatingCoolingState = 0;
-      }*/
-
-      if (device.deviceType.startsWith('Humidifier')) {
+          this.log.info(`A SwitchBot Device has been discovered with a deviceType that is currently not supported. ${device.deviceType}`);
+      }
+      /*if (device.deviceType.startsWith('Humidifier')) {
         // this.deviceinfo(device);
         this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
         this.createHumidifier(device, devices);
       } else {
         this.log.info(`A SwitchBot Device has been discovered with a deviceType that is currently not supported. ${device.deviceType}`);
-      }
+      }*/
     }
   }
 

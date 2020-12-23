@@ -18,6 +18,7 @@
   },
   "main": "dist/index.js",
   "scripts": {
+    "update": "npm update && npm install",
     "lint": "eslint src/**.ts",
     "watch": "npm run build && npm link && nodemon",
     "build": "rimraf ./dist && tsc",
@@ -41,13 +42,13 @@
     "ir"
   ],
   "dependencies": {
-    "axios": "^0.21.0",
+    "axios": "^0.21.1",
     "rxjs": "^6.6.3"
   },
   "devDependencies": {
     "@types/node": "^14.14.14",
-    "@typescript-eslint/eslint-plugin": "^4.10.0",
-    "@typescript-eslint/parser": "^4.10.0",
+    "@typescript-eslint/eslint-plugin": "^4.11.0",
+    "@typescript-eslint/parser": "^4.11.0",
     "eslint": "^7.15.0",
     "eslint-plugin-prettier": "^3.3.0",
     "homebridge": "^1.1.7",
