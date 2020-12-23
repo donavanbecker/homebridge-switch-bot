@@ -118,8 +118,8 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
   async discoverDevices() {
     const devices = (await this.axios.get(DeviceURL)).data;
     this.log.debug(JSON.stringify(devices));
+    this.log.info(`Total Devices Found: ${devices.body.deviceList.length}`);
     for (const device of devices.body.deviceList) {
-      this.log.info(`Total Devices Found: ${device.length}`);
       this.log.debug(JSON.stringify(device));
       // For Future Devices
       switch (device.deviceType) {
@@ -131,13 +131,6 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
         default:
           this.log.info(`A SwitchBot Device has been discovered with a deviceType that is currently not supported. ${device.deviceType}`);
       }
-      /*if (device.deviceType.startsWith('Humidifier')) {
-        // this.deviceinfo(device);
-        this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
-        this.createHumidifier(device, devices);
-      } else {
-        this.log.info(`A SwitchBot Device has been discovered with a deviceType that is currently not supported. ${device.deviceType}`);
-      }*/
     }
   }
 
@@ -155,10 +148,10 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
         //existingAccessory.context.firmwareRevision = firmware;
-        await this.api.updatePlatformAccessories([existingAccessory]);
+        this.api.updatePlatformAccessories([existingAccessory]);
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
-        await new Humidifier(this, existingAccessory, device);
+        new Humidifier(this, existingAccessory, device);
         this.log.debug(`Humidifier UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`);
       } else {
         this.unregisterPlatformAccessories(existingAccessory);
