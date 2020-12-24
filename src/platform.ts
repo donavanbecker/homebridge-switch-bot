@@ -2,12 +2,7 @@ import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, Service, Charact
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { PLATFORM_NAME, PLUGIN_NAME, DeviceURL } from './settings';
 import { Humidifier } from './Devices/Humidifier';
-import {
-  irdevices,
-  device,
-  SwitchBotPlatformConfig,
-  deviceResponses,
-} from './configTypes';
+import { irdevices, device, SwitchBotPlatformConfig, deviceResponses } from './configTypes';
 
 /**
  * HomebridgePlatform
@@ -47,7 +42,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
     // setup axios interceptor to add headers / api key to each request
     this.axios.interceptors.request.use((request: AxiosRequestConfig) => {
-      request.headers.Authorization = this.config.credentials ?.openToken;
+      request.headers.Authorization = this.config.credentials?.openToken;
       request.headers['Content-Type'] = 'application/json; charset=utf8';
       return request;
     });
@@ -92,9 +87,9 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
     this.config.options = this.config.options || {};
 
     if (this.config.options) {
-      this.config.options ?.humidifier;
+      this.config.options?.humidifier;
     }
-    
+
     if (this.config.options!.ttl! < 120) {
       throw new Error('TTL must be above 120 (2 minutes).');
     }
@@ -117,25 +112,36 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
    */
   async discoverDevices() {
     const devices = (await this.axios.get(DeviceURL)).data;
-    this.log.debug(JSON.stringify(devices));
+    if (this.config.devicediscovery) {
+      this.deviceListInfo(devices);
+    } else {
+      this.log.debug(JSON.stringify(devices));
+    }
     this.log.info(`Total Devices Found: ${devices.body.deviceList.length}`);
     for (const device of devices.body.deviceList) {
-      this.log.debug(JSON.stringify(device));
+      if (this.config.devicediscovery) {
+        this.deviceInfo(device);
+      } else {
+        this.log.debug(JSON.stringify(device));
+      }
       // For Future Devices
       switch (device.deviceType) {
         case 'Humidifier':
-          this.deviceinfo(device);
           this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
           this.createHumidifier(device, devices);
           break;
         default:
-          this.log.info(`A SwitchBot Device has been discovered with a deviceType that is currently not supported. ${device.deviceType}`);
+          this.log.info(
+            `A SwitchBot Device has been discovered with a deviceType that is currently not supported. ${device.deviceType}`,
+          );
       }
     }
   }
 
   private async createHumidifier(device: device, devices: deviceResponses) {
-    const uuid = this.api.hap.uuid.generate(`${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`);
+    const uuid = this.api.hap.uuid.generate(
+      `${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
+    );
 
     // see if an accessory with the same uuid has already been registered and restored from
     // the cached devices we stored in the `configureAccessory` method above
@@ -152,16 +158,16 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
         new Humidifier(this, existingAccessory, device);
-        this.log.debug(`Humidifier UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`);
+        this.log.debug(
+          `Humidifier UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
+        );
       } else {
         this.unregisterPlatformAccessories(existingAccessory);
       }
     } else {
       // the accessory does not yet exist, so we need to create it
       this.log.info('Adding new accessory:', `${device.deviceName} ${device.deviceType}`);
-      this.log.debug(
-        `Registering new device: ${device.deviceName} ${device.deviceType} - ${device.deviceId}`,
-      );
+      this.log.debug(`Registering new device: ${device.deviceName} ${device.deviceType} - ${device.deviceId}`);
 
       // create a new accessory
       const accessory = new this.api.platformAccessory(`${device.deviceName} ${device.deviceType}`, uuid);
@@ -174,7 +180,9 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       // create the accessory handler for the newly create accessory
       // this is imported from `platformAccessory.ts`
       new Humidifier(this, accessory, device);
-      this.log.debug(`Humidifier UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`);
+      this.log.debug(
+        `Humidifier UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
+      );
 
       // link the accessory to your platform
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
@@ -188,9 +196,11 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
     this.log.info('Removing existing accessory from cache:', existingAccessory.displayName);
   }
 
-  public deviceinfo(device: irdevices | device) {
-    if (this.config.devicediscovery) {
-      this.log.warn(JSON.stringify(device));
-    }
+  public deviceListInfo(devices: deviceResponses) {
+    this.log.warn(JSON.stringify(devices));
+  }
+
+  public deviceInfo(device: irdevices | device) {
+    this.log.warn(JSON.stringify(device));
   }
 }

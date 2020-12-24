@@ -1,10 +1,10 @@
 {
   "displayName": "Homebridge SwitchBot",
   "name": "homebridge-switchbot-openapi",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "The [Homebridge](https://homebridge.io) Switch-Bot plugin allows you to access your [SwitchBot](https://www.switch-bot.com) devices from HomeKit.",
   "author": "SwitchBot <support@wondertechlabs.com> (https://github.com/SwitchBot)",
-  "license": "Apache-2.0",
+  "license": "ISC",
   "repository": {
     "type": "git",
     "url": "git://github.com/OpenWonderLabs/homebridge-switchbot-openapi.git"
@@ -38,15 +38,14 @@
     "homebridge-plugin",
     "switch-bot",
     "switchbot",
-    "humidifier",
-    "ir"
+    "humidifier"
   ],
   "dependencies": {
     "axios": "^0.21.1",
     "rxjs": "^6.6.3"
   },
   "devDependencies": {
-    "@types/node": "^14.14.14",
+    "@types/node": "^14.14.16",
     "@typescript-eslint/eslint-plugin": "^4.11.0",
     "@typescript-eslint/parser": "^4.11.0",
     "eslint": "^7.15.0",

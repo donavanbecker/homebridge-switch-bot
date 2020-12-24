@@ -35,20 +35,9 @@
           "ttl": {
             "title": "TTL",
             "type": "number",
-            "minimum": 300,
-            "placeholder": 300,
-            "description": "Indicates the number of seconds between polls of the Honeywell Home service."
-          },
-          "humidifier": {
-            "title": "humidifier",
-            "type": "object",
-            "properties": {
-              "hide": {
-                "title": "Hide humidifier(s)",
-                "type": "boolean",
-                "requried": false
-              }
-            }
+            "minimum": 120,
+            "placeholder": 120,
+            "description": "Indicates the number of seconds between polls of SwitchBot API."
           }
         }
       }
@@ -60,7 +49,10 @@
       "title": "SwitchBot Account Info",
       "expandable": true,
       "expanded": false,
-      "items": ["name", "credentials.openToken"]
+      "items": [
+        "name",
+        "credentials.openToken"
+      ]
     },
     {
       "type": "fieldset",
@@ -75,19 +67,6 @@
         {
           "key": "options.ttl",
           "notitle": true
-        },
-        {
-          "type": "fieldset",
-          "title": "Humidifier Options",
-          "expandable": true,
-          "expanded": false,
-          "items": [
-            {
-              "type": "help",
-              "helpvalue": "<h5>Humidifier</h5><em class='primary-text'>Allows you to hide your Humidifier(s).</em>"
-            },
-            "options.humidifier.hide"
-          ]
         }
       ]
     }
