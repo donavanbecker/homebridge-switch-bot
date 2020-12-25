@@ -384,10 +384,19 @@ export class Humidifier {
     );
 
     this.RelativeHumidityHumidifierThreshold = value;
+    if (this.Active === 0) {
+      this.Active = 1;
+      this.CurrentHumidifierDehumidifierState = 1;
+    }
     this.service.updateCharacteristic(
       this.platform.Characteristic.RelativeHumidityHumidifierThreshold,
       this.RelativeHumidityHumidifierThreshold,
     );
+    this.service.updateCharacteristic(
+      this.platform.Characteristic.CurrentHumidifierDehumidifierState,
+      this.CurrentHumidifierDehumidifierState,
+    );
+    this.service.updateCharacteristic(this.platform.Characteristic.Active, this.Active);
     this.doHumidifierUpdate.next();
     callback(null);
   }
