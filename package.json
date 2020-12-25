@@ -2,7 +2,7 @@
   "displayName": "Homebridge SwitchBot",
   "name": "homebridge-switchbot-openapi",
   "version": "1.0.0",
-  "description": "The [Homebridge](https://homebridge.io) Switch-Bot plugin allows you to access your [SwitchBot](https://www.switch-bot.com) devices from HomeKit.",
+  "description": "The [Homebridge](https://homebridge.io) SwitchBot plugin allows you to access your [SwitchBot](https://www.switch-bot.com) devices from HomeKit.",
   "author": "SwitchBot <support@wondertechlabs.com> (https://github.com/SwitchBot)",
   "license": "ISC",
   "repository": {
@@ -36,9 +36,10 @@
   ],
   "keywords": [
     "homebridge-plugin",
-    "switch-bot",
     "switchbot",
-    "humidifier"
+    "humidifier",
+    "humidity",
+    "temperature"
   ],
   "dependencies": {
     "axios": "^0.21.1",

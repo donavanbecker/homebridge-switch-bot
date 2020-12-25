@@ -141,7 +141,7 @@ export class Humidifier {
   }
 
   /**
-   * Parse the device status from the honeywell api
+   * Parse the device status from the SwitchBot api
    */
   parseStatus() {
     // Current Relative Humidity

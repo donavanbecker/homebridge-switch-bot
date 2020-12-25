@@ -9,11 +9,11 @@ export const PLATFORM_NAME = 'SwitchBot';
 export const PLUGIN_NAME = 'homebridge-switchbot-openapi';
 
 /**
- * This is the main url used to access switch-bot API
+ * This is the main url used to access SwitchBot API
  */
 export const AuthURL = 'https://api.switch-bot.com';
 
 /**
- * This is the main url used to access switch-bot API
+ * This is the main url used to access SwitchBot API
  */
 export const DeviceURL = 'https://api.switch-bot.com/v1.0/devices';

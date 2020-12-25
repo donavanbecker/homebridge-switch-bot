@@ -8,7 +8,7 @@
 <a href="https://www.npmjs.com/package/homebridge-switchbot-openapi"><img title="npm downloads" src="https://badgen.net/npm/dt/homebridge-switchbot-openapi" ></a>
 
 <p>The Homebridge <a href="https://www.switch-bot.com">SwitchBot</a> 
-plugin allows you to access your Switch-Bot Device(s) from HomeKit.
+plugin allows you to access your SwitchBot Device(s) from HomeKit.
   <a href="https://homebridge.io">Homebridge</a>. 
 </p>
 
@@ -36,6 +36,6 @@ plugin allows you to access your Switch-Bot Device(s) from HomeKit.
 
 - [SwitchBot Humidifiers](https://www.switch-bot.com/products/switchbot-smart-humidifier).
 
-## Switch-Bot API
+## SwitchBotAPI
 
 - [OpenWonderLabs/SwitchBotAPI](https://github.com/OpenWonderLabs/SwitchBotAPI)
