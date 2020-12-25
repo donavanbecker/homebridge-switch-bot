@@ -129,7 +129,8 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
           break;
         default:
           this.log.info(
-            `A SwitchBot Device has been discovered with a deviceType that is currently not supported. ${device.deviceType}`,
+            `A SwitchBot Device has been discovered with Device Type: ${device.deviceType}, which is currently not supported.`,
+            'Submit Feature Requests Here: https://git.io/JL14Z,',
           );
       }
     }
