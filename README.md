@@ -2,13 +2,13 @@
 
 <a href="https://github.com/homebridge/verified/blob/master/verified-plugins.json"><img alt="homebridge-verified" src="https://raw.githubusercontent.com/OpenWonderLabs/homebridge-switchbot-openapi/main/switchbot/Homebridge_x_SwitchBot.svg?sanitize=true" width="500px"></a>
 
-# Homebridge SwitchBot
+# Homebridge SwitchBot OpenAPI
 
 <a href="https://www.npmjs.com/package/homebridge-switchbot-openapi"><img title="npm version" src="https://badgen.net/npm/v/homebridge-switchbot-openapi" ></a>
 <a href="https://www.npmjs.com/package/homebridge-switchbot-openapi"><img title="npm downloads" src="https://badgen.net/npm/dt/homebridge-switchbot-openapi" ></a>
 
-<p>The Homebridge <a href="https://www.switch-bot.com">SwitchBot</a> 
-plugin allows you to access your SwitchBot Device(s) from HomeKit.
+<p>The Homebridge <a href="https://www.switch-bot.com">SwitchBot</a>  OpenAPI
+plugin allows you to access your SwitchBot Device(s) from HomeKit with
   <a href="https://homebridge.io">Homebridge</a>. 
 </p>
 
