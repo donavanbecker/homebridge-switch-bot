@@ -2,6 +2,7 @@ import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, Service, Charact
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { PLATFORM_NAME, PLUGIN_NAME, DeviceURL } from './settings';
 import { Humidifier } from './Devices/Humidifier';
+import { Curtain } from './Devices/Curtain';
 import { irdevices, device, SwitchBotPlatformConfig, deviceResponses } from './configTypes';
 
 /**
@@ -127,10 +128,14 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
           this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
           this.createHumidifier(device, devices);
           break;
+        case 'Curtain':
+          this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
+          this.createCurtain(device, devices);
+          break;
         default:
           this.log.info(
             `A SwitchBot Device has been discovered with Device Type: ${device.deviceType}, which is currently not supported.`,
-            'Submit Feature Requests Here: https://git.io/JL14Z,',
+            'Submit Feature Requests Here: https://git.io/JL14Z',
           );
       }
     }
@@ -180,6 +185,58 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       new Humidifier(this, accessory, device);
       this.log.debug(
         `Humidifier UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
+      );
+
+      // link the accessory to your platform
+      this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
+      this.accessories.push(accessory);
+    }
+  }
+
+  private async createCurtain(device: device, devices: deviceResponses) {
+    const uuid = this.api.hap.uuid.generate(
+      `${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
+    );
+
+    // see if an accessory with the same uuid has already been registered and restored from
+    // the cached devices we stored in the `configureAccessory` method above
+    const existingAccessory = this.accessories.find((accessory) => accessory.UUID === uuid);
+
+    if (existingAccessory) {
+      // the accessory already exists
+      if (devices.statusCode === 100) {
+        this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
+
+        // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
+        //existingAccessory.context.firmwareRevision = firmware;
+        this.api.updatePlatformAccessories([existingAccessory]);
+        // create the accessory handler for the restored accessory
+        // this is imported from `platformAccessory.ts`
+        new Curtain(this, existingAccessory, device);
+        this.log.debug(
+          `Curtain UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
+        );
+      } else {
+        this.unregisterPlatformAccessories(existingAccessory);
+      }
+    } else {
+      // the accessory does not yet exist, so we need to create it
+      this.log.info('Adding new accessory:', `${device.deviceName} ${device.deviceType}`);
+      this.log.debug(`Registering new device: ${device.deviceName} ${device.deviceType} - ${device.deviceId}`);
+
+      // create a new accessory
+      const accessory = new this.api.platformAccessory(`${device.deviceName} ${device.deviceType}`, uuid);
+
+      // store a copy of the device object in the `accessory.context`
+      // the `context` property can be used to store any data about the accessory you may need
+      //accessory.context.firmwareRevision = firmware;
+      accessory.context.device = device;
+      // accessory.context.firmwareRevision = findaccessories.accessoryAttribute.softwareRevision;
+      // create the accessory handler for the newly create accessory
+      // this is imported from `platformAccessory.ts`
+      new Curtain(this, accessory, device);
+      this.log.debug(
+        `Curtain UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
       );
 
       // link the accessory to your platform
