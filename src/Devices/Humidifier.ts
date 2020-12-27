@@ -146,33 +146,49 @@ export class Humidifier {
   parseStatus() {
     // Current Relative Humidity
     this.CurrentRelativeHumidity = this.deviceStatus.body.humidity;
+    this.platform.log.debug(
+      'Humidifier %s CurrentRelativeHumidity -',
+      this.accessory.displayName,
+      'Device is Currently: ',
+      this.CurrentRelativeHumidity,
+    );
     // Water Level
-    this.WaterLevel = 100; //Will be implimented once available in API.
+    if (this.deviceStatus.body) {
+      this.WaterLevel = 100; //Will be implimented once available in API.
+    } else {
+      this.WaterLevel = 0;
+    }
+    this.platform.log.debug(
+      'Humidifier %s WaterLevel -',
+      this.accessory.displayName,
+      'Device is Currently: ',
+      this.WaterLevel,
+    );
     // Active
     switch (this.deviceStatus.body.power) {
       case 'on':
-        this.Active = 1;
+        this.Active = this.platform.Characteristic.Active.ACTIVE;
         break;
       default:
-        this.Active = 0;
+        this.Active = this.platform.Characteristic.Active.INACTIVE;
     }
     this.platform.log.debug('Humidifier %s Active -', this.accessory.displayName, 'Device is Currently: ', this.Active);
     // Target Humidifier Dehumidifier State
     switch (this.deviceStatus.body.auto) {
       case true:
-        this.TargetHumidifierDehumidifierState = 0;
-        this.CurrentHumidifierDehumidifierState = 2;
+        this.TargetHumidifierDehumidifierState = this.platform.Characteristic.TargetHumidifierDehumidifierState.HUMIDIFIER_OR_DEHUMIDIFIER;
+        this.CurrentHumidifierDehumidifierState = this.platform.Characteristic.CurrentHumidifierDehumidifierState.HUMIDIFYING;
         this.RelativeHumidityHumidifierThreshold = this.CurrentRelativeHumidity;
         break;
       default:
-        this.TargetHumidifierDehumidifierState = 1;
+        this.TargetHumidifierDehumidifierState = this.platform.Characteristic.TargetHumidifierDehumidifierState.HUMIDIFIER;
         this.RelativeHumidityHumidifierThreshold = this.deviceStatus.body.nebulizationEfficiency;
         if (this.CurrentRelativeHumidity > this.RelativeHumidityHumidifierThreshold) {
-          this.CurrentHumidifierDehumidifierState = 1;
-        } else if (this.Active === 0) {
-          this.CurrentHumidifierDehumidifierState = 0;
+          this.CurrentHumidifierDehumidifierState = this.platform.Characteristic.CurrentHumidifierDehumidifierState.IDLE;
+        } else if (this.Active === this.platform.Characteristic.Active.INACTIVE) {
+          this.CurrentHumidifierDehumidifierState = this.platform.Characteristic.CurrentHumidifierDehumidifierState.INACTIVE;
         } else {
-          this.CurrentHumidifierDehumidifierState = 2;
+          this.CurrentHumidifierDehumidifierState = this.platform.Characteristic.CurrentHumidifierDehumidifierState.HUMIDIFYING;
         }
     }
     this.platform.log.debug(
@@ -195,12 +211,24 @@ export class Humidifier {
     );
     // Lock Physical Controls
     if (this.deviceStatus.body.childLock) {
-      this.LockPhysicalControls = 1;
+      this.LockPhysicalControls = this.platform.Characteristic.LockPhysicalControls.CONTROL_LOCK_ENABLED;
     } else {
-      this.LockPhysicalControls = 0;
+      this.LockPhysicalControls = this.platform.Characteristic.LockPhysicalControls.CONTROL_LOCK_DISABLED;
     }
+    this.platform.log.debug(
+      'Humidifier %s LockPhysicalControls -',
+      this.accessory.displayName,
+      'Device is Currently: ',
+      this.LockPhysicalControls,
+    );
     // Current Temperature
     this.CurrentTemperature = this.deviceStatus.body.temperature;
+    this.platform.log.debug(
+      'Humidifier %s CurrentTemperature -',
+      this.accessory.displayName,
+      'Device is Currently: ',
+      this.CurrentTemperature,
+    );
   }
 
   /**
@@ -236,8 +264,12 @@ export class Humidifier {
    * Pushes the requested changes to the SwitchBot API
    */
   async pushChanges() {
-    if (this.TargetHumidifierDehumidifierState === 1 && this.Active === 1) {
-      this.platform.log.debug(`Pushing ${this.RelativeHumidityHumidifierThreshold}!!!`);
+    if (
+      this.TargetHumidifierDehumidifierState ===
+        this.platform.Characteristic.TargetHumidifierDehumidifierState.HUMIDIFIER &&
+      this.Active === this.platform.Characteristic.Active.ACTIVE
+    ) {
+      this.platform.log.debug(`Pushing Manual: ${this.RelativeHumidityHumidifierThreshold}!`);
       const payload = {
         commandType: 'command',
         command: 'setMode',
@@ -255,7 +287,11 @@ export class Humidifier {
       // Make the API request
       const push = await this.platform.axios.post(`${DeviceURL}/${this.device.deviceId}/commands`, payload);
       this.platform.log.debug('Humidifier %s Changes pushed -', this.accessory.displayName, push.data);
-    } else if (this.TargetHumidifierDehumidifierState === 0 && this.Active === 1) {
+    } else if (
+      this.TargetHumidifierDehumidifierState ===
+        this.platform.Characteristic.TargetHumidifierDehumidifierState.HUMIDIFIER_OR_DEHUMIDIFIER &&
+      this.Active === this.platform.Characteristic.Active.ACTIVE
+    ) {
       await this.pushAutoChanges();
     } else {
       await this.pushActiveChanges();
@@ -266,8 +302,12 @@ export class Humidifier {
    * Pushes the requested changes to the SwitchBot API
    */
   async pushAutoChanges() {
-    if (this.TargetHumidifierDehumidifierState === 0 && this.Active === 1) {
-      this.platform.log.debug('Pushing Auto!!!');
+    if (
+      this.TargetHumidifierDehumidifierState ===
+        this.platform.Characteristic.TargetHumidifierDehumidifierState.HUMIDIFIER_OR_DEHUMIDIFIER &&
+      this.Active === this.platform.Characteristic.Active.ACTIVE
+    ) {
+      this.platform.log.debug('Pushing Auto!');
       const payload = {
         commandType: 'command',
         command: 'setMode',
@@ -292,8 +332,8 @@ export class Humidifier {
    * Pushes the requested changes to the SwitchBot API
    */
   async pushActiveChanges() {
-    if (this.Active === 0) {
-      this.platform.log.debug('Pushing Off!!!');
+    if (this.Active === this.platform.Characteristic.Active.INACTIVE) {
+      this.platform.log.debug('Pushing Off!');
       const payload = {
         commandType: 'command',
         command: 'turnOff',
@@ -384,9 +424,9 @@ export class Humidifier {
     );
 
     this.RelativeHumidityHumidifierThreshold = value;
-    if (this.Active === 0) {
-      this.Active = 1;
-      this.CurrentHumidifierDehumidifierState = 1;
+    if (this.Active === this.platform.Characteristic.Active.INACTIVE) {
+      this.Active = this.platform.Characteristic.Active.ACTIVE;
+      this.CurrentHumidifierDehumidifierState = this.platform.Characteristic.CurrentHumidifierDehumidifierState.IDLE;
     }
     this.service.updateCharacteristic(
       this.platform.Characteristic.RelativeHumidityHumidifierThreshold,

@@ -55,22 +55,16 @@ export class Curtain {
     // in this example we are using the name we stored in the `accessory.context` in the `discoverDevices` method.
     this.service.setCharacteristic(
       this.platform.Characteristic.Name,
-      `API ${this.device.deviceName} ${this.device.deviceType}`,
+      `${this.device.deviceName} ${this.device.deviceType}`,
     );
 
     // each service must implement at-minimum the "required characteristics" for the given service type
     // see https://developers.homebridge.io/#/service/WindowCovering
 
     // create handlers for required characteristics
-    this.service.setCharacteristic(
-      this.platform.Characteristic.PositionState,
-      this.PositionState,
-    );
+    this.service.setCharacteristic(this.platform.Characteristic.PositionState, this.PositionState);
 
-    this.service.setCharacteristic(
-      this.platform.Characteristic.CurrentPosition,
-      this.CurrentPosition,
-    );
+    this.service.setCharacteristic(this.platform.Characteristic.CurrentPosition, this.CurrentPosition);
 
     this.service
       .getCharacteristic(this.platform.Characteristic.TargetPosition)
@@ -124,18 +118,42 @@ export class Curtain {
   parseStatus() {
     // CurrentPosition
     this.CurrentPosition = 100 - this.deviceStatus.body.slidePosition;
+    this.platform.log.debug(
+      'Humidifier %s CurrentPosition -',
+      this.accessory.displayName,
+      'Device is Currently: ',
+      this.CurrentPosition,
+    );
 
     // PositionState
     if (this.deviceStatus.body.moving) {
       if (this.TargetPosition > this.CurrentPosition) {
-        this.platform.log.debug('Curtain %s -', this.accessory.displayName, 'Current position:', this.CurrentPosition, 'closing');
+        this.platform.log.debug(
+          'Curtain %s -',
+          this.accessory.displayName,
+          'Current position:',
+          this.CurrentPosition,
+          'closing',
+        );
         this.PositionState = this.platform.Characteristic.PositionState.INCREASING;
       } else {
-        this.platform.log.debug('Curtain %s -', this.accessory.displayName, 'Current position:', this.CurrentPosition, 'opening');
+        this.platform.log.debug(
+          'Curtain %s -',
+          this.accessory.displayName,
+          'Current position:',
+          this.CurrentPosition,
+          'opening',
+        );
         this.PositionState = this.platform.Characteristic.PositionState.DECREASING;
       }
     } else {
-      this.platform.log.debug('Curtain %s -', this.accessory.displayName, 'Current position:', this.CurrentPosition, 'standby');
+      this.platform.log.debug(
+        'Curtain %s -',
+        this.accessory.displayName,
+        'Current position:',
+        this.CurrentPosition,
+        'standby',
+      );
       this.PositionState = this.platform.Characteristic.PositionState.STOPPED;
     }
   }
@@ -192,50 +210,31 @@ export class Curtain {
 
   updateHomeKitCharacteristics() {
     this.platform.log.debug(
-      `Curtain %s updateHomeKitCharacteristics -`,
+      'Curtain %s updateHomeKitCharacteristics -',
       this.accessory.displayName,
       JSON.stringify({
-        'CurrentPosition': this.CurrentPosition,
-        'PositionState': this.PositionState,
-        'TargetPosition': this.TargetPosition,
-      })
+        CurrentPosition: this.CurrentPosition,
+        PositionState: this.PositionState,
+        TargetPosition: this.TargetPosition,
+      }),
     );
-    this.service.updateCharacteristic(
-      this.platform.Characteristic.CurrentPosition,
-      this.CurrentPosition,
-    );
-    this.service.updateCharacteristic(
-      this.platform.Characteristic.PositionState,
-      this.PositionState,
-    );
-    this.service.updateCharacteristic(
-      this.platform.Characteristic.TargetPosition,
-      this.TargetPosition,
-    );
+    this.service.updateCharacteristic(this.platform.Characteristic.CurrentPosition, this.CurrentPosition);
+    this.service.updateCharacteristic(this.platform.Characteristic.PositionState, this.PositionState);
+    this.service.updateCharacteristic(this.platform.Characteristic.TargetPosition, this.TargetPosition);
   }
 
   handleTargetPositionSet(value, callback) {
-    this.platform.log.debug(
-      'Curtain %s -',
-      this.accessory.displayName,
-      `Set TargetPosition: ${value}`,
-    );
+    this.platform.log.debug('Curtain %s -', this.accessory.displayName, `Set TargetPosition: ${value}`);
 
     this.TargetPosition = value;
-    this.service.updateCharacteristic(
-      this.platform.Characteristic.TargetPosition,
-      this.TargetPosition,
-    );
+    this.service.updateCharacteristic(this.platform.Characteristic.TargetPosition, this.TargetPosition);
 
     if (value > this.CurrentPosition) {
       this.PositionState = this.platform.Characteristic.PositionState.INCREASING;
     } else {
       this.PositionState = this.platform.Characteristic.PositionState.DECREASING;
     }
-    this.service.setCharacteristic(
-      this.platform.Characteristic.PositionState,
-      this.PositionState,
-    );
+    this.service.setCharacteristic(this.platform.Characteristic.PositionState, this.PositionState);
 
     this.doCurtainUpdate.next();
     callback(null);
