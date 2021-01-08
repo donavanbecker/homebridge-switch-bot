@@ -21,7 +21,8 @@ export type options = {
 };
 
 export type bot = {
-  
+  device_switch: string[];
+  device_press: string[];
 };
 
 export type humidifier = {

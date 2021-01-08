@@ -2,8 +2,10 @@ import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, Service, Charact
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { PLATFORM_NAME, PLUGIN_NAME, DeviceURL } from './settings';
 import { Humidifier } from './Devices/Humidifier';
+import { Bot } from './Devices/Bot';
 import { Curtain } from './Devices/Curtain';
 import { irdevices, device, SwitchBotPlatformConfig, deviceResponses, deviceStatusResponse } from './configTypes';
+
 
 /**
  * HomebridgePlatform
@@ -90,7 +92,8 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
       // Bot Config Options
       if (this.config.options?.bot) {
-        this.config.options.bot;
+        this.config.options.bot.device_press;
+        this.config.options.bot.device_switch;
       }
 
       // Humidifier Config Options
@@ -146,6 +149,10 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
           case 'Humidifier':
             this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
             this.createHumidifier(device, devices);
+            break;
+          case 'Bots':
+            this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
+            this.createBot(device, devices);
             break;
           case 'Curtain':
             this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
@@ -208,6 +215,60 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       new Humidifier(this, accessory, device);
       this.log.debug(
         `Humidifier UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
+      );
+
+      // link the accessory to your platform
+      this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
+      this.accessories.push(accessory);
+    } else {
+      this.log.error(`Unable to Register new device: ${device.deviceName} ${device.deviceType} - ${device.deviceId}`);
+    }
+  }
+
+  private async createBot(device: device, devices: deviceResponses) {
+    const uuid = this.api.hap.uuid.generate(
+      `${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
+    );
+
+    // see if an accessory with the same uuid has already been registered and restored from
+    // the cached devices we stored in the `configureAccessory` method above
+    const existingAccessory = this.accessories.find((accessory) => accessory.UUID === uuid);
+
+    if (existingAccessory) {
+      // the accessory already exists
+      if (!this.config.options?.hide_device.includes(device.deviceId) && devices.statusCode === 100) {
+        this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName, 'DeviceID:', device.deviceId);
+
+        // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
+        //existingAccessory.context.firmwareRevision = firmware;
+        this.api.updatePlatformAccessories([existingAccessory]);
+        // create the accessory handler for the restored accessory
+        // this is imported from `platformAccessory.ts`
+        new Bot(this, existingAccessory, device);
+        this.log.debug(
+          `Bot UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
+        );
+      } else {
+        this.unregisterPlatformAccessories(existingAccessory);
+      }
+    } else if (!this.config.options?.hide_device.includes(device.deviceId)) {
+      // the accessory does not yet exist, so we need to create it
+      this.log.info('Adding new accessory:', device.deviceName, device.deviceType, 'DeviceID:', device.deviceId);
+      this.log.debug('Registering new device:', device.deviceName, device.deviceType, '-', device.deviceId);
+
+      // create a new accessory
+      const accessory = new this.api.platformAccessory(`${device.deviceName} ${device.deviceType}`, uuid);
+
+      // store a copy of the device object in the `accessory.context`
+      // the `context` property can be used to store any data about the accessory you may need
+      //accessory.context.firmwareRevision = firmware;
+      accessory.context.device = device;
+      // accessory.context.firmwareRevision = findaccessories.accessoryAttribute.softwareRevision;
+      // create the accessory handler for the newly create accessory
+      // this is imported from `platformAccessory.ts`
+      new Bot(this, accessory, device);
+      this.log.debug(
+        `Bot UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
       );
 
       // link the accessory to your platform

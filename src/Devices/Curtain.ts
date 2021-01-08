@@ -1,4 +1,4 @@
-import { Service, PlatformAccessory } from 'homebridge';
+import { Service, PlatformAccessory, CharacteristicEventTypes } from 'homebridge';
 import { SwitchBotPlatform } from '../platform';
 import { interval, Subject } from 'rxjs';
 import { debounceTime, skipWhile, tap } from 'rxjs/operators';
@@ -25,9 +25,9 @@ export class Curtain {
     public device: device,
   ) {
     // default placeholders
-    this.CurrentPosition;
+    this.CurrentPosition = 100;
     this.PositionState = this.platform.Characteristic.PositionState.STOPPED;
-    this.TargetPosition;
+    this.TargetPosition = 100;
 
     // this is subject we use to track when we need to POST changes to the SwitchBot API
     this.doCurtainUpdate = new Subject();
@@ -76,7 +76,7 @@ export class Curtain {
         minValue: this.platform.config.options?.curtain?.set_min || 0,
         maxValue: this.platform.config.options?.curtain?.set_max || 100,
       })
-      .on('set', this.handleTargetPositionSet.bind(this));
+      .on(CharacteristicEventTypes.SET, this.handleTargetPositionSet.bind(this));
 
     // Update Homekit
     this.updateHomeKitCharacteristics();
@@ -221,10 +221,14 @@ export class Curtain {
       } as any;
 
       this.platform.log.info(
-        'Sending request to SwitchBot API. command:',
-        `${payload.command}, parameter:`,
-        `${payload.parameter}, commandType:`,
-        `${payload.commandType}`,
+        'Sending request for',
+        this.accessory.displayName,
+        'to SwitchBot API. command:',
+        payload.command,
+        'parameter:',
+        payload.parameter,
+        'commandType:',
+        payload.commandType,
       );
       this.platform.log.debug('Curtain %s pushChanges -', this.accessory.displayName, JSON.stringify(payload));
 

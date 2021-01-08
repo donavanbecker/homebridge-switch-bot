@@ -1,4 +1,4 @@
-import { Service, PlatformAccessory } from 'homebridge';
+import { Service, PlatformAccessory, CharacteristicEventTypes } from 'homebridge';
 import { SwitchBotPlatform } from '../platform';
 import { interval, Subject } from 'rxjs';
 import { debounceTime, skipWhile, tap } from 'rxjs/operators';
@@ -34,14 +34,14 @@ export class Humidifier {
     public device: device,
   ) {
     // default placeholders
-    this.CurrentRelativeHumidity;
-    this.TargetHumidifierDehumidifierState;
-    this.CurrentHumidifierDehumidifierState;
-    this.Active;
-    this.RelativeHumidityHumidifierThreshold;
-    this.LockPhysicalControls;
-    this.CurrentTemperature;
-    this.WaterLevel;
+    this.CurrentRelativeHumidity = 0 || 100;
+    this.TargetHumidifierDehumidifierState = 0 || 1;
+    this.CurrentHumidifierDehumidifierState = 0 || 1 || 2;
+    this.Active = 0 || 1;
+    this.RelativeHumidityHumidifierThreshold = 0 || 100;
+    this.LockPhysicalControls = 0 || 1;
+    this.CurrentTemperature = 0 || 100;
+    this.WaterLevel = 0 || 100;
 
     // this is subject we use to track when we need to POST changes to the SwitchBot API
     this.doHumidifierUpdate = new Subject();
@@ -89,17 +89,17 @@ export class Humidifier {
       .setProps({
         validValues: [0, 1],
       })
-      .on('set', this.handleTargetHumidifierDehumidifierStateSet.bind(this));
+      .on(CharacteristicEventTypes.SET, this.handleTargetHumidifierDehumidifierStateSet.bind(this));
 
-    this.service.getCharacteristic(this.platform.Characteristic.Active).on('set', this.handleActiveSet.bind(this));
+    this.service.getCharacteristic(this.platform.Characteristic.Active).on(CharacteristicEventTypes.SET, this.handleActiveSet.bind(this));
 
     this.service
       .getCharacteristic(this.platform.Characteristic.RelativeHumidityHumidifierThreshold)
-      .on('set', this.handleRelativeHumidityHumidifierThresholdSet.bind(this));
+      .on(CharacteristicEventTypes.SET, this.handleRelativeHumidityHumidifierThresholdSet.bind(this));
 
     this.service
       .getCharacteristic(this.platform.Characteristic.LockPhysicalControls)
-      .on('set', this.handleLockPhysicalControlsSet.bind(this));
+      .on(CharacteristicEventTypes.SET, this.handleLockPhysicalControlsSet.bind(this));
 
     // create a new Temperature Sensor service
     (this.temperatureservice =
@@ -276,10 +276,14 @@ export class Humidifier {
       } as any;
 
       this.platform.log.info(
-        'Sending request to SwitchBot API. command:',
-        `${payload.command}, parameter:`,
-        `${payload.parameter}, commandType:`,
-        `${payload.commandType}`,
+        'Sending request for',
+        this.accessory.displayName,
+        'to SwitchBot API. command:',
+        payload.command,
+        'parameter:',
+        payload.parameter,
+        'commandType:',
+        payload.commandType,
       );
       this.platform.log.debug('Humidifier %s pushChanges -', this.accessory.displayName, JSON.stringify(payload));
 
@@ -315,10 +319,14 @@ export class Humidifier {
         } as any;
 
         this.platform.log.info(
-          'Sending request to SwitchBot API. command:',
-          `${payload.command}, parameter:`,
-          `${payload.parameter}, commandType:`,
-          `${payload.commandType}`,
+          'Sending request for',
+          this.accessory.displayName,
+          'to SwitchBot API. command:',
+          payload.command,
+          'parameter:',
+          payload.parameter,
+          'commandType:',
+          payload.commandType,
         );
         this.platform.log.debug('Humidifier %s pushAutoChanges -', this.accessory.displayName, JSON.stringify(payload));
 
@@ -346,10 +354,14 @@ export class Humidifier {
         } as any;
 
         this.platform.log.info(
-          'Sending request to SwitchBot API. command:',
-          `${payload.command}, parameter:`,
-          `${payload.parameter}, commandType:`,
-          `${payload.commandType}`,
+          'Sending request for',
+          this.accessory.displayName,
+          'to SwitchBot API. command:',
+          payload.command,
+          'parameter:',
+          payload.parameter,
+          'commandType:',
+          payload.commandType,
         );
         this.platform.log.debug(
           'Humidifier %s pushActiveChanges -',

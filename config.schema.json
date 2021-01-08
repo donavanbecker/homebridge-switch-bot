@@ -46,13 +46,28 @@
               "type": "string"
             }
           },
+          "bot": {
+            "type": "object",
+            "properties": {
+              "device_switch": {
+                "title": "Switch Mode Bots",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "device_press": {
+                "title": "Press Mode Bots",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
           "humidifier": {
             "type": "object",
             "properties": {
-              "hide": {
-                "title": "Hide Humidifiers",
-                "type": "boolean"
-              },
               "hide_temperature": {
                 "title": "Hide Humidifier's Temperature Sensor",
                 "type": "boolean"
@@ -75,6 +90,10 @@
             }
           }
         }
+      },
+      "devicediscovery": {
+        "name": "Device Discovery",
+        "type": "boolean"
       }
     }
   },
@@ -128,6 +147,52 @@
         },
         {
           "type": "fieldset",
+          "title": "Bot Settings",
+          "expandable": true,
+          "expanded": false,
+          "items": [
+            {
+              "key": "options.bot.device_switch",
+              "notitle": true,
+              "add": "Add Another Bot in Switch Mode",
+              "type": "array",
+              "items": [
+                {
+                  "type": "div",
+                  "displayFlex": true,
+                  "flex-direction": "row",
+                  "items": [
+                    {
+                      "key": "options.bot.device_switch[]",
+                      "placeholder": "81F3UT59513F"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "key": "options.bot.device_press",
+              "notitle": true,
+              "add": "Add Another Bot in Press Mode",
+              "type": "array",
+              "items": [
+                {
+                  "type": "div",
+                  "displayFlex": true,
+                  "flex-direction": "row",
+                  "items": [
+                    {
+                      "key": "options.bot.device_press[]",
+                      "placeholder": "81F3UT59513F"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "fieldset",
           "title": "Humidifier Settings",
           "expandable": true,
           "expanded": false,
@@ -144,6 +209,14 @@
             "options.curtain.set_min",
             "options.curtain.set_max"
           ]
+        },
+        {
+          "type": "help",
+          "helpvalue": "<h5>Device Discovery</h5><em class='primary-text'>Enables Device Info Logging.</em>"
+        },
+        {
+          "key": "devicediscovery",
+          "title": "Device Discovery"
         }
       ]
     }

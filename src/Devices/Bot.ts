@@ -1,4 +1,4 @@
-import { Service, PlatformAccessory } from 'homebridge';
+import { Service, PlatformAccessory, CharacteristicEventTypes } from 'homebridge';
 import { SwitchBotPlatform } from '../platform';
 import { interval, Subject } from 'rxjs';
 import { debounceTime, skipWhile, tap } from 'rxjs/operators';
@@ -26,8 +26,8 @@ export class Bot {
     public device: device,
   ) {
     // default placeholders
-    this.On;
-    this.OutletInUse;
+    this.On = true;
+    this.OutletInUse = true;
 
     // this is subject we use to track when we need to POST changes to the SwitchBot API
     this.doBotUpdate = new Subject();
@@ -64,13 +64,9 @@ export class Bot {
     // each service must implement at-minimum the "required characteristics" for the given service type
     // see https://developers.homebridge.io/#/service/Outlet
 
-    this.service.getCharacteristic(this.platform.Characteristic.On)
-      .on('set', this.handleOnSet.bind(this));
-
-    this.service.setCharacteristic(
-      this.platform.Characteristic.OutletInUse,
-      this.OutletInUse,
-    );
+    this.service
+      .getCharacteristic(this.platform.Characteristic.On)
+      .on(CharacteristicEventTypes.SET, this.handleOnSet.bind(this));  
 
     // Retrieve initial values and updateHomekit
     //this.refreshStatus();
@@ -108,14 +104,21 @@ export class Bot {
    */
   parseStatus() {
     // Current Relative Humidity
-    if (this.deviceStatus.body.power) {
-      this.On = true;
+    if (this.deviceStatus.body.power === 'on') {
+      this.OutletInUse = true;
+    } else {
+      this.OutletInUse = false;
+    }
+    if (this.On === true) {
+      this.On === true;
+    } else {
+      this.On === false;
     }
     this.platform.log.debug(
       'Bot %s CurrentRelativeHumidity -',
       this.accessory.displayName,
       'Device is Currently: ',
-      this.On,
+      this.OutletInUse,
     );
   }
 
@@ -158,19 +161,26 @@ export class Bot {
       parameter: 'default',
     } as any;
 
-    if (this.On) {
+    
+    if (this.platform.config.options?.bot?.device_switch && this.On) {
       payload.commmand = 'turnOn';
-    } else if (!this.On) {
+    } else if (this.platform.config.options?.bot?.device_switch && !this.On) {
       payload.commmand = 'turnOff';
-    } else {
+    } else if (this.platform.config.options?.bot?.device_press) {
       payload.commmand = 'press';
+    } else {
+      this.platform.log.warn('Bot Device Paramters not set for this Bot.');
     }
 
     this.platform.log.info(
-      'Sending request to SwitchBot API. command:',
-      `${payload.command}, parameter:`,
-      `${payload.parameter}, commandType:`,
-      `${payload.commandType}`,
+      'Sending request for',
+      this.accessory.displayName,
+      'to SwitchBot API. command:',
+      payload.command,
+      'parameter:',
+      payload.parameter,
+      'commandType:',
+      payload.commandType,
     );
     this.platform.log.debug('Bot %s pushChanges -', this.accessory.displayName, JSON.stringify(payload));
 
@@ -197,8 +207,11 @@ export class Bot {
    * Handle requests to set the "On" characteristic
    */
   handleOnSet(value, callback) {
-    this.platform.log.debug('Triggered SET On:', value);
-
+    this.platform.log.debug('Bot %s -', this.accessory.displayName, `Set On: ${value}`);
+    this.On = value;
+    this.service.updateCharacteristic(this.platform.Characteristic.On, this.On);
+    this.doBotUpdate.next();
     callback(null);
   }
+
 }
