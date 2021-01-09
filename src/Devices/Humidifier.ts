@@ -105,9 +105,7 @@ export class Humidifier {
     (this.temperatureservice =
       this.accessory.getService(this.platform.Service.TemperatureSensor) ||
       this.accessory.addService(this.platform.Service.TemperatureSensor)),
-    `${this.device.deviceName} ${this.device.deviceType}`;
-
-    this.temperatureservice.setCharacteristic(this.platform.Characteristic.CurrentTemperature, this.CurrentTemperature);
+    `${this.device.deviceName} ${this.device.deviceType} Temperature Sensor`;
 
     // Retrieve initial values and updateHomekit
     //this.refreshStatus();

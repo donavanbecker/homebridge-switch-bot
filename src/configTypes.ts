@@ -37,6 +37,7 @@ export type humidifier = {
 export type curtain = {
   set_max?: number;
   set_min?: number;
+  set_minStep?: number;
 };
 
 export interface AxiosRequestConfig {

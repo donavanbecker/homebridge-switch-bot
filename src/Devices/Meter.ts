@@ -82,13 +82,13 @@ export class Meter {
     (this.humidityservice =
       this.accessory.getService(this.platform.Service.HumiditySensor) ||
       this.accessory.addService(this.platform.Service.HumiditySensor)),
-    `${this.device.deviceName} ${this.device.deviceType}`;
+    `${this.device.deviceName} ${this.device.deviceType} Humidity Sensor`;
 
     // create a new Temperature Sensor service
     (this.temperatureservice =
       this.accessory.getService(this.platform.Service.TemperatureSensor) ||
       this.accessory.addService(this.platform.Service.TemperatureSensor)),
-    `${this.device.deviceName} ${this.device.deviceType}`;
+    `${this.device.deviceName} ${this.device.deviceType} Temperature Sensor`;
 
     // Retrieve initial values and updateHomekit
     this.updateHomeKitCharacteristics();

@@ -110,6 +110,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
       // Curtain Config Options
       if (this.config.options?.curtain) {
+        this.config.options.curtain.set_minStep;
         this.config.options.curtain.set_min;
         this.config.options.curtain.set_max;
       }
