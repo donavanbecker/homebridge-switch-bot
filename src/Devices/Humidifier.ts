@@ -34,14 +34,14 @@ export class Humidifier {
     public device: device,
   ) {
     // default placeholders
-    this.CurrentRelativeHumidity = 0 || 100;
-    this.TargetHumidifierDehumidifierState = 0 || 1;
-    this.CurrentHumidifierDehumidifierState = 0 || 1 || 2;
-    this.Active = 0 || 1;
-    this.RelativeHumidityHumidifierThreshold = 0 || 100;
-    this.LockPhysicalControls = 0 || 1;
-    this.CurrentTemperature = 0 || 100;
-    this.WaterLevel = 0 || 100;
+    this.CurrentRelativeHumidity = 100;
+    this.TargetHumidifierDehumidifierState = this.platform.Characteristic.TargetHumidifierDehumidifierState.HUMIDIFIER;
+    this.CurrentHumidifierDehumidifierState = this.platform.Characteristic.CurrentHumidifierDehumidifierState.INACTIVE;
+    this.Active = this.platform.Characteristic.Active.ACTIVE;
+    this.RelativeHumidityHumidifierThreshold = 100;
+    this.LockPhysicalControls = this.platform.Characteristic.LockPhysicalControls.CONTROL_LOCK_DISABLED;
+    this.CurrentTemperature = 100;
+    this.WaterLevel = 100;
 
     // this is subject we use to track when we need to POST changes to the SwitchBot API
     this.doHumidifierUpdate = new Subject();

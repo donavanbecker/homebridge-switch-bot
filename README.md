@@ -16,15 +16,20 @@ plugin allows you to access your SwitchBot Device(s) from HomeKit with
 
 ## Installation
 
-1. Search for "SwitchBot" on the plugin screen of [Homebridge Config UI X](https://github.com/oznu/homebridge-config-ui-x).
-2. Click **Install**.
+1. Search for "SwitchBot" on the plugin screen of [Homebridge Config UI X](https://github.com/oznu/homebridge-config-ui-x)
+2. Click **Install**
 
 ## Configuration
 
-1. Download SwitchBot App on App Store or Google Play Store.
-2. Register a SwitchBot account and log in into your account.
-3. Generate an Open Token within the App.
-4. Input your Open Token into the Config <span style="color:red">*Open Token*</span> paramter.
+1. Download SwitchBot App on App Store or Google Play Store
+2. Register a SwitchBot account and log in into your account
+3. Generate an Open Token within the App
+    - Click Bottom Profile Tab
+    - Click Preference
+    - Click App version 10 Times, this will enable Developer Options
+    - Click Developer Options
+    - Click Copy to Clipboard
+4. Input your `Token` into the config paramter
 
 <p align="center">
 
@@ -35,6 +40,7 @@ plugin allows you to access your SwitchBot Device(s) from HomeKit with
 ## Supported Devices
 
 - [SwitchBot Humidifier](https://www.switch-bot.com/products/switchbot-smart-humidifier)
+- [SwitchBot Meter](https://www.switch-bot.com/products/switchbot-meter)
 - [SwitchBot Curtain](https://www.switch-bot.com/products/switchbot-curtain)
 
 ## SwitchBotAPI

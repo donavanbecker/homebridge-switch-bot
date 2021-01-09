@@ -17,7 +17,7 @@
         "type": "object",
         "properties": {
           "openToken": {
-            "title": "Open Token",
+            "title": "Token",
             "type": "string",
             "required": true
           },
