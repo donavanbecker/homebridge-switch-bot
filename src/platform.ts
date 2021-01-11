@@ -157,7 +157,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
             this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
             this.createHumidifier(device, devices);
             break;
-          case 'Bots':
+          case 'Bot':
             this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
             this.createBot(device, devices);
             break;
