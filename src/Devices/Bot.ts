@@ -161,14 +161,14 @@ export class Bot {
     if (this.platform.config.options?.bot?.device_switch?.includes(this.device.deviceId) && this.On) {
       payload.command = 'turnOn';
       this.On = true;
-      this.platform.log.warn('Switch Mode, Turning %s', this.On);
+      this.platform.log.debug('Switch Mode, Turning %s', this.On);
     } else if (this.platform.config.options?.bot?.device_switch?.includes(this.device.deviceId) && !this.On) {
       payload.command = 'turnOff';
       this.On = false;
-      this.platform.log.warn('Switch Mode, Turning %s', this.On);
+      this.platform.log.debug('Switch Mode, Turning %s', this.On);
     } else if (this.platform.config.options?.bot?.device_press?.includes(this.device.deviceId)) {
       payload.command = 'press';
-      this.platform.log.warn('Press Mode');
+      this.platform.log.debug('Press Mode');
       this.On = false;
     } else {
       throw new Error('Bot Device Paramters not set for this Bot.');
