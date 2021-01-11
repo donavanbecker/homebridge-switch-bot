@@ -123,6 +123,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       this.config.options!.refreshRate! = 300;
       this.log.warn('Using Default Refresh Rate.');
       }
+      
     }
   
     if (!this.config.credentials) {
@@ -158,7 +159,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
             this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
             this.createHumidifier(device, devices);
             break;
-          case 'Bots':
+          case 'Bot':
             this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
             this.createBot(device, devices);
             break;
@@ -290,6 +291,9 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
         device.deviceId,
       );
 
+      if (!this.config.options?.bot?.device_press || !this.config.options?.bot?.device_switch) {
+        throw new Error('You must set your Bot to Press or Switch Mode');
+      }
       // create a new accessory
       const accessory = new this.api.platformAccessory(`${device.deviceName} ${device.deviceType}`, uuid);
 

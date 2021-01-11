@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. This project uses [Semantic Versioning](https://semver.org/)
 
+## [Version 1.2.0](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v1.1.0...v1.2.0) (2021-01-XX)
+
+### Changes
+
+- Adds Support for [SwitchBot Bot](https://www.switch-bot.com/products/switchbot-bot).
+- Added option to set Mininum Step Config for [SwitchBot Curtain](https://www.switch-bot.com/products/switchbot-curtain), lower the ammount of commands being sent.
+
 ## [Version 1.1.0](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v1.0.1...v1.1.0) (2021-01-08)
 
 ### Changes

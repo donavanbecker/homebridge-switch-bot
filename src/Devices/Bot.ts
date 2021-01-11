@@ -13,12 +13,13 @@ import { device, deviceStatusResponse } from '../configTypes';
 export class Bot {
   private service: Service;
 
-
-  botUpdateInProgress!: boolean;
-  doBotUpdate!: any;
   On!: boolean;
   OutletInUse!: boolean;
   deviceStatus!: deviceStatusResponse;
+  Mode: any;
+
+  botUpdateInProgress!: boolean;
+  doBotUpdate!: any;
 
   constructor(
     private readonly platform: SwitchBotPlatform,
@@ -26,8 +27,9 @@ export class Bot {
     public device: device,
   ) {
     // default placeholders
-    this.On = true;
-    this.OutletInUse = true;
+    this.On = false;
+    this.OutletInUse = false;
+    this.Mode;
 
     // this is subject we use to track when we need to POST changes to the SwitchBot API
     this.doBotUpdate = new Subject();
@@ -52,7 +54,7 @@ export class Bot {
 
     // To avoid "Cannot add a Service with the same UUID another Service without also defining a unique 'subtype' property." error,
     // when creating multiple services of the same type, you need to use the following syntax to specify a name and subtype id:
-    // this.accessory.getService('NAME') ?? this.accessory.addService(this.platform.Service.Lightbulb, 'NAME', 'USER_DEFINED_SUBTYPE');
+    // this.accessory.getService('NAME') ?? this.accessory.addService(this.platform.Service.Outlet, 'NAME', 'USER_DEFINED_SUBTYPE');
 
     // set the service name, this is what is displayed as the default name on the Home app
     // in this example we are using the name we stored in the `accessory.context` in the `discoverDevices` method.
@@ -69,7 +71,6 @@ export class Bot {
       .on(CharacteristicEventTypes.SET, this.handleOnSet.bind(this));  
 
     // Retrieve initial values and updateHomekit
-    //this.refreshStatus();
     this.updateHomeKitCharacteristics();
 
     // Start an update interval
@@ -103,22 +104,16 @@ export class Bot {
    * Parse the device status from the SwitchBot api
    */
   parseStatus() {
-    // Current Relative Humidity
     if (this.deviceStatus.body.power === 'on') {
       this.OutletInUse = true;
     } else {
       this.OutletInUse = false;
     }
-    if (this.On === true) {
-      this.On === true;
-    } else {
-      this.On === false;
-    }
     this.platform.log.debug(
-      'Bot %s CurrentRelativeHumidity -',
+      'Bot %s OutletInUse: %s On: %s',
       this.accessory.displayName,
-      'Device is Currently: ',
       this.OutletInUse,
+      this.On,
     );
   }
 
@@ -153,23 +148,32 @@ export class Bot {
 
   /**
    * Pushes the requested changes to the SwitchBot API
+   * deviceType	commandType	  Command	    command parameter	  Description
+   * Bot   -    "command"     "turnOff"   "default"	  =        set to OFF state
+   * Bot   -    "command"     "turnOn"    "default"	  =        set to ON state
+   * Bot   -    "command"     "press"     "default"	  =        trigger press
    */
   async pushChanges() {
-    this.platform.log.debug(`Pushing On: ${this.On}!`);
     const payload = {
       commandType: 'command',
       parameter: 'default',
     } as any;
 
     
-    if (this.platform.config.options?.bot?.device_switch && this.On) {
-      payload.commmand = 'turnOn';
-    } else if (this.platform.config.options?.bot?.device_switch && !this.On) {
-      payload.commmand = 'turnOff';
-    } else if (this.platform.config.options?.bot?.device_press) {
-      payload.commmand = 'press';
+    if (this.platform.config.options?.bot?.device_switch.includes(this.device.deviceId) && this.On) {
+      payload.command = 'turnOn';
+      this.On = true;
+      this.platform.log.warn('Switch Mode, Turning %s', this.On);
+    } else if (this.platform.config.options?.bot?.device_switch.includes(this.device.deviceId) && !this.On) {
+      payload.command = 'turnOff';
+      this.On = false;
+      this.platform.log.warn('Switch Mode, Turning %s', this.On);
+    } else if (this.platform.config.options?.bot?.device_press.includes(this.device.deviceId)) {
+      payload.command = 'press';
+      this.platform.log.warn('Press Mode');
+      this.On = false;
     } else {
-      this.platform.log.warn('Bot Device Paramters not set for this Bot.');
+      throw new Error('Bot Device Paramters not set for this Bot.');
     }
 
     this.platform.log.info(
@@ -187,6 +191,7 @@ export class Bot {
     // Make the API request
     const push = await this.platform.axios.post(`${DeviceURL}/${this.device.deviceId}/commands`, payload);
     this.platform.log.debug('Bot %s Changes pushed -', this.accessory.displayName, push.data);
+    this.refreshStatus();
   }
 
   /**
@@ -208,9 +213,9 @@ export class Bot {
    */
   handleOnSet(value, callback) {
     this.platform.log.debug('Bot %s -', this.accessory.displayName, `Set On: ${value}`);
+    this.doBotUpdate.next();
     this.On = value;
     this.service.updateCharacteristic(this.platform.Characteristic.On, this.On);
-    this.doBotUpdate.next();
     callback(null);
   }
 
