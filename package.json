@@ -19,7 +19,7 @@
   "main": "dist/index.js",
   "scripts": {
     "clean": "npm clean-install",
-    "audit": "npm audit && npm audit fix",
+    "audit": "npm audit fix",
     "update": "npm update && npm install",
     "lint": "eslint src/**.ts",
     "watch": "npm run build && npm link && nodemon",
@@ -54,7 +54,7 @@
     "eslint": "^7.17.0",
     "eslint-plugin-prettier": "^3.3.1",
     "homebridge": "^1.1.7",
-    "homebridge-config-ui-x": "^4.37.0-test.2",
+    "homebridge-config-ui-x": "^4.36.0",
     "nodemon": "^2.0.7",
     "prettier": "^2.2.1",
     "rimraf": "^3.0.2",

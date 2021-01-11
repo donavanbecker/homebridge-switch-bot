@@ -41,6 +41,12 @@ plugin allows you to access your SwitchBot Device(s) from HomeKit with
 
 - [SwitchBot Humidifier](https://www.switch-bot.com/products/switchbot-smart-humidifier)
 - [SwitchBot Meter](https://www.switch-bot.com/products/switchbot-meter)
+- [SwitchBot Bot](https://www.switch-bot.com/products/switchbot-bot)
+    - You must set your Bot's Device ID in the Press Mode or Switch Mode Bot Settings (Advanced Settings > Bot Settings)
+        - Press Mode - Turns on then instantly turn it off.
+        - Switch Mode - Turns on and keep it on until it is turned off.
+            - This can get out of sync, since API doesn't give me a status.
+            - To Correct you must go into the SwitchBot App and correct the status of either `On` or `Off`.
 - [SwitchBot Curtain](https://www.switch-bot.com/products/switchbot-curtain)
 
 ## SwitchBotAPI
