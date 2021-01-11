@@ -292,7 +292,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       );
 
       if (!this.config.options?.bot?.device_press || !this.config.options?.bot?.device_switch) {
-        throw new Error('You must set your Bot to Press or Switch Mode');
+        this.log.error('You must set your Bot to Press or Switch Mode');
       }
       // create a new accessory
       const accessory = new this.api.platformAccessory(`${device.deviceName} ${device.deviceType}`, uuid);
