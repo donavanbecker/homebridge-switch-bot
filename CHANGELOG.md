@@ -7,6 +7,11 @@ All notable changes to this project will be documented in this file. This projec
 ### Changes
 
 - Adds Support for [SwitchBot Bot](https://www.switch-bot.com/products/switchbot-bot).
+    - You must set your Bot's Device ID in the Press Mode or Switch Mode Bot Settings (Advanced Settings > Bot Settings)
+        - Press Mode - Turns on then instantly turn it off.
+        - Switch Mode - Turns on and keep it on until it is turned off.
+            - This can get out of sync, since API doesn't give me a status.
+            - To Correct you must go into the SwitchBot App and correct the status of either `On` or `Off`.
 - Added option to set Mininum Step Config for [SwitchBot Curtain](https://www.switch-bot.com/products/switchbot-curtain), lower the ammount of commands being sent.
 
 ## [Version 1.1.0](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v1.0.1...v1.1.0) (2021-01-08)
