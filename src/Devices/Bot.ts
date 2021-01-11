@@ -160,15 +160,15 @@ export class Bot {
     } as any;
 
     
-    if (this.platform.config.options?.bot?.device_switch.includes(this.device.deviceId) && this.On) {
+    if (this.platform.config.options?.bot?.device_switch?.includes(this.device.deviceId) && this.On) {
       payload.command = 'turnOn';
       this.On = true;
       this.platform.log.warn('Switch Mode, Turning %s', this.On);
-    } else if (this.platform.config.options?.bot?.device_switch.includes(this.device.deviceId) && !this.On) {
+    } else if (this.platform.config.options?.bot?.device_switch?.includes(this.device.deviceId) && !this.On) {
       payload.command = 'turnOff';
       this.On = false;
       this.platform.log.warn('Switch Mode, Turning %s', this.On);
-    } else if (this.platform.config.options?.bot?.device_press.includes(this.device.deviceId)) {
+    } else if (this.platform.config.options?.bot?.device_press?.includes(this.device.deviceId)) {
       payload.command = 'press';
       this.platform.log.warn('Press Mode');
       this.On = false;
