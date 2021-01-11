@@ -16,7 +16,6 @@ export class Bot {
   On!: boolean;
   OutletInUse!: boolean;
   deviceStatus!: deviceStatusResponse;
-  Mode: any;
 
   botUpdateInProgress!: boolean;
   doBotUpdate!: any;
@@ -29,7 +28,6 @@ export class Bot {
     // default placeholders
     this.On = false;
     this.OutletInUse = false;
-    this.Mode;
 
     // this is subject we use to track when we need to POST changes to the SwitchBot API
     this.doBotUpdate = new Subject();
