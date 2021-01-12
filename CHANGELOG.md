@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. This project uses [Semantic Versioning](https://semver.org/)
 
+## [Version 1.3.0](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v1.2.1...v1.3.0) (2021-01-XX)
+
+### Changes
+
+- Add Support for [SwitchBot Hub Mini](https://www.switch-bot.com/products/switchbot-hub-mini).
+- Add Support for [SwitchBot Hub Plus](https://www.switch-bot.com/products/switchbot-hub-plus).
+
 ## [Version 1.2.1](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v1.2.0...v1.2.1) (2021-01-11)
 
 ### Changes
