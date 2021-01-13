@@ -6,9 +6,6 @@ import { Bot } from './Devices/Bot';
 import { Meter } from './Devices/Meter';
 import { Curtain } from './Devices/Curtain';
 import { irdevices, device, SwitchBotPlatformConfig, deviceResponses, deviceStatusResponse } from './configTypes';
-import { HubMini } from './Hubs/HubMini';
-import { HubPlus } from './Hubs/HubPlus';
-
 
 /**
  * HomebridgePlatform
@@ -161,6 +158,12 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
             this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
             this.createHumidifier(device, devices);
             break;
+          case 'Hub Mini':
+            this.log.info('Discovered a %s', device.deviceType);
+            break;
+          case 'Hub Plus':
+            this.log.info('Discovered a %s', device.deviceType);
+            break;
           case 'Bot':
             this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
             this.createBot(device, devices);
@@ -176,17 +179,10 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
           case 'Remote':
             this.log.debug('Discovered %s, %s is Not Supported.', device.deviceName, device.deviceType);
             break;
-          case 'Hub Mini':
-            this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
-            this.createHub(device, devices);
-            break;
-          case 'Hub Plus':
-            this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
-            this.createHub(device, devices);
-            break;
           default:
             this.log.info(
-              'A SwitchBot Device has been discovered with Device Type: %s, which is currently not supported.',
+              'Device: %s with Device Type: %s, is currently not supported.',
+              device.deviceName,
               device.deviceType,
               'Submit Feature Requests Here: https://git.io/JL14Z',
             );
@@ -454,81 +450,6 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       new Curtain(this, accessory, device);
       this.log.debug(
         `Curtain UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
-      );
-
-      // link the accessory to your platform
-      this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
-      this.accessories.push(accessory);
-    } else {
-      this.log.error(
-        'Unable to Register new device: %s %s - %s',
-        device.deviceName,
-        device.deviceType,
-        device.deviceId,
-      );
-    }
-  }
-
-  private async createHub(device: device, devices: deviceResponses) {
-    const uuid = this.api.hap.uuid.generate(
-      `${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
-    );
-
-    // see if an accessory with the same uuid has already been registered and restored from
-    // the cached devices we stored in the `configureAccessory` method above
-    const existingAccessory = this.accessories.find((accessory) => accessory.UUID === uuid);
-
-    if (existingAccessory) {
-      // the accessory already exists
-      if (!this.config.options?.hide_device.includes(device.deviceId) && devices.statusCode === 100) {
-        this.log.info(
-          'Restoring existing accessory from cache: %s DeviceID: %s',
-          existingAccessory.displayName,
-          device.deviceId,
-        );
-
-        // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
-        //existingAccessory.context.firmwareRevision = firmware;
-        this.api.updatePlatformAccessories([existingAccessory]);
-        // create the accessory handler for the restored accessory
-        // this is imported from `platformAccessory.ts`
-        if (device.deviceType === 'Hub Plus') {
-          new HubPlus(this, existingAccessory, device);
-        } else if (device.deviceType === 'Hub Mini') {
-          new HubMini(this, existingAccessory, device);
-        }
-        this.log.debug(
-          `Hub UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
-        );
-      } else {
-        this.unregisterPlatformAccessories(existingAccessory);
-      }
-    } else if (!this.config.options?.hide_device.includes(device.deviceId)) {
-      // the accessory does not yet exist, so we need to create it
-      this.log.info(
-        'Adding new accessory: %s %s DeviceID: %s',
-        device.deviceName,
-        device.deviceType,
-        device.deviceId,
-      );
-
-      // create a new accessory
-      const accessory = new this.api.platformAccessory(`${device.deviceName} ${device.deviceType}`, uuid);
-
-      // store a copy of the device object in the `accessory.context`
-      // the `context` property can be used to store any data about the accessory you may need
-      //accessory.context.firmwareRevision = firmware;
-      accessory.context.device = device;
-      // accessory.context.firmwareRevision = findaccessories.accessoryAttribute.softwareRevision;
-      // create the accessory handler for the newly create accessory
-      // this is imported from `platformAccessory.ts`
-      if (device.deviceType === 'Hub Plus') {
-        new HubPlus(this, accessory, device);
-      } else if (device.deviceType === 'Hub Mini') {
-        new HubMini(this, accessory, device);
-      }
-      this.log.debug(
-        `Hub UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
       );
 
       // link the accessory to your platform

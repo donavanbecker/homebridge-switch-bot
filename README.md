@@ -41,13 +41,19 @@ plugin allows you to access your SwitchBot Device(s) from HomeKit with
 
 - [SwitchBot Humidifier](https://www.switch-bot.com/products/switchbot-smart-humidifier)
 - [SwitchBot Meter](https://www.switch-bot.com/products/switchbot-meter)
-- [SwitchBot Bot](https://www.switch-bot.com/products/switchbot-bot)
-    - You must set your Bot's Device ID in the Press Mode or Switch Mode Bot Settings (Advanced Settings > Bot Settings)
-        - Press Mode - Turns on then instantly turn it off.
-        - Switch Mode - Turns on and keep it on until it is turned off.
-            - This can get out of sync, since API doesn't give me a status.
-            - To Correct you must go into the SwitchBot App and correct the status of either `On` or `Off`.
+    - [SwitchBot Hub Mini](https://www.switch-bot.com/products/switchbot-hub-mini) or [SwitchBot Hub Plus](https://www.switch-bot.com/products/switchbot-hub-plus) Required
+    - Enable Cloud Services for Device on SwitchBot App
 - [SwitchBot Curtain](https://www.switch-bot.com/products/switchbot-curtain)
+    - [SwitchBot Hub Mini](https://www.switch-bot.com/products/switchbot-hub-mini) or [SwitchBot Hub Plus](https://www.switch-bot.com/products/switchbot-hub-plus) Required
+    - Enable Cloud Services for Device on SwitchBot App
+- [SwitchBot Bot](https://www.switch-bot.com/products/switchbot-bot)
+    - [SwitchBot Hub Mini](https://www.switch-bot.com/products/switchbot-hub-mini) or [SwitchBot Hub Plus](https://www.switch-bot.com/products/switchbot-hub-plus) Required
+    - Enable Cloud Services for Device on SwitchBot App
+    - You must set your Bot's Device ID in the Press Mode or Switch Mode Bot Settings (Advanced Settings > Bot Settings)
+        - Press Mode - Turns on then instantly turn it off
+        - Switch Mode - Turns on and keep it on until it is turned off
+            - This can get out of sync, since API doesn't give me a status
+            - To Correct you must go into the SwitchBot App and correct the status of either `On` or `Off`
 
 ## SwitchBotAPI
 
