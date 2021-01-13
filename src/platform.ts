@@ -155,29 +155,43 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
         // For Future Devices
         switch (device.deviceType) {
           case 'Humidifier':
-            this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
+            if (!this.config.options?.hide_device.includes(device.deviceId)) {
+              this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
+            }
             this.createHumidifier(device, devices);
             break;
           case 'Hub Mini':
-            this.log.info('Discovered a %s', device.deviceType);
+            if (!this.config.options?.hide_device.includes(device.deviceId)) {  
+              this.log.info('Discovered a %s', device.deviceType);
+            }
             break;
           case 'Hub Plus':
-            this.log.info('Discovered a %s', device.deviceType);
+            if (!this.config.options?.hide_device.includes(device.deviceId)) {  
+              this.log.info('Discovered a %s', device.deviceType);
+            }
             break;
           case 'Bot':
-            this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
+            if (!this.config.options?.hide_device.includes(device.deviceId)) {
+              this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
+            }
             this.createBot(device, devices);
             break;
           case 'Meter':
-            this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
+            if (!this.config.options?.hide_device.includes(device.deviceId)) {  
+              this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
+            }
             this.createMeter(device, devices);
             break;
           case 'Curtain':
-            this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
+            if (!this.config.options?.hide_device.includes(device.deviceId)) {
+              this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
+            }
             this.createCurtain(device, devices);
             break;
           case 'Remote':
-            this.log.debug('Discovered %s, %s is Not Supported.', device.deviceName, device.deviceType);
+            if (!this.config.options?.hide_device.includes(device.deviceId)) {
+              this.log.debug('Discovered %s, %s is Not Supported.', device.deviceName, device.deviceType);
+            }
             break;
           default:
             this.log.info(
@@ -197,7 +211,9 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
         // For Future Devices
         switch (device.remoteType) {
           case 'PlaceHolder':
-            this.log.info('Discovered %s %s', device.deviceName, device.remoteType);
+            if (!this.config.options?.hide_device.includes(device.deviceId)) {
+              this.log.info('Discovered %s %s', device.deviceName, device.remoteType);
+            }
             this.createHumidifier(device, devices);
             break;
           default:
@@ -273,12 +289,14 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       this.accessories.push(accessory);
     } else {
-      this.log.error(
-        'Unable to Register new device: %s %s - %s',
-        device.deviceName,
-        device.deviceType,
-        device.deviceId,
-      );
+      if (!this.config.options?.hide_device.includes(device.deviceId)) {
+        this.log.error(
+          'Unable to Register new device: %s %s - %s',
+          device.deviceName,
+          device.deviceType,
+          device.deviceId,
+        );
+      }
     }
   }
 
@@ -342,13 +360,15 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       // link the accessory to your platform
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       this.accessories.push(accessory);
-    } else {
-      this.log.error(
-        'Unable to Register new device: %s %s - %s',
-        device.deviceName,
-        device.deviceType,
-        device.deviceId,
-      );
+    } else {      
+      if (!this.config.options?.hide_device.includes(device.deviceId)) {
+        this.log.error(
+          'Unable to Register new device: %s %s - %s',
+          device.deviceName,
+          device.deviceType,
+          device.deviceId,
+        );
+      }
     }
   }
 
@@ -410,12 +430,14 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       this.accessories.push(accessory);
     } else {
-      this.log.error(
-        'Unable to Register new device: %s %s - %s',
-        device.deviceName,
-        device.deviceType,
-        device.deviceId,
-      );
+      if (!this.config.options?.hide_device.includes(device.deviceId)) {
+        this.log.error(
+          'Unable to Register new device: %s %s - %s',
+          device.deviceName,
+          device.deviceType,
+          device.deviceId,
+        );
+      }
     }
   }
 
@@ -477,12 +499,14 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       this.accessories.push(accessory);
     } else {
-      this.log.error(
-        'Unable to Register new device: %s %s - %s',
-        device.deviceName,
-        device.deviceType,
-        device.deviceId,
-      );
+      if (!this.config.options?.hide_device.includes(device.deviceId)) {
+        this.log.error(
+          'Unable to Register new device: %s %s - %s',
+          device.deviceName,
+          device.deviceType,
+          device.deviceId,
+        );
+      }
     }
   }
 
