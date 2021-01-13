@@ -188,6 +188,27 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
             );
         }
       }
+      for (const device of devices.body.infraredRemoteList) {
+        if (this.config.devicediscovery) {
+          this.deviceInfo(device);
+        } else {
+          this.log.debug(JSON.stringify(device));
+        }
+        // For Future Devices
+        switch (device.deviceType) {
+          case 'PlaceHolder':
+            this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
+            this.createHumidifier(device, devices);
+            break;
+          default:
+            this.log.info(
+              'Device: %s with Device Type: %s, is currently not supported.',
+              device.deviceName,
+              device.deviceType,
+              'Submit Feature Requests Here: https://git.io/JL14Z',
+            );
+        }
+      }
     } catch (e) {
       this.log.error('Failed to Discover Devices.', JSON.stringify(e.message));
       this.log.debug(JSON.stringify(e));
