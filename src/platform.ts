@@ -195,16 +195,16 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
           this.log.debug(JSON.stringify(device));
         }
         // For Future Devices
-        switch (device.deviceType) {
+        switch (device.remoteType) {
           case 'PlaceHolder':
-            this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
+            this.log.info('Discovered %s %s', device.deviceName, device.remoteType);
             this.createHumidifier(device, devices);
             break;
           default:
             this.log.info(
               'Device: %s with Device Type: %s, is currently not supported.',
               device.deviceName,
-              device.deviceType,
+              device.remoteType,
               'Submit Feature Requests Here: https://git.io/JL14Z',
             );
         }
