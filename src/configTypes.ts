@@ -81,10 +81,10 @@ export type device = {
 
 //a list of virtual infrared remote devices.
 export type infraredRemoteList = {
-  device: Array<irdevices>;
+  device: Array<irdevice>;
 };
 
-export type irdevices = {
+export type irdevice = {
   deviceId: string; //device ID
   deviceName: string; //device name
   remoteType: string; //device type
