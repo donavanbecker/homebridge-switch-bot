@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. This project uses [Semantic Versioning](https://semver.org/)
 
-## [Version 1.2.3](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v1.2.1...v1.2.2) (2021-01-12)
+## [Version 1.2.4](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v1.2.3...v1.2.4) (2021-01-13)
+
+### Changes
+
+- Updated logging on `Hidden Devices` so that they are not displayed as discovered or as not able to register.
+
+## [Version 1.2.3](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v1.2.2...v1.2.3) (2021-01-12)
 
 ### Changes
 
