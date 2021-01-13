@@ -2,7 +2,7 @@ import { CharacteristicValue, PlatformAccessory, Service } from 'homebridge';
 import { SwitchBotPlatform } from '../platform';
 import { interval, Subject } from 'rxjs';
 import { debounceTime, skipWhile, tap } from 'rxjs/operators';
-import { DeviceURL, PLUGIN_NAME } from '../settings';
+import { DeviceURL } from '../settings';
 import { irdevice, deviceStatusResponse } from '../configTypes';
 
 /**
@@ -17,7 +17,6 @@ export class TV {
 
   tvUpdateInProgress!: boolean;
   doTVUpdate!: any;
-  tvAccessory!: PlatformAccessory;
   Active!: CharacteristicValue;
 
   constructor(
@@ -45,10 +44,10 @@ export class TV {
     const tvName = this.device.deviceName || 'SwitchBot TV';
 
     // set the accessory category
-    this.tvAccessory.category = this.platform.api.hap.Categories.TELEVISION;
+    this.accessory.category = this.platform.api.hap.Categories.TELEVISION;
 
     // add the tv service
-    const tvService = this.tvAccessory.addService(this.platform.Service.Television);
+    const tvService = this.accessory.addService(this.platform.Service.Television);
 
     // set the tv name
     tvService.setCharacteristic(this.platform.Characteristic.ConfiguredName, tvName);
@@ -142,7 +141,7 @@ export class TV {
      * Create a speaker service to allow volume control
      */
 
-    const speakerService = this.tvAccessory.addService(this.platform.Service.TelevisionSpeaker);
+    const speakerService = this.accessory.addService(this.platform.Service.TelevisionSpeaker);
 
     speakerService
       .setCharacteristic(this.platform.Characteristic.Active, this.platform.Characteristic.Active.ACTIVE)
@@ -254,7 +253,7 @@ export class TV {
    * Updates the status for each of the HomeKit Characteristics
    */
   updateHomeKitCharacteristics() {
-    this.tvService.updateCharacteristic(this.platform.Characteristic.Active, this.Active);
+    //this.tvService.updateCharacteristic(this.platform.Characteristic.Active, this.Active);
   }
 
 }

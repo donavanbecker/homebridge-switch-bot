@@ -511,7 +511,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
     }
   }
 
-  private async createTV(device: irdevice, devices: deviceResponses) {
+  private async createTV(device: irdevice) {
     const uuid = this.api.hap.uuid.generate(
       `${device.deviceName}-${device.deviceId}-${device.remoteType}-${device.hubDeviceId}`,
     );
@@ -521,26 +521,22 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
     const existingAccessory = this.accessories.find((accessory) => accessory.UUID === uuid);
 
     if (existingAccessory) {
-      // the accessory already exists
-      if (!this.config.options?.hide_device.includes(device.deviceId) && devices.statusCode === 100) {
-        this.log.info(
-          'Restoring existing accessory from cache: %s DeviceID: %s',
-          existingAccessory.displayName,
-          device.deviceId,
-        );
+      this.log.info(
+        'Restoring existing accessory from cache: %s DeviceID: %s',
+        existingAccessory.displayName,
+        device.deviceId,
+      );
 
-        // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
-        //existingAccessory.context.firmwareRevision = firmware;
-        this.api.updatePlatformAccessories([existingAccessory]);
-        // create the accessory handler for the restored accessory
-        // this is imported from `platformAccessory.ts`
-        new Curtain(this, existingAccessory, device);
-        this.log.debug(
-          `Curtain UDID: ${device.deviceName}-${device.deviceId}-${device.remoteType}-${device.hubDeviceId}`,
-        );
-      } else {
-        this.unregisterPlatformAccessories(existingAccessory);
-      }
+      // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
+      //existingAccessory.context.firmwareRevision = firmware;
+      this.api.updatePlatformAccessories([existingAccessory]);
+      // create the accessory handler for the restored accessory
+      // this is imported from `platformAccessory.ts`
+      new TV(this, existingAccessory, device);
+      this.log.debug(
+        `TV UDID: ${device.deviceName}-${device.deviceId}-${device.remoteType}-${device.hubDeviceId}`,
+      );
+      
     } else if (!this.config.options?.hide_device.includes(device.deviceId)) {
       // the accessory does not yet exist, so we need to create it
       this.log.info(
@@ -560,13 +556,17 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       // accessory.context.firmwareRevision = findaccessories.accessoryAttribute.softwareRevision;
       // create the accessory handler for the newly create accessory
       // this is imported from `platformAccessory.ts`
-      new Curtain(this, accessory, device);
+      new TV(this, accessory, device);
       this.log.debug(
-        `Curtain UDID: ${device.deviceName}-${device.deviceId}-${device.remoteType}-${device.hubDeviceId}`,
+        `TV UDID: ${device.deviceName}-${device.deviceId}-${device.remoteType}-${device.hubDeviceId}`,
       );
 
-      // link the accessory to your platform
-      this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
+      /**
+     * Publish as external accessory
+     * Only one TV can exist per bridge, to bypass this limitation, you should
+     * publish your TV as an external accessory.
+     */
+      this.api.publishExternalAccessories(PLUGIN_NAME, [accessory]);
       this.accessories.push(accessory);
     } else {
       if (!this.config.options?.hide_device.includes(device.deviceId)) {
