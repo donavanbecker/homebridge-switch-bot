@@ -520,7 +520,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
     // the cached devices we stored in the `configureAccessory` method above
     const existingAccessory = this.accessories.find((accessory) => accessory.UUID === uuid);
 
-    if (existingAccessory) {
+    if (existingAccessory && !this.config.options?.hide_device.includes(device.deviceId)) {
       this.log.info(
         'Restoring existing accessory from cache: %s DeviceID: %s',
         existingAccessory.displayName,
@@ -540,7 +540,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
     } else if (!this.config.options?.hide_device.includes(device.deviceId)) {
       // the accessory does not yet exist, so we need to create it
       this.log.info(
-        'Adding new accessory: %s %s DeviceID: %s',
+        'TV Accessory: %s %s DeviceID: %s',
         device.deviceName,
         device.remoteType,
         device.deviceId,
