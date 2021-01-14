@@ -1,7 +1,5 @@
-import { Service, PlatformAccessory, CharacteristicEventTypes } from 'homebridge';
+import { Service, PlatformAccessory, CharacteristicEventTypes, CharacteristicSetCallback } from 'homebridge';
 import { SwitchBotPlatform } from '../platform';
-import { interval, Subject } from 'rxjs';
-import { debounceTime, skipWhile, tap } from 'rxjs/operators';
 import { DeviceURL } from '../settings';
 import { device, deviceStatusResponse } from '../configTypes';
 
@@ -27,14 +25,7 @@ export class Bot {
   ) {
     // default placeholders
     this.On = false;
-    this.OutletInUse = false;
-
-    // this is subject we use to track when we need to POST changes to the SwitchBot API
-    this.doBotUpdate = new Subject();
-    this.botUpdateInProgress = false;
-
-    // Retrieve initial values and updateHomekit
-    this.refreshStatus();
+    this.OutletInUse = true;
 
     // set accessory information
     this.accessory
@@ -70,78 +61,13 @@ export class Bot {
 
     // Retrieve initial values and updateHomekit
     this.updateHomeKitCharacteristics();
-
-    // Start an update interval
-    interval(this.platform.config.options!.refreshRate! * 1000)
-      .pipe(skipWhile(() => this.botUpdateInProgress))
-      .subscribe(() => {
-        this.refreshStatus();
-      });
-
-    // Watch for Bot change events
-    // We put in a debounce of 100ms so we don't make duplicate calls
-    this.doBotUpdate
-      .pipe(
-        tap(() => {
-          this.botUpdateInProgress = true;
-        }),
-        debounceTime(100),
-      )
-      .subscribe(async () => {
-        try {
-          await this.pushChanges();
-        } catch (e) {
-          this.platform.log.error(JSON.stringify(e.message));
-          this.platform.log.debug('Bot %s -', this.accessory.displayName, JSON.stringify(e));
-        }
-        this.botUpdateInProgress = false;
-      });
   }
 
   /**
    * Parse the device status from the SwitchBot api
    */
   parseStatus() {
-    if (this.deviceStatus.body.power === 'on') {
-      this.OutletInUse = true;
-    } else {
-      this.OutletInUse = false;
-    }
-    this.platform.log.debug(
-      'Bot %s OutletInUse: %s On: %s',
-      this.accessory.displayName,
-      this.OutletInUse,
-      this.On,
-    );
-  }
-
-  /**
-   * Asks the SwitchBot API for the latest device information
-   */
-  async refreshStatus() {
-    try {
-      // this.platform.log.error('Bot - Reading', `${DeviceURL}/${this.device.deviceID}/devices`);
-      const deviceStatus: deviceStatusResponse = (
-        await this.platform.axios.get(`${DeviceURL}/${this.device.deviceId}/status`)
-      ).data;
-      if (deviceStatus.message === 'success') {
-        this.deviceStatus = deviceStatus;
-        this.platform.log.debug(
-          'Bot %s refreshStatus -',
-          this.accessory.displayName,
-          JSON.stringify(this.deviceStatus),
-        );
-
-        this.parseStatus();
-        this.updateHomeKitCharacteristics();
-      }
-    } catch (e) {
-      this.platform.log.error(
-        `Bot - Failed to update status of ${this.device.deviceName}`,
-        JSON.stringify(e.message),
-        this.platform.log.debug('Bot %s -', this.accessory.displayName, JSON.stringify(e)),
-      );
-    }
+    this.OutletInUse = true;
   }
 
   /**
@@ -189,7 +115,6 @@ export class Bot {
     // Make the API request
     const push = await this.platform.axios.post(`${DeviceURL}/${this.device.deviceId}/commands`, payload);
     this.platform.log.debug('Bot %s Changes pushed -', this.accessory.displayName, push.data);
-    this.refreshStatus();
   }
 
   /**
@@ -202,17 +127,17 @@ export class Bot {
     );
     this.service.updateCharacteristic(
       this.platform.Characteristic.OutletInUse,
-      this.OutletInUse,
+      true,
     );
   }
 
   /**
    * Handle requests to set the "On" characteristic
    */
-  handleOnSet(value, callback) {
+  async handleOnSet(value: any, callback: CharacteristicSetCallback) {
     this.platform.log.debug('Bot %s -', this.accessory.displayName, `Set On: ${value}`);
-    this.doBotUpdate.next();
     this.On = value;
+    await this.pushChanges();
     this.service.updateCharacteristic(this.platform.Characteristic.On, this.On);
     callback(null);
   }

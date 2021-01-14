@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. This project uses [Semantic Versioning](https://semver.org/)
 
+## [Version 1.3.0](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v1.2.4...v1.3.0) (2021-01-XX)
+
+### Changes
+
+- Adds initial Support for IR TV.
+    - Supports Volume Up and Down in Control Center.
+    - Supports On and Off in Home App.
+
 ## [Version 1.2.4](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v1.2.3...v1.2.4) (2021-01-13)
 
 ### Changes

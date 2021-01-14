@@ -24,6 +24,8 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
     responseType: 'json',
   });
 
+  deviceStatus!: deviceStatusResponse;
+
   constructor(public readonly log: Logger, public readonly config: SwitchBotPlatformConfig, public readonly api: API) {
     this.log.debug('Finished initializing platform:', this.config.name);
     // only load if configured
@@ -148,7 +150,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       }
       this.log.info('Total Devices Found:', devices.body.deviceList.length);
       for (const device of devices.body.deviceList) {
-        if (this.config.devicediscovery) {
+        if (this.config.devicediscovery && !this.config.options?.hide_device.includes(device.deviceId)) {
           this.deviceInfo(device);
         } else {
           this.log.debug(JSON.stringify(device));

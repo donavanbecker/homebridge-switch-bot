@@ -6,8 +6,6 @@ import {
   Service,
 } from 'homebridge';
 import { SwitchBotPlatform } from '../platform';
-import { interval, Subject } from 'rxjs';
-import { debounceTime, skipWhile, tap } from 'rxjs/operators';
 import { DeviceURL } from '../settings';
 import { irdevice, deviceStatusResponse } from '../configTypes';
 
@@ -21,25 +19,14 @@ export class TV {
   speakerService: Service;
 
   Active!: CharacteristicValue;
+  tvVolume!: number;
   deviceStatus!: deviceStatusResponse;
-
-  tvUpdateInProgress!: boolean;
-  doTVUpdate!: any;
 
   constructor(
     private readonly platform: SwitchBotPlatform,
     private accessory: PlatformAccessory,
     public device: irdevice,
   ) {
-    // default placeholders
-
-    // this is subject we use to track when we need to POST changes to the SwitchBot API
-    this.doTVUpdate = new Subject();
-    this.tvUpdateInProgress = false;
-
-    // Retrieve initial values and updateHomekit
-    this.refreshStatus();
-
     // set accessory information
     this.accessory
       .getService(this.platform.Service.AccessoryInformation)!
@@ -77,8 +64,14 @@ export class TV {
     // handle on / off events using the Active characteristic
     this.service
       .getCharacteristic(this.platform.Characteristic.Active)
-      .on(CharacteristicEventTypes.SET, (value, callback: CharacteristicGetCallback) => {
-        this.platform.log.info('set Active => setvalue: ' + value);
+      .on(CharacteristicEventTypes.SET, (value: any, callback: CharacteristicGetCallback) => {
+        this.platform.log.debug('TV %s Set Active: %s', this.accessory.displayName, value);
+        if (value === this.platform.Characteristic.Active.INACTIVE){
+          this.pushTVoffChanges();
+        } else {
+          this.pushTVonChanges();
+        }
+        this.Active = value;
         this.service.updateCharacteristic(this.platform.Characteristic.Active, this.Active);
         callback(null);
       });
@@ -88,69 +81,76 @@ export class TV {
     // handle input source changes
     this.service
       .getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
-      .on(CharacteristicEventTypes.SET, (value, callback) => {
+      .on(CharacteristicEventTypes.SET, (value: any, callback: CharacteristicGetCallback) => {
         // the value will be the value you set for the Identifier Characteristic
         // on the Input Source service that was selected - see input sources below.
 
-        this.platform.log.info('set Active Identifier => setvalue: ' + value);
+        this.platform.log.debug('TV %s Set Active Identifier: %s', this.accessory.displayName, value);
         callback(null);
       });
 
     // handle remote control input
     this.service
       .getCharacteristic(this.platform.Characteristic.RemoteKey)
-      .on(CharacteristicEventTypes.SET, (value, callback) => {
+      .on(CharacteristicEventTypes.SET, (value: any, callback: CharacteristicGetCallback) => {
         switch (value) {
           case this.platform.Characteristic.RemoteKey.REWIND: {
-            this.platform.log.info('set Remote Key Pressed: REWIND');
+            this.platform.log.debug('TV %s Set Remote Key Pressed: REWIND', this.accessory.displayName);
             break;
           }
           case this.platform.Characteristic.RemoteKey.FAST_FORWARD: {
-            this.platform.log.info('set Remote Key Pressed: FAST_FORWARD');
+            this.platform.log.debug('TV %s Set Remote Key Pressed: FAST_FORWARD', this.accessory.displayName);
             break;
           }
           case this.platform.Characteristic.RemoteKey.NEXT_TRACK: {
-            this.platform.log.info('set Remote Key Pressed: NEXT_TRACK');
+            this.platform.log.debug('TV %s Set Remote Key Pressed: NEXT_TRACK', this.accessory.displayName);
             break;
           }
           case this.platform.Characteristic.RemoteKey.PREVIOUS_TRACK: {
-            this.platform.log.info('set Remote Key Pressed: PREVIOUS_TRACK');
+            this.platform.log.debug('TV %s Set Remote Key Pressed: PREVIOUS_TRACK', this.accessory.displayName);
             break;
           }
           case this.platform.Characteristic.RemoteKey.ARROW_UP: {
-            this.platform.log.info('set Remote Key Pressed: ARROW_UP');
+            this.platform.log.debug('TV %s Set Remote Key Pressed: ARROW_UP', this.accessory.displayName);
+            this.pushUpChanges();
             break;
           }
           case this.platform.Characteristic.RemoteKey.ARROW_DOWN: {
-            this.platform.log.info('set Remote Key Pressed: ARROW_DOWN');
+            this.platform.log.debug('TV %s Set Remote Key Pressed: ARROW_DOWN', this.accessory.displayName);
+            this.pushDownChanges();
             break;
           }
           case this.platform.Characteristic.RemoteKey.ARROW_LEFT: {
-            this.platform.log.info('set Remote Key Pressed: ARROW_LEFT');
+            this.platform.log.debug('TV %s Set Remote Key Pressed: ARROW_LEFT', this.accessory.displayName);
+            this.pushLeftChanges();
             break;
           }
           case this.platform.Characteristic.RemoteKey.ARROW_RIGHT: {
-            this.platform.log.info('set Remote Key Pressed: ARROW_RIGHT');
+            this.platform.log.debug('TV %s Set Remote Key Pressed: ARROW_RIGHT', this.accessory.displayName);
+            this.pushRightChanges();
             break;
           }
           case this.platform.Characteristic.RemoteKey.SELECT: {
-            this.platform.log.info('set Remote Key Pressed: SELECT');
+            this.platform.log.debug('TV %s Set Remote Key Pressed: SELECT', this.accessory.displayName);
+            this.pushOkChanges();
             break;
           }
           case this.platform.Characteristic.RemoteKey.BACK: {
-            this.platform.log.info('set Remote Key Pressed: BACK');
+            this.platform.log.debug('TV %s Set Remote Key Pressed: BACK', this.accessory.displayName);
+            this.pushBackChanges();
             break;
           }
           case this.platform.Characteristic.RemoteKey.EXIT: {
-            this.platform.log.info('set Remote Key Pressed: EXIT');
+            this.platform.log.debug('TV %s Set Remote Key Pressed: EXIT', this.accessory.displayName);
             break;
           }
           case this.platform.Characteristic.RemoteKey.PLAY_PAUSE: {
-            this.platform.log.info('set Remote Key Pressed: PLAY_PAUSE');
+            this.platform.log.debug('TV %s Set Remote Key Pressed: PLAY_PAUSE', this.accessory.displayName);
             break;
           }
           case this.platform.Characteristic.RemoteKey.INFORMATION: {
-            this.platform.log.info('set Remote Key Pressed: INFORMATION');
+            this.platform.log.debug('TV %s Set Remote Key Pressed: INFORMATION', this.accessory.displayName);
+            this.pushMenuChanges();
             break;
           }
         }
@@ -179,69 +179,15 @@ export class TV {
     this.speakerService
       .getCharacteristic(this.platform.Characteristic.VolumeSelector)
       .on(CharacteristicEventTypes.SET, (value, callback: CharacteristicGetCallback) => {
-        this.platform.log.info('set VolumeSelector => setvalue: ' + value);
+        this.platform.log.debug('TV %s Set VolumeSelector: %s', this.accessory.displayName, value);
+        if (value > this.tvVolume) {
+          this.pushVolumeUpChanges();
+        } else {
+          this.pushVolumeDownChanges();
+        }
+        this.tvVolume = value;
         callback(null);
       });
-
-    // Retrieve initial values and updateHomekit
-    this.updateHomeKitCharacteristics();
-
-    // Start an update interval
-    interval(this.platform.config.options!.refreshRate! * 1000)
-      .pipe(skipWhile(() => this.tvUpdateInProgress))
-      .subscribe(() => {
-        this.refreshStatus();
-      });
-
-    // Watch for TV change events
-    // We put in a debounce of 100ms so we don't make duplicate calls
-    this.doTVUpdate
-      .pipe(
-        tap(() => {
-          this.tvUpdateInProgress = true;
-        }),
-        debounceTime(100),
-      )
-      .subscribe(async () => {
-        try {
-          await this.pushChanges();
-        } catch (e) {
-          this.platform.log.error(JSON.stringify(e.message));
-          this.platform.log.debug('TV %s -', this.accessory.displayName, JSON.stringify(e));
-        }
-        this.tvUpdateInProgress = false;
-      });
-  }
-
-  /**
-   * Parse the device status from the SwitchBot api
-   */
-  parseStatus() {
-    //this.platform.log.debug('TV %s Active: %s', this.accessory.displayName, this.Active);
-  }
-
-  /**
-   * Asks the SwitchBot API for the latest device information
-   */
-  async refreshStatus() {
-    try {
-      const deviceStatus: deviceStatusResponse = (
-        await this.platform.axios.get(`${DeviceURL}/${this.device.deviceId}/status`)
-      ).data;
-      if (deviceStatus.message === 'success') {
-        this.deviceStatus = deviceStatus;
-        this.platform.log.warn('TV %s refreshStatus -', this.accessory.displayName, JSON.stringify(this.deviceStatus));
-
-        this.parseStatus();
-        this.updateHomeKitCharacteristics();
-      }
-    } catch (e) {
-      this.platform.log.error(
-        `TV - Failed to update status of ${this.device.deviceName}`,
-        JSON.stringify(e.message),
-        this.platform.log.debug('TV %s -', this.accessory.displayName, JSON.stringify(e)),
-      );
-    }
   }
 
   /**
@@ -250,24 +196,110 @@ export class TV {
    * TV:        "command"       "turnOff"         "default"	        =        set to OFF state
    * TV:        "command"       "turnOn"          "default"	        =        set to ON state
    * TV:        "command"       "volumeAdd"       "default"	        =        volume up
-   * TV:        "command"       "channelAdd"      "default"	        =        volume down
-   * TV:        "command"       "channelSub"      "default"	        =        volume down
-   * TV:        "command"	      "setMute"	        "default"	        =        mute/unmute
-   * TV:        "command"	      "FastForward"     "default"         =        fast forward
-   * TV:        "command"	      "Rewind"	        "default"         =        rewind
-   * TV:        "command"       "Next"	          "default"         =        next track
-   * TV:        "command"	      "Previous"	      "default"         =        last track
-   * TV:        "command"	      "Pause"	          "default"         =        pause
-   * TV:        "command"	      "Play"	          "default"         =        play/resume
-   * TV:        "command"	      "Stop"            "default"         =        stop
+   * TV:        "command"       "volumeSub"       "default"	        =        volume down
+   * TV:        "command"       "channelAdd"      "default"	        =        next channel
+   * TV:        "command"       "channelSub"      "default"	        =        previous channel
    */
-  async pushChanges() {
+  async pushTVonChanges() {
     const payload = {
       commandType: 'command',
       parameter: 'default',
-      command: '',
+      command: 'turnOn',
     } as any;
+    await this.pushTVChanges(payload);
+  }
 
+  async pushTVoffChanges() {
+    const payload = {
+      commandType: 'command',
+      parameter: 'default',
+      command: 'turnOn',
+    } as any;
+    await this.pushTVChanges(payload);
+  }
+
+  async pushOkChanges() {
+    const payload = {
+      commandType: 'command',
+      parameter: 'default',
+      command: 'Ok',
+    } as any;
+    await this.pushTVChanges(payload);
+  }
+
+  async pushBackChanges() {
+    const payload = {
+      commandType: 'command',
+      parameter: 'default',
+      command: 'Back',
+    } as any;
+    await this.pushTVChanges(payload);
+  }
+
+  async pushMenuChanges() {
+    const payload = {
+      commandType: 'command',
+      parameter: 'default',
+      command: 'Menu',
+    } as any;
+    await this.pushTVChanges(payload);
+  }
+
+  async pushUpChanges() {
+    const payload = {
+      commandType: 'command',
+      parameter: 'default',
+      command: 'Up',
+    } as any;
+    await this.pushTVChanges(payload);
+  }
+
+  async pushDownChanges() {
+    const payload = {
+      commandType: 'command',
+      parameter: 'default',
+      command: 'Down',
+    } as any;
+    await this.pushTVChanges(payload);
+  }
+
+  async pushRightChanges() {
+    const payload = {
+      commandType: 'command',
+      parameter: 'default',
+      command: 'Right',
+    } as any;
+    await this.pushTVChanges(payload);
+  }
+
+  async pushLeftChanges() {
+    const payload = {
+      commandType: 'command',
+      parameter: 'default',
+      command: 'Left',
+    } as any;
+    await this.pushTVChanges(payload);
+  }
+
+  async pushVolumeUpChanges() {
+    const payload = {
+      commandType: 'command',
+      parameter: 'default',
+      command: 'volumeAdd',
+    } as any;
+    await this.pushTVChanges(payload);
+  }
+
+  async pushVolumeDownChanges() {
+    const payload = {
+      commandType: 'command',
+      parameter: 'default',
+      command: 'volumeSub',
+    } as any;
+    await this.pushTVChanges(payload);
+  }
+
+  public async pushTVChanges(payload: any) {
     this.platform.log.info(
       'Sending request for',
       this.accessory.displayName,
@@ -283,12 +315,5 @@ export class TV {
     // Make the API request
     const push = await this.platform.axios.post(`${DeviceURL}/${this.device.deviceId}/commands`, payload);
     this.platform.log.debug('TV %s Changes pushed -', this.accessory.displayName, push.data);
-  }
-
-  /**
-   * Updates the status for each of the HomeKit Characteristics
-   */
-  updateHomeKitCharacteristics() {
-    //this.Service.updateCharacteristic(this.platform.Characteristic.Active, this.Active);
   }
 }
