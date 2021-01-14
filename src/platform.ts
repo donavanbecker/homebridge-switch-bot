@@ -24,8 +24,6 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
     responseType: 'json',
   });
 
-  deviceStatus!: deviceStatusResponse;
-
   constructor(public readonly log: Logger, public readonly config: SwitchBotPlatformConfig, public readonly api: API) {
     this.log.debug('Finished initializing platform:', this.config.name);
     // only load if configured
