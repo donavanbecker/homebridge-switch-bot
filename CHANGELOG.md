@@ -2,13 +2,27 @@
 
 All notable changes to this project will be documented in this file. This project uses [Semantic Versioning](https://semver.org/)
 
-## [Version 1.3.0](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v1.2.4...v1.3.0) (2021-01-XX)
+## [Version 2.0.0](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v1.2.4...v2.0.0) (2021-01-14)
+
+### Major Changes
+
+- *IMPORTANT*
+
+    BEFORE UPDATING TO `v2.0.0`, YOU WILL NEED TO CLEAR CACHE ON ALL YOUR SWITCHBOT DEVICES
+    
+    IF YOU DON'T YOU WILL GET DUPLICATE DEVICES IN YOUR CACHE. 
+
+- Changes made to `uuid`, so it doesn't cause duplicate devices going forward if connecting to different Hub.
+    - `uuid` is the Unique ID that is Generated to Create each Accessory.
+        - Before `uuid` was using `deviceName`, `deviceId`, `deviceType`, and `hubDeviceId`
+        - Now `uuid` is now using `deviceName`, `deviceId`, `deviceType`
 
 ### Changes
 
 - Adds initial Support for IR TV.
     - Supports Volume Up and Down in Control Center.
     - Supports On and Off in Home App.
+- Removed status update from Bots that was un-needed.
 
 ## [Version 1.2.4](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v1.2.3...v1.2.4) (2021-01-13)
 

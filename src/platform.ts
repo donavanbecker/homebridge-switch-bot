@@ -236,7 +236,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
   private async createHumidifier(device: device, devices: deviceResponses) {
     const uuid = this.api.hap.uuid.generate(
-      `${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
+      `${device.deviceName}-${device.deviceId}-${device.deviceType}`,
     );
 
     // see if an accessory with the same uuid has already been registered and restored from
@@ -259,7 +259,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
         // this is imported from `platformAccessory.ts`
         new Humidifier(this, existingAccessory, device);
         this.log.debug(
-          `Humidifier UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
+          `Humidifier UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}`,
         );
       } else {
         this.unregisterPlatformAccessories(existingAccessory);
@@ -285,7 +285,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       // this is imported from `platformAccessory.ts`
       new Humidifier(this, accessory, device);
       this.log.debug(
-        `Humidifier UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
+        `Humidifier UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}`,
       );
 
       // link the accessory to your platform
@@ -305,7 +305,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
   private async createBot(device: device, devices: deviceResponses) {
     const uuid = this.api.hap.uuid.generate(
-      `${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
+      `${device.deviceName}-${device.deviceId}-${device.deviceType}`,
     );
 
     // see if an accessory with the same uuid has already been registered and restored from
@@ -328,7 +328,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
         // this is imported from `platformAccessory.ts`
         new Bot(this, existingAccessory, device);
         this.log.debug(
-          `Bot UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
+          `Bot UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}`,
         );
       } else {
         this.unregisterPlatformAccessories(existingAccessory);
@@ -357,7 +357,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       // this is imported from `platformAccessory.ts`
       new Bot(this, accessory, device);
       this.log.debug(
-        `Bot UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
+        `Bot UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}`,
       );
 
       // link the accessory to your platform
@@ -377,7 +377,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
   private async createMeter(device: device, devices: deviceResponses) {
     const uuid = this.api.hap.uuid.generate(
-      `${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
+      `${device.deviceName}-${device.deviceId}-${device.deviceType}`,
     );
 
     // see if an accessory with the same uuid has already been registered and restored from
@@ -400,7 +400,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
         // this is imported from `platformAccessory.ts`
         new Meter(this, existingAccessory, device);
         this.log.debug(
-          `Meter UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
+          `Meter UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}`,
         );
       } else {
         this.unregisterPlatformAccessories(existingAccessory);
@@ -426,7 +426,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       // this is imported from `platformAccessory.ts`
       new Meter(this, accessory, device);
       this.log.debug(
-        `Meter UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
+        `Meter UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}`,
       );
 
       // link the accessory to your platform
@@ -446,7 +446,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
   private async createCurtain(device: device, devices: deviceResponses) {
     const uuid = this.api.hap.uuid.generate(
-      `${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
+      `${device.deviceName}-${device.deviceId}-${device.deviceType}`,
     );
 
     // see if an accessory with the same uuid has already been registered and restored from
@@ -469,7 +469,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
         // this is imported from `platformAccessory.ts`
         new Curtain(this, existingAccessory, device);
         this.log.debug(
-          `Curtain UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
+          `Curtain UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}`,
         );
       } else {
         this.unregisterPlatformAccessories(existingAccessory);
@@ -495,7 +495,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       // this is imported from `platformAccessory.ts`
       new Curtain(this, accessory, device);
       this.log.debug(
-        `Curtain UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}-${device.hubDeviceId}`,
+        `Curtain UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}`,
       );
 
       // link the accessory to your platform

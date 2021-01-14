@@ -19,7 +19,7 @@ export class TV {
   speakerService: Service;
 
   Active!: CharacteristicValue;
-  tvVolume!: number;
+  ActiveIdentifier!: CharacteristicValue;
   deviceStatus!: deviceStatusResponse;
 
   constructor(
@@ -66,6 +66,7 @@ export class TV {
       .getCharacteristic(this.platform.Characteristic.Active)
       .on(CharacteristicEventTypes.SET, (value: any, callback: CharacteristicGetCallback) => {
         this.platform.log.debug('TV %s Set Active: %s', this.accessory.displayName, value);
+        this.platform.log.warn(value);
         if (value === this.platform.Characteristic.Active.INACTIVE){
           this.pushTVoffChanges();
         } else {
@@ -112,32 +113,32 @@ export class TV {
           }
           case this.platform.Characteristic.RemoteKey.ARROW_UP: {
             this.platform.log.debug('TV %s Set Remote Key Pressed: ARROW_UP', this.accessory.displayName);
-            this.pushUpChanges();
+            //this.pushUpChanges();
             break;
           }
           case this.platform.Characteristic.RemoteKey.ARROW_DOWN: {
             this.platform.log.debug('TV %s Set Remote Key Pressed: ARROW_DOWN', this.accessory.displayName);
-            this.pushDownChanges();
+            //this.pushDownChanges();
             break;
           }
           case this.platform.Characteristic.RemoteKey.ARROW_LEFT: {
             this.platform.log.debug('TV %s Set Remote Key Pressed: ARROW_LEFT', this.accessory.displayName);
-            this.pushLeftChanges();
+            //this.pushLeftChanges();
             break;
           }
           case this.platform.Characteristic.RemoteKey.ARROW_RIGHT: {
             this.platform.log.debug('TV %s Set Remote Key Pressed: ARROW_RIGHT', this.accessory.displayName);
-            this.pushRightChanges();
+            //this.pushRightChanges();
             break;
           }
           case this.platform.Characteristic.RemoteKey.SELECT: {
             this.platform.log.debug('TV %s Set Remote Key Pressed: SELECT', this.accessory.displayName);
-            this.pushOkChanges();
+            //this.pushOkChanges();
             break;
           }
           case this.platform.Characteristic.RemoteKey.BACK: {
             this.platform.log.debug('TV %s Set Remote Key Pressed: BACK', this.accessory.displayName);
-            this.pushBackChanges();
+            //this.pushBackChanges();
             break;
           }
           case this.platform.Characteristic.RemoteKey.EXIT: {
@@ -150,7 +151,7 @@ export class TV {
           }
           case this.platform.Characteristic.RemoteKey.INFORMATION: {
             this.platform.log.debug('TV %s Set Remote Key Pressed: INFORMATION', this.accessory.displayName);
-            this.pushMenuChanges();
+            //this.pushMenuChanges();
             break;
           }
         }
@@ -180,12 +181,11 @@ export class TV {
       .getCharacteristic(this.platform.Characteristic.VolumeSelector)
       .on(CharacteristicEventTypes.SET, (value, callback: CharacteristicGetCallback) => {
         this.platform.log.debug('TV %s Set VolumeSelector: %s', this.accessory.displayName, value);
-        if (value > this.tvVolume) {
+        if (value === this.platform.Characteristic.VolumeSelector.INCREMENT) {
           this.pushVolumeUpChanges();
         } else {
           this.pushVolumeDownChanges();
         }
-        this.tvVolume = value;
         callback(null);
       });
   }
@@ -201,19 +201,21 @@ export class TV {
    * TV:        "command"       "channelSub"      "default"	        =        previous channel
    */
   async pushTVonChanges() {
-    const payload = {
-      commandType: 'command',
-      parameter: 'default',
-      command: 'turnOn',
-    } as any;
-    await this.pushTVChanges(payload);
+    if (this.Active !== 1){
+      const payload = {
+        commandType: 'command',
+        parameter: 'default',
+        command: 'turnOn',
+      } as any;
+      await this.pushTVChanges(payload);
+    }
   }
 
   async pushTVoffChanges() {
     const payload = {
       commandType: 'command',
       parameter: 'default',
-      command: 'turnOn',
+      command: 'turnOff',
     } as any;
     await this.pushTVChanges(payload);
   }
