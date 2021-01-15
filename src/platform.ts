@@ -212,17 +212,19 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
         // For Future Devices
         switch (device.remoteType) {
           case 'TV':
-            if (!this.config.options?.hide_device.includes(device.deviceId)) {
-              this.log.info('Discovered %s %s', device.deviceName, device.remoteType);
-            }
-            this.createTV(device);
-            break;
           case 'DIY TV':
             if (!this.config.options?.hide_device.includes(device.deviceId)) {
               this.log.info('Discovered %s %s', device.deviceName, device.remoteType);
             }
             this.createTV(device);
-            break;  
+            break;
+          case 'Fan':
+          case 'DIY Fan':
+            if (!this.config.options?.hide_device.includes(device.deviceId)) {
+              this.log.info('Discovered %s %s', device.deviceName, device.remoteType, 'Not Yet Implimented');
+            }
+            //this.createFan(device);
+            break;    
           default:
             this.log.info(
               'Device: %s with Device Type: %s, is currently not supported.',
