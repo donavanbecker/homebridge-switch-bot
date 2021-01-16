@@ -68,9 +68,9 @@ export class TV {
         this.platform.log.debug('TV %s Set Active: %s', this.accessory.displayName, value);
         this.platform.log.warn(value);
         if (value === this.platform.Characteristic.Active.INACTIVE){
-          this.pushTVoffChanges();
+          this.pushTvOffChanges();
         } else {
-          this.pushTVonChanges();
+          this.pushTvOnChanges();
         }
         this.Active = value;
         this.service.updateCharacteristic(this.platform.Characteristic.Active, this.Active);
@@ -200,7 +200,7 @@ export class TV {
    * TV:        "command"       "channelAdd"      "default"	        =        next channel
    * TV:        "command"       "channelSub"      "default"	        =        previous channel
    */
-  async pushTVonChanges() {
+  async pushTvOnChanges() {
     if (this.Active !== 1){
       const payload = {
         commandType: 'command',
@@ -211,7 +211,7 @@ export class TV {
     }
   }
 
-  async pushTVoffChanges() {
+  async pushTvOffChanges() {
     const payload = {
       commandType: 'command',
       parameter: 'default',

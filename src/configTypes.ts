@@ -18,6 +18,7 @@ export type options = {
   meter?: meter;
   humidifier?: humidifier;
   curtain?: curtain;
+  fan?: irfan;
 };
 
 export type meter = {
@@ -37,6 +38,28 @@ export type humidifier = {
 export type curtain = {
   set_max?: number;
   set_min?: number;
+  set_minStep?: number;
+};
+
+export type irfan = {
+  swing_mode?: string[];
+  rotation_speed?: string[];
+  set_max?: set_max;
+  set_min?: set_min;
+  set_minStep?: set_minStep;
+};
+export type set_max = {
+  set_max_device?: string[];
+  set_max?: number;
+};
+
+export type set_min = {
+  set_min_device?: string[];
+  set_min?: number;
+};
+
+export type set_minStep = { 
+  set_minStep_device?: string[];
   set_minStep?: number;
 };
 
