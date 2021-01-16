@@ -233,6 +233,14 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
           case 'DIY TV':
           case 'Projector':
           case 'DIY Projector':
+          case 'Set Top Box':
+          case 'DIY Set Top Box':
+          case 'IPTV':
+          case 'DIY IPTV':
+          case 'DVD':
+          case 'DIY DVD':
+          case 'Speaker':
+          case 'DIY Speaker':     
             if (!this.config.options?.hide_device.includes(device.deviceId)) {
               this.log.info('Discovered %s %s', device.deviceName, device.remoteType);
             }

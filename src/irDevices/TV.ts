@@ -35,7 +35,25 @@ export class TV {
       .setCharacteristic(this.platform.Characteristic.SerialNumber, this.device.deviceId);
 
     // set the accessory category
-    this.accessory.category = this.platform.api.hap.Categories.TELEVISION;
+    switch (device.remoteType) {
+      case 'Speaker':
+      case 'DIY Speaker':
+        this.accessory.category = this.platform.api.hap.Categories.SPEAKER;
+        break;
+      case 'DVD':
+      case 'DIY DVD':
+      case 'IPTV':
+      case 'DIY IPTV':  
+        this.accessory.category = this.platform.api.hap.Categories.TV_STREAMING_STICK;
+        break;
+      case 'Set Top Box':
+      case 'DIY Set Top Box':
+        this.accessory.category = this.platform.api.hap.Categories.TV_SET_TOP_BOX;
+        break;      
+      default:
+        this.accessory.category = this.platform.api.hap.Categories.TELEVISION;
+    }
+    
 
     // get the Television service if it exists, otherwise create a new Television service
     // you can create multiple services for each accessory
