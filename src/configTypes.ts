@@ -49,17 +49,17 @@ export type irfan = {
   set_minStep?: set_minStep;
 };
 export type set_max = {
-  set_max_device?: string[];
+  set_max_device?: string[]; //For Potential Future Use
   set_max?: number;
 };
 
 export type set_min = {
-  set_min_device?: string[];
+  set_min_device?: string[]; //For Potential Future Use
   set_min?: number;
 };
 
-export type set_minStep = { 
-  set_minStep_device?: string[];
+export type set_minStep = {
+  set_minStep_device?: string[]; //For Potential Future Use
   set_minStep?: number;
 };
 
@@ -80,9 +80,9 @@ export type deviceList = {
 };
 
 export type device = {
-   //device ID.
+  //device ID.
   deviceId: string;
-   //device name.
+  //device name.
   deviceName: string;
   //device type.
   deviceType: string;
@@ -132,7 +132,7 @@ export type deviceStatus = {
   //only available for Meter/Humidifier devices. humidity percentage.
   humidity: number;
   //only available for Meter/Humidifier devices. temperature in celsius.
-  temperature: number; 
+  temperature: number;
   //only available for Humidifier devices. atomization efficiency %.
   nebulizationEfficiency: number;
   //only available for Humidifier devices. determines if a Humidifier is in Auto Mode or not.
@@ -146,7 +146,7 @@ export type deviceStatus = {
   //only available for Curtain devices. determines if a Curtain is paired with or grouped with another Curtain or not.
   group: boolean;
   //only available for Curtain devices. determines if a Curtain is moving or not.
-  moving: boolean; 
+  moving: boolean;
   //only available for Curtain devices. the percentage of the distance between the
   //calibrated open position and close position that a Curtain has moved to.
   slidePosition: number;
@@ -155,7 +155,7 @@ export type deviceStatus = {
   //available for Smart Fan devices. the fan speed.
   speed: number;
   //available for Smart Fan devices. determines if the fan is swinging or not.
-  shaking: boolean; 
+  shaking: boolean;
   //only available for Smart Fan devices. the fan's swing direciton.
   shakeCenter: string;
   //only available for Smart Fan devices. the fan's swing range, 0~120°.

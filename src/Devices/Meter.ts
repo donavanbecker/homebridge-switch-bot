@@ -34,7 +34,7 @@ export class Meter {
     public device: device,
   ) {
     // default placeholders
-    this.BatteryLevel= 100;
+    this.BatteryLevel = 100;
     this.ChargingState;
     this.StatusLowBattery = this.platform.Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW;
     this.CurrentRelativeHumidity = 100;

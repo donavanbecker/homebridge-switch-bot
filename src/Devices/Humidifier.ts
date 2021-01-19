@@ -91,7 +91,9 @@ export class Humidifier {
       })
       .on(CharacteristicEventTypes.SET, this.handleTargetHumidifierDehumidifierStateSet.bind(this));
 
-    this.service.getCharacteristic(this.platform.Characteristic.Active).on(CharacteristicEventTypes.SET, this.handleActiveSet.bind(this));
+    this.service
+      .getCharacteristic(this.platform.Characteristic.Active)
+      .on(CharacteristicEventTypes.SET, this.handleActiveSet.bind(this));
 
     this.service
       .getCharacteristic(this.platform.Characteristic.RelativeHumidityHumidifierThreshold)

@@ -93,6 +93,25 @@
                 "placeholder": "100"
               }
             }
+          },
+          "fan": {
+            "type": "object",
+            "properties": {
+              "swing_mode": {
+                "title": "Enable Swing Mode by Device ID",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "rotation_speed": {
+                "title": "Enable Rotation Speed by Device ID",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       },
@@ -128,38 +147,19 @@
           "notitle": true
         },
         {
-          "type": "help",
-          "helpvalue": "<h5>Hide Device</h5><em class='primary-text'>Hide Device allows you to hide a device using it's deviceID.</em>"
-        },
-        {
-          "key": "options.hide_device",
-          "notitle": true,
-          "add": "Add Another Device",
-          "type": "array",
-          "items": [
-            {
-              "type": "div",
-              "displayFlex": true,
-              "flex-direction": "row",
-              "items": [
-                {
-                  "key": "options.hide_device[]",
-                  "placeholder": "81F3UT59513F"
-                }
-              ]
-            }
-          ]
-        },
-        {
           "type": "fieldset",
-          "title": "Bot Settings",
+          "title": "Hidden Devices",
           "expandable": true,
           "expanded": false,
           "items": [
             {
-              "key": "options.bot.device_switch",
-              "notitle": false,
-              "add": "Add Another Bot in Switch Mode",
+              "type": "help",
+              "helpvalue": "<h5>Hide Device</h5><em class='primary-text'>Hide Device allows you to hide a device using it's deviceID.</em>"
+            },
+            {
+              "key": "options.hide_device",
+              "notitle": true,
+              "add": "Add Another Device",
               "type": "array",
               "items": [
                 {
@@ -168,52 +168,214 @@
                   "flex-direction": "row",
                   "items": [
                     {
-                      "key": "options.bot.device_switch[]",
+                      "key": "options.hide_device[]",
                       "placeholder": "81F3UT59513F"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "fieldset",
+          "title": "SwitchBot Device Settings",
+          "expandable": true,
+          "expanded": false,
+          "items": [
+            {
+              "type": "fieldset",
+              "title": "Bot Settings",
+              "expandable": true,
+              "expanded": false,
+              "items": [
+                {
+                  "key": "options.bot.device_switch",
+                  "notitle": false,
+                  "add": "Add Another Bot in Switch Mode",
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "div",
+                      "displayFlex": true,
+                      "flex-direction": "row",
+                      "items": [
+                        {
+                          "key": "options.bot.device_switch[]",
+                          "placeholder": "81F3UT59513F"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "key": "options.bot.device_press",
+                  "notitle": false,
+                  "add": "Add Another Bot in Press Mode",
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "div",
+                      "displayFlex": true,
+                      "flex-direction": "row",
+                      "items": [
+                        {
+                          "key": "options.bot.device_press[]",
+                          "placeholder": "81F3UT59513F"
+                        }
+                      ]
                     }
                   ]
                 }
               ]
             },
             {
-              "key": "options.bot.device_press",
-              "notitle": false,
-              "add": "Add Another Bot in Press Mode",
-              "type": "array",
+              "type": "fieldset",
+              "title": "Humidifier Settings",
+              "expandable": true,
+              "expanded": false,
               "items": [
-                {
-                  "type": "div",
-                  "displayFlex": true,
-                  "flex-direction": "row",
-                  "items": [
-                    {
-                      "key": "options.bot.device_press[]",
-                      "placeholder": "81F3UT59513F"
-                    }
-                  ]
-                }
+                "options.humidifier.hide_temperature"
+              ]
+            },
+            {
+              "type": "fieldset",
+              "title": "Curtain Settings",
+              "expandable": true,
+              "expanded": false,
+              "items": [
+                "options.curtain.set_minStep",
+                "options.curtain.set_min",
+                "options.curtain.set_max"
               ]
             }
           ]
         },
         {
           "type": "fieldset",
-          "title": "Humidifier Settings",
+          "title": "IR Device Settings",
           "expandable": true,
           "expanded": false,
           "items": [
-            "options.humidifier.hide_temperature"
-          ]
-        },
-        {
-          "type": "fieldset",
-          "title": "Curtain Settings",
-          "expandable": true,
-          "expanded": false,
-          "items": [
-            "options.curtain.set_minStep",
-            "options.curtain.set_min",
-            "options.curtain.set_max"
+            {
+              "type": "fieldset",
+              "title": "Fan Settings",
+              "expandable": true,
+              "expanded": false,
+              "items": [
+                {
+                  "type": "fieldset",
+                  "title": "Rotation Speed Settings",
+                  "expandable": true,
+                  "expanded": false,
+                  "items": [
+                    {
+                      "key": "options.fan.rotation_speed",
+                      "notitle": false,
+                      "add": "Add Another Fan Device ID to Enable Rotation Speed on Device",
+                      "type": "array",
+                      "items": [
+                        {
+                          "type": "div",
+                          "displayFlex": true,
+                          "flex-direction": "row",
+                          "items": [
+                            {
+                              "key": "options.fan.rotation_speed[]",
+                              "placeholder": "81F3UT59513F"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "key": "options.fan.set_min.set_min",
+                      "notitle": false,
+                      "add": "Add Another Fan Device ID to Set Min Rotation Speed on Device",
+                      "type": "array",
+                      "items": [
+                        {
+                          "type": "div",
+                          "displayFlex": true,
+                          "flex-direction": "row",
+                          "items": [
+                            {
+                              "key": "options.fan.set_max.set_max",
+                              "placeholder": "100"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "key": "options.fan.set_max.set_max",
+                      "notitle": false,
+                      "add": "Add Another Fan Device ID to Set Max Rotation Speed on Device",
+                      "type": "array",
+                      "items": [
+                        {
+                          "type": "div",
+                          "displayFlex": true,
+                          "flex-direction": "row",
+                          "items": [
+                            {
+                              "key": "options.fan.set_max.set_max_device[]",
+                              "placeholder": "100"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "key": "options.fan.set_minStep.set_minStep",
+                      "notitle": false,
+                      "add": "Add Another Fan Device ID to Min Step for Rotation on Device",
+                      "type": "array",
+                      "items": [
+                        {
+                          "type": "div",
+                          "displayFlex": true,
+                          "flex-direction": "row",
+                          "items": [
+                            {
+                              "key": "options.fan.set_minStep.set_min",
+                              "placeholder": "1"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "fieldset",
+                  "title": "Swing Mode Settings",
+                  "expandable": true,
+                  "expanded": false,
+                  "items": [
+                    {
+                      "key": "options.fan.swing_mode",
+                      "notitle": false,
+                      "add": "Add Another Fan Device ID to Enable Swing Mode on Device",
+                      "type": "array",
+                      "items": [
+                        {
+                          "type": "div",
+                          "displayFlex": true,
+                          "flex-direction": "row",
+                          "items": [
+                            {
+                              "key": "options.fan.swing_mode[]",
+                              "placeholder": "81F3UT59513F"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
           ]
         },
         {

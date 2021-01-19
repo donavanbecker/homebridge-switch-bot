@@ -40,20 +40,19 @@ export class TV {
       case 'DIY Speaker':
         this.accessory.category = this.platform.api.hap.Categories.SPEAKER;
         break;
-      case 'DVD':
-      case 'DIY DVD':
       case 'IPTV':
-      case 'DIY IPTV':  
+      case 'DIY IPTV':
         this.accessory.category = this.platform.api.hap.Categories.TV_STREAMING_STICK;
         break;
+      case 'DVD':
+      case 'DIY DVD':
       case 'Set Top Box':
       case 'DIY Set Top Box':
         this.accessory.category = this.platform.api.hap.Categories.TV_SET_TOP_BOX;
-        break;      
+        break;
       default:
         this.accessory.category = this.platform.api.hap.Categories.TELEVISION;
     }
-    
 
     // get the Television service if it exists, otherwise create a new Television service
     // you can create multiple services for each accessory
@@ -85,7 +84,7 @@ export class TV {
       .on(CharacteristicEventTypes.SET, (value: any, callback: CharacteristicGetCallback) => {
         this.platform.log.debug('TV %s Set Active: %s', this.accessory.displayName, value);
         this.platform.log.warn(value);
-        if (value === this.platform.Characteristic.Active.INACTIVE){
+        if (value === this.platform.Characteristic.Active.INACTIVE) {
           this.pushTvOffChanges();
         } else {
           this.pushTvOnChanges();
@@ -219,7 +218,7 @@ export class TV {
    * TV:        "command"       "channelSub"      "default"	        =        previous channel
    */
   async pushTvOnChanges() {
-    if (this.Active !== 1){
+    if (this.Active !== 1) {
       const payload = {
         commandType: 'command',
         parameter: 'default',

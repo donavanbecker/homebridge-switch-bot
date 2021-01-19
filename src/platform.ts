@@ -120,17 +120,17 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       if (this.config.options?.fan) {
         this.config.options.fan.swing_mode;
         this.config.options.fan.rotation_speed;
-        if (this.config.options.fan.set_minStep){
-          this.config.options.fan.set_minStep.set_minStep_device;  
+        if (this.config.options.fan.set_minStep) {
+          this.config.options.fan.set_minStep.set_minStep_device; //For Potential Future Use
           this.config.options.fan.set_minStep.set_minStep;
         }
-        if (this.config.options.fan.set_min){
-          this.config.options.fan.set_min.set_min_device; 
+        if (this.config.options.fan.set_min) {
+          this.config.options.fan.set_min.set_min_device; //For Potential Future Use
           this.config.options.fan.set_min.set_min;
         }
-        if (this.config.options.fan.set_max){
-          this.config.options.fan.set_max.set_max_device;
-          this.config.options.fan.set_max.set_max; 
+        if (this.config.options.fan.set_max) {
+          this.config.options.fan.set_max.set_max_device; //For Potential Future Use
+          this.config.options.fan.set_max.set_max;
         }
       }
 
@@ -240,7 +240,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
           case 'DVD':
           case 'DIY DVD':
           case 'Speaker':
-          case 'DIY Speaker':     
+          case 'DIY Speaker':
             if (!this.config.options?.hide_device.includes(device.deviceId)) {
               this.log.info('Discovered %s %s', device.deviceName, device.remoteType);
             }
@@ -528,7 +528,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       this.log.debug(`TV UDID: ${device.deviceName}-${device.deviceId}-${device.remoteType}-${device.hubDeviceId}`);
     } else if (!this.config.options?.hide_device.includes(device.deviceId)) {
       // the accessory does not yet exist, so we need to create it
-      this.log.info('TV Accessory: %s %s DeviceID: %s', device.deviceName, device.remoteType, device.deviceId);
+      this.log.info('Adding new accessory: %s %s DeviceID: %s', device.deviceName, device.remoteType, device.deviceId);
 
       // create a new accessory
       const accessory = new this.api.platformAccessory(`${device.deviceName} ${device.remoteType}`, uuid);
