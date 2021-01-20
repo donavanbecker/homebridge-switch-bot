@@ -37,7 +37,7 @@ plugin allows you to access your SwitchBot Device(s) from HomeKit with
 
 </p>
 
-## Supported Devices
+## Supported SwitchBot Devices
 
 - [SwitchBot Humidifier](https://www.switch-bot.com/products/switchbot-smart-humidifier)
 - [SwitchBot Meter](https://www.switch-bot.com/products/switchbot-meter)
@@ -54,6 +54,26 @@ plugin allows you to access your SwitchBot Device(s) from HomeKit with
         - Switch Mode - Turns on and keep it on until it is turned off
             - This can get out of sync, since API doesn't give me a status
             - To Correct you must go into the SwitchBot App and correct the status of either `On` or `Off`
+
+## Supported IR Devices
+### _(All IR Devices require [Hub Plus](https://www.switch-bot.com/products/switchbot-hub-plus) or [Hub Mini](https://www.switch-bot.com/products/switchbot-hub-mini))_
+
+- TV
+    - Allows for On/Off and Volume Controls
+- Projector (Displayed as TV)
+    - Allows for On/Off and Volume Controls
+- Set Top Box  (Displayed as Set Top Box)
+    - Allows for On/Off and Volume Controls
+- DVD  (Displayed as Set Top Box)
+    - Allows for On/Off and Volume Controls
+- Streamer  (Displayed as Streaming Stick)
+    - Allows for On/Off and Volume Controls
+- Speaker  (Displayed as Speaker)
+    - Allows for On/Off and Volume Controls
+- Fans
+    - Allows for On/Off Controls
+    - Optional Rotation Speed
+    - Optional Swing Mode
 
 ## SwitchBotAPI
 

@@ -9,6 +9,16 @@ All notable changes to this project will be documented in this file. This projec
 - Refined Support for IR TV.
   - Now DIY TVs are Supported
   - Until an Update to the SwitchBot API, only Power and Volume will work.
+- Adds Support for Projectors - Displayed As a TV.
+  - Also Supports DIY Projectors.
+- Adds Support for DVD - Displayed As a Set Top Box.
+  - Also Supports DIY DVD.
+- Adds Support for Set Top Box - Displayed As a Set Top Box.
+  - Also Supports DIY Set Top Box.
+- Adds Support for Streamer - Displayed As a Streaming Stick.
+  - Also Supports DIY Streamer.
+- Adds Support for Speaker - Displayed As a Speaker.
+  - Also Supports DIY Speaker.
 - Adds Support for IR Fans
   - Allows for Adding Rotation Speed Characteristic If Fan Supports it, This will effect all Fans.
   - Allows for Adding Swing Mode Characteristic If Fan Supports it, This will effect all Fans.

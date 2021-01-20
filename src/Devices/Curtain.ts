@@ -12,12 +12,11 @@ export class Curtain {
   PositionState!: number;
   TargetPosition!: number;
   deviceStatus!: deviceStatusResponse;
+  setNewTarget!: boolean;
+  setNewTargetTimer!: NodeJS.Timeout;
 
   curtainUpdateInProgress!: boolean;
   doCurtainUpdate!: any;
-
-  setNewTarget!: boolean;
-  setNewTargetTimer!: NodeJS.Timeout;
 
   constructor(
     private readonly platform: SwitchBotPlatform,
@@ -135,6 +134,10 @@ export class Curtain {
       this.CurrentPosition,
     );
 
+    if (!this.deviceStatus.body.calibrate) {
+      this.platform.log.warn('Your Curtains need to be recalibrated');
+    }
+
     // this.platform.log.info(
     //   'Curtain %s -',
     //   this.accessory.displayName,
@@ -151,7 +154,6 @@ export class Curtain {
     // );
     // PositionState
     if (this.deviceStatus.body.moving) {
-      this.setNewTarget = false;
       if (this.TargetPosition > this.CurrentPosition) {
         this.platform.log.debug(
           'Curtain %s -',
