@@ -64,7 +64,6 @@ export class Fan {
       .getCharacteristic(this.platform.Characteristic.Active)
       .on(CharacteristicEventTypes.SET, (value: any, callback: CharacteristicGetCallback) => {
         this.platform.log.debug('Fan %s Set Active: %s', this.accessory.displayName, value);
-        this.platform.log.warn(value);
         if (value === this.platform.Characteristic.Active.INACTIVE) {
           this.pushFanOffChanges();
         } else {
@@ -101,7 +100,6 @@ export class Fan {
         })
         .on(CharacteristicEventTypes.SET, (value: any, callback: CharacteristicGetCallback) => {
           this.platform.log.debug('Fan %s Set Active: %s', this.accessory.displayName, value);
-          this.platform.log.warn(value);
           if (value > this.RotationSpeed) {
             this.RotationSpeed = 1;
             this.pushFanSpeedUpChanges();
@@ -133,7 +131,6 @@ export class Fan {
         .getCharacteristic(this.platform.Characteristic.SwingMode)
         .on(CharacteristicEventTypes.SET, (value: any, callback: CharacteristicGetCallback) => {
           this.platform.log.debug('Fan %s Set Active: %s', this.accessory.displayName, value);
-          this.platform.log.warn(value);
           if (value > this.SwingMode) {
             this.SwingMode = 1;
             this.pushFanOnChanges();

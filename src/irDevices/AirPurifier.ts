@@ -7,7 +7,7 @@ import {
 } from 'homebridge';
 import { SwitchBotPlatform } from '../platform';
 import { DeviceURL } from '../settings';
-import { irdevice, deviceStatusResponse } from '../configTypes';
+import { irdevice } from '../configTypes';
 
 /**
  * Platform Accessory
@@ -18,8 +18,6 @@ export class AirPurifier {
   service!: Service;
 
   Active!: CharacteristicValue;
-  ActiveIdentifier!: CharacteristicValue;
-  deviceStatus!: deviceStatusResponse;
   RotationSpeed!: number;
   lastTemperature!: number;
   currentTemperature!: number;
@@ -67,8 +65,6 @@ export class AirPurifier {
       .getCharacteristic(this.platform.Characteristic.Active)
       .on(CharacteristicEventTypes.SET, (value: any, callback: CharacteristicGetCallback) => {
         this.platform.log.debug('%s %s Set Active: %s', this.device.remoteType, this.accessory.displayName, value);
-        this.platform.log.warn(value);
-
         try {
           if (value === this.platform.Characteristic.Active.INACTIVE) {
             this.pushAirConditionerOffChanges();

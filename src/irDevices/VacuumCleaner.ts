@@ -14,7 +14,7 @@ import { irdevice } from '../configTypes';
  * An instance of this class is created for each accessory your platform registers
  * Each accessory may expose multiple services of different service types.
  */
-export class Light {
+export class VacuumCleaner {
   service!: Service;
 
   On!: CharacteristicValue;
@@ -36,8 +36,8 @@ export class Light {
     // get the Television service if it exists, otherwise create a new Television service
     // you can create multiple services for each accessory
     (this.service =
-      this.accessory.getService(this.platform.Service.Lightbulb) ||
-      this.accessory.addService(this.platform.Service.Lightbulb)),
+      this.accessory.getService(this.platform.Service.Switch) ||
+      this.accessory.addService(this.platform.Service.Switch)),
     `${this.device.deviceName} ${this.device.remoteType}`;
 
     // To avoid "Cannot add a Service with the same UUID another Service without also defining a unique 'subtype' property." error,
@@ -58,28 +58,12 @@ export class Light {
         this.platform.log.debug('%s %s Set On: %s', this.device.remoteType, this.accessory.displayName, value);
         this.On = value;
         if (this.On) {
-          this.pushLightOnChanges();
+          this.pushOnChanges();
         } else {
-          this.pushLightOffChanges();
+          this.pushOffChanges();
         }
-        this.service.updateCharacteristic(this.platform.Characteristic.Active, this.On);
         callback(null);
       });
-
-    // handle Brightness events using the Brightness characteristic
-    /* this.service
-      .getCharacteristic(this.platform.Characteristic.Brightness)
-      .on(CharacteristicEventTypes.SET, (value: any, callback: CharacteristicGetCallback) => {
-        this.platform.log.debug('%s %s Set Brightness: %s', this.device.remoteType, this.accessory.displayName, value);
-        this.Brightness = value;
-        if (value > this.Brightness) {
-          this.pushLightBrightnessUpChanges();
-        } else {
-          this.pushLightBrightnessDownChanges();
-        }
-        this.service.updateCharacteristic(this.platform.Characteristic.Active, this.Brightness);
-        callback(null);
-      });*/
   }
 
   /**
@@ -92,7 +76,7 @@ export class Light {
    * Light:        "command"       "channelAdd"      "default"	        =        next channel
    * Light:        "command"       "channelSub"      "default"	        =        previous channel
    */
-  async pushLightOnChanges() {
+  async pushOnChanges() {
     if (this.On) {
       const payload = {
         commandType: 'command',
@@ -103,7 +87,7 @@ export class Light {
     }
   }
 
-  async pushLightOffChanges() {
+  async pushOffChanges() {
     if (!this.On) {
       const payload = {
         commandType: 'command',
@@ -112,24 +96,6 @@ export class Light {
       } as any;
       await this.pushChanges(payload);
     }
-  }
-
-  async pushLightBrightnessUpChanges() {
-    const payload = {
-      commandType: 'command',
-      parameter: 'default',
-      command: 'brightnessUp',
-    } as any;
-    await this.pushChanges(payload);
-  }
-
-  async pushLightBrightnessDownChanges() {
-    const payload = {
-      commandType: 'command',
-      parameter: 'default',
-      command: 'brightnessDown',
-    } as any;
-    await this.pushChanges(payload);
   }
 
   public async pushChanges(payload: any) {

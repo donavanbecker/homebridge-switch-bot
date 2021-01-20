@@ -83,7 +83,6 @@ export class TV {
       .getCharacteristic(this.platform.Characteristic.Active)
       .on(CharacteristicEventTypes.SET, (value: any, callback: CharacteristicGetCallback) => {
         this.platform.log.debug('TV %s Set Active: %s', this.accessory.displayName, value);
-        this.platform.log.warn(value);
         if (value === this.platform.Characteristic.Active.INACTIVE) {
           this.pushTvOffChanges();
         } else {

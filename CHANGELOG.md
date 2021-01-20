@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file. This project uses [Semantic Versioning](https://semver.org/)
 
-## [Version 2.1.0](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v2.0.0...v2.1.0) (2021-01-XX)
+## [Version 2.1.0](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v2.0.0...v2.1.0) (2021-01-20)
 
 ### Changes
 
@@ -22,6 +22,11 @@ All notable changes to this project will be documented in this file. This projec
 - Adds Support for IR Fans
   - Allows for Adding Rotation Speed Characteristic If Fan Supports it, This will effect all Fans.
   - Allows for Adding Swing Mode Characteristic If Fan Supports it, This will effect all Fans.
+- Adds Support for IR Lights
+- Adds Support for IR Air Conditioners.
+- Adds Support for IR Air Purifiers.
+- Adds Support for IR Water Heaters.
+- Fixed Logging, where only SwitchBot Device Count was being logged and not IR Devices.
 - Fixed Issue with Min/Max Values on Current Position of Curtains Working for Close and Open.
 
 ## [Version 2.0.0](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v1.2.4...v2.0.0) (2021-01-14)
