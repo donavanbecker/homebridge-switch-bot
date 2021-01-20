@@ -277,7 +277,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
             if (!this.config.options?.hide_device.includes(device.deviceId)) {
               this.log.info('Discovered %s %s', device.deviceName, device.remoteType);
             }
-            //this.createAirPurifier(device);
+            this.createAirPurifier(device);
             break;  
           case 'Water Heater':
           case 'DIY Water Heater':

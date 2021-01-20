@@ -8,7 +8,6 @@ import {
 import { SwitchBotPlatform } from '../platform';
 import { DeviceURL } from '../settings';
 import { irdevice, deviceStatusResponse } from '../configTypes';
-import { error } from 'console';
 
 /**
  * Platform Accessory
@@ -67,7 +66,7 @@ export class AirConditioner {
     this.service
       .getCharacteristic(this.platform.Characteristic.Active)
       .on(CharacteristicEventTypes.SET, (value: any, callback: CharacteristicGetCallback) => {
-        this.platform.log.debug('Light %s Set Active: %s', this.accessory.displayName, value);
+        this.platform.log.debug('%s %s Set Active: %s', this.device.remoteType, this.accessory.displayName, value);
         this.platform.log.warn(value);
 
         try {
@@ -217,12 +216,14 @@ export class AirConditioner {
   }
 
   async pushAirConditionerOffChanges() {
-    const payload = {
-      commandType: 'command',
-      parameter: 'default',
-      command: 'turnOff',
-    } as any;
-    await this.pushChanges(payload);
+    if (this.Active !== 0) {
+      const payload = {
+        commandType: 'command',
+        parameter: 'default',
+        command: 'turnOff',
+      } as any;
+      await this.pushChanges(payload);
+    }
   }
 
   async pushAirConditionerStatusChanges() {
