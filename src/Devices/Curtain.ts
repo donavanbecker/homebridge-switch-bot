@@ -134,10 +134,6 @@ export class Curtain {
       this.CurrentPosition,
     );
 
-    if (!this.deviceStatus.body.calibrate) {
-      this.platform.log.warn('Your Curtains need to be recalibrated');
-    }
-
     // this.platform.log.info(
     //   'Curtain %s -',
     //   this.accessory.displayName,
