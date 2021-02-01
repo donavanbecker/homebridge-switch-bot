@@ -71,7 +71,12 @@
               "hide_temperature": {
                 "title": "Hide Humidifier's Temperature Sensor",
                 "type": "boolean"
-              }
+              },
+              "set_minStep": {
+                "title": "Set Min Step",
+                "type": "number",
+                "placeholder": "1"
+              },
             }
           },
           "curtain": {
@@ -235,6 +240,7 @@
               "expandable": true,
               "expanded": false,
               "items": [
+                "options.humidifier.set_minStep",
                 "options.humidifier.hide_temperature"
               ]
             },

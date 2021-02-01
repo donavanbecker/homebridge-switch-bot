@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. This project uses [Semantic Versioning](https://semver.org/)
 
+## [Version 2.2.0](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v2.1.0...v2.2.0) (2021-02-XX)
+
+### Changes
+
+- Added option to Set `minStep` for SwitchBot Humidifiers.
+
 ## [Version 2.1.0](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v2.0.0...v2.1.0) (2021-01-20)
 
 ### Changes

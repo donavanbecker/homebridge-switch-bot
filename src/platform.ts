@@ -112,6 +112,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
       // Humidifier Config Options
       if (this.config.options?.humidifier) {
+        this.config.options.humidifier.set_minStep;
         this.config.options.humidifier.hide_temperature;
       }
 

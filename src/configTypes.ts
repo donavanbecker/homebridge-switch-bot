@@ -33,6 +33,7 @@ export type bot = {
 
 export type humidifier = {
   hide_temperature?: boolean;
+  set_minStep?: number;
 };
 
 export type curtain = {
