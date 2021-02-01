@@ -76,7 +76,7 @@
                 "title": "Set Min Step",
                 "type": "number",
                 "placeholder": "1"
-              },
+              }
             }
           },
           "curtain": {
