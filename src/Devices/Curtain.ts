@@ -150,7 +150,7 @@ export class Curtain {
     // );
     // PositionState
     if (this.deviceStatus.body.moving) {
-      if (this.TargetPosition > this.CurrentPosition) {
+      if (this.TargetPosition > (this.platform.config.options?.curtain?.set_max || this.CurrentPosition)) {
         this.platform.log.debug(
           'Curtain %s -',
           this.accessory.displayName,
@@ -159,7 +159,7 @@ export class Curtain {
           'closing',
         );
         this.PositionState = this.platform.Characteristic.PositionState.INCREASING;
-      } else if (this.TargetPosition < this.CurrentPosition) {
+      } else if (this.TargetPosition < (this.platform.config.options?.curtain?.set_min || this.CurrentPosition)) {
         this.platform.log.debug(
           'Curtain %s -',
           this.accessory.displayName,
