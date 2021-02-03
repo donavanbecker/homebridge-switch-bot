@@ -67,13 +67,7 @@ export class Curtain {
     // create handlers for required characteristics
     this.service.setCharacteristic(this.platform.Characteristic.PositionState, this.PositionState);
 
-    this.service.getCharacteristic(this.platform.Characteristic.CurrentPosition)
-      .setProps({
-        minValue: this.platform.config.options?.curtain?.set_min || 0,
-        maxValue: this.platform.config.options?.curtain?.set_max || 100,
-        validValueRanges: [0, 100],
-      })
-      .on('get', this.handleCurrentPositionGet.bind(this));
+    this.service.setCharacteristic(this.platform.Characteristic.CurrentPosition, this.CurrentPosition);
 
     this.service
       .getCharacteristic(this.platform.Characteristic.TargetPosition)
@@ -126,7 +120,7 @@ export class Curtain {
 
   parseStatus() {
     // CurrentPosition
-    this.CurrentPosition = this.set_maxCurrentOption() - this.deviceStatus.body.slidePosition;
+    this.CurrentPosition = 100 - this.deviceStatus.body.slidePosition;
     this.platform.log.debug(
       'Curtain %s CurrentPosition -',
       this.accessory.displayName,
@@ -150,7 +144,7 @@ export class Curtain {
     // );
     // PositionState
     if (this.deviceStatus.body.moving) {
-      if (this.TargetPosition > (this.platform.config.options?.curtain?.set_max || this.CurrentPosition)) {
+      if (this.TargetPosition > this.CurrentPosition) {
         this.platform.log.debug(
           'Curtain %s -',
           this.accessory.displayName,
@@ -159,7 +153,7 @@ export class Curtain {
           'closing',
         );
         this.PositionState = this.platform.Characteristic.PositionState.INCREASING;
-      } else if (this.TargetPosition < (this.platform.config.options?.curtain?.set_min || this.CurrentPosition)) {
+      } else if (this.TargetPosition < this.CurrentPosition) {
         this.platform.log.debug(
           'Curtain %s -',
           this.accessory.displayName,
@@ -217,7 +211,7 @@ export class Curtain {
   async pushChanges() {
     if (this.TargetPosition !== this.CurrentPosition) {
       this.platform.log.debug(`Pushing ${this.TargetPosition}`);
-      const adjustedTargetPosition = this.set_maxCurrentOption() - this.TargetPosition;
+      const adjustedTargetPosition = 100 - this.TargetPosition;
       const payload = {
         commandType: 'command',
         command: 'setPosition',
@@ -242,10 +236,6 @@ export class Curtain {
     }
   }
 
-  private set_maxCurrentOption() {
-    return this.platform.config.options?.curtain?.set_max || 100;
-  }
-
   updateHomeKitCharacteristics() {
     this.platform.log.debug(
       'Curtain %s updateHomeKitCharacteristics -',
@@ -262,16 +252,8 @@ export class Curtain {
   }
 
   /**
-   * Handle requests to get the current value of the "Current Position" characteristic
+   * Handle requests to set the value of the "Target Position" characteristic
    */
-  handleCurrentPositionGet(callback) {
-    this.platform.log.debug('Curtain %s - Getting CurrentPosition', this.accessory.displayName);
-
-    // set this to a valid value for CurrentPosition
-    const currentValue = this.CurrentPosition;
-    callback(null, currentValue);
-  }
-
   handleTargetPositionSet(value, callback) {
     this.platform.log.debug('Curtain %s - Set TargetPosition: %s', this.accessory.displayName, value);
 

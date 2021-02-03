@@ -113,7 +113,6 @@ export class Humidifier {
     `${this.device.deviceName} ${this.device.deviceType} Temperature Sensor`;
 
     // Retrieve initial values and updateHomekit
-    //this.refreshStatus();
     this.updateHomeKitCharacteristics();
 
     // Start an update interval
