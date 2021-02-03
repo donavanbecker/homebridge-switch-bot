@@ -24,9 +24,7 @@ export class Curtain {
     public device: device,
   ) {
     // default placeholders
-    this.CurrentPosition = 100;
     this.PositionState = this.platform.Characteristic.PositionState.STOPPED;
-    this.TargetPosition = 100;
 
     // this is subject we use to track when we need to POST changes to the SwitchBot API
     this.doCurtainUpdate = new Subject();
