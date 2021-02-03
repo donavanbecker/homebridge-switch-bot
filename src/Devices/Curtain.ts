@@ -72,7 +72,7 @@ export class Curtain {
     this.service
       .getCharacteristic(this.platform.Characteristic.TargetPosition)
       .setProps({
-        minStep: this.platform.config.options!.curtain!.set_minStep || 1,
+        minStep: this.platform.config.options?.curtain?.set_minStep || 1,
         validValueRanges: [0, 100],
       })
       .on(CharacteristicEventTypes.SET, this.handleTargetPositionSet.bind(this));
@@ -144,12 +144,14 @@ export class Curtain {
     // );
     // PositionState
     if (this.deviceStatus.body.moving) {
-      if (this.CurrentPosition < this.platform.config.options!.curtain!.set_min!) {
-        this.platform.log.debug('Curtain %s -', this.CurrentPosition, 'standby');
-        this.PositionState = this.platform.Characteristic.PositionState.STOPPED;
-      } else if (this.CurrentPosition > this.platform.config.options!.curtain!.set_max!) {
-        this.platform.log.debug('Curtain %s -', this.CurrentPosition, 'standby');
-        this.PositionState = this.platform.Characteristic.PositionState.STOPPED;
+      if (this.platform.config.options?.curtain?.set_min || this.platform.config.options?.curtain?.set_max) {
+        if (this.CurrentPosition < this.platform.config.options!.curtain!.set_min!) {
+          this.platform.log.debug('Curtain %s -', this.CurrentPosition, 'standby');
+          this.PositionState = this.platform.Characteristic.PositionState.STOPPED;
+        } else if (this.CurrentPosition > this.platform.config.options!.curtain!.set_max!) {
+          this.platform.log.debug('Curtain %s -', this.CurrentPosition, 'standby');
+          this.PositionState = this.platform.Characteristic.PositionState.STOPPED;
+        }
       } else if (this.TargetPosition > this.CurrentPosition) {
         this.platform.log.debug(
           'Curtain %s -',
