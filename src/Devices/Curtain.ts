@@ -245,7 +245,7 @@ export class Curtain {
   }
 
   updateHomeKitCharacteristics() {
-    this.platform.log.debug(
+    this.platform.log.warn(
       'Curtain %s updateHomeKitCharacteristics -',
       this.accessory.displayName,
       JSON.stringify({
