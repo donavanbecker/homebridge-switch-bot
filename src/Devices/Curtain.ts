@@ -144,15 +144,7 @@ export class Curtain {
     // );
     // PositionState
     if (this.deviceStatus.body.moving) {
-      if (this.platform.config.options?.curtain?.set_min || this.platform.config.options?.curtain?.set_max) {
-        if (this.CurrentPosition < this.platform.config.options!.curtain!.set_min!) {
-          this.platform.log.debug('Curtain %s -', this.CurrentPosition, 'standby');
-          this.PositionState = this.platform.Characteristic.PositionState.STOPPED;
-        } else if (this.CurrentPosition > this.platform.config.options!.curtain!.set_max!) {
-          this.platform.log.debug('Curtain %s -', this.CurrentPosition, 'standby');
-          this.PositionState = this.platform.Characteristic.PositionState.STOPPED;
-        }
-      } else if (this.TargetPosition > this.CurrentPosition) {
+      if (this.TargetPosition > this.CurrentPosition) {
         this.platform.log.debug(
           'Curtain %s -',
           this.accessory.displayName,
