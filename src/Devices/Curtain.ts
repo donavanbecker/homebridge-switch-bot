@@ -72,7 +72,7 @@ export class Curtain {
     this.service
       .getCharacteristic(this.platform.Characteristic.TargetPosition)
       .setProps({
-        minStep: this.platform.config.options?.curtain?.set_minStep || 1,
+        minStep: this.platform.config.options!.curtain!.set_minStep || 1,
         validValueRanges: [0, 100],
       })
       .on(CharacteristicEventTypes.SET, this.handleTargetPositionSet.bind(this));

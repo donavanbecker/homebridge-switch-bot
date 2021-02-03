@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file. This projec
 ### Changes
 
 - Added option to Set `minStep` for SwitchBot Humidifiers.
+- Fix Issue with Curtain set_min and set_max config options not working.
 
 ## [Version 2.1.0](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v2.0.0...v2.1.0) (2021-01-20)
 

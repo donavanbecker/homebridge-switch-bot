@@ -98,7 +98,7 @@ export class Humidifier {
     this.service
       .getCharacteristic(this.platform.Characteristic.RelativeHumidityHumidifierThreshold)
       .setProps({
-        minStep: this.platform.config.options?.humidifier?.set_minStep || 1,
+        minStep: this.platform.config.options!.humidifier!.set_minStep || 1,
       })
       .on(CharacteristicEventTypes.SET, this.handleRelativeHumidityHumidifierThresholdSet.bind(this));
 
