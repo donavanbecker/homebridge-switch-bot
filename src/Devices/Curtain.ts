@@ -296,12 +296,12 @@ export class Curtain {
 
   public setMinMax() {
     if (this.platform.config.options?.curtain?.set_min) {
-      if (this.CurrentPosition < this.platform.config.options?.curtain?.set_min) {
+      if (this.CurrentPosition <= this.platform.config.options?.curtain?.set_min) {
         this.CurrentPosition = 0;
       }
     }
     if (this.platform.config.options?.curtain?.set_max) {
-      if (this.CurrentPosition > this.platform.config.options?.curtain?.set_max) {
+      if (this.CurrentPosition >= this.platform.config.options?.curtain?.set_max) {
         this.CurrentPosition = 100;
       }
     }
