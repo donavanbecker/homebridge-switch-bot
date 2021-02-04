@@ -119,6 +119,7 @@ export class Curtain {
   parseStatus() {
     // CurrentPosition
     this.CurrentPosition = 100 - this.deviceStatus.body.slidePosition;
+    this.setMinMax();
     this.platform.log.debug(
       'Curtain %s CurrentPosition -',
       this.accessory.displayName,
@@ -235,7 +236,7 @@ export class Curtain {
   }
 
   updateHomeKitCharacteristics() {
-    this.platform.log.warn(
+    this.platform.log.debug(
       'Curtain %s updateHomeKitCharacteristics -',
       this.accessory.displayName,
       JSON.stringify({
@@ -244,6 +245,7 @@ export class Curtain {
         TargetPosition: this.TargetPosition,
       }),
     );
+    this.setMinMax();
     this.service.updateCharacteristic(this.platform.Characteristic.CurrentPosition, this.CurrentPosition);
     this.service.updateCharacteristic(this.platform.Characteristic.PositionState, this.PositionState);
     this.service.updateCharacteristic(this.platform.Characteristic.TargetPosition, this.TargetPosition);
@@ -290,5 +292,18 @@ export class Curtain {
 
     this.doCurtainUpdate.next();
     callback(null);
+  }
+
+  public setMinMax() {
+    if (this.platform.config.options?.curtain?.set_min) {
+      if (this.CurrentPosition < this.platform.config.options?.curtain?.set_min) {
+        this.CurrentPosition = 0;
+      }
+    }
+    if (this.platform.config.options?.curtain?.set_max) {
+      if (this.CurrentPosition > this.platform.config.options?.curtain?.set_max) {
+        this.CurrentPosition = 100;
+      }
+    }
   }
 }
