@@ -75,18 +75,18 @@ export class Fan {
       });
 
     if (this.platform.config.options?.fan?.rotation_speed?.includes(device.deviceId)) {
-      if (this.platform.config.options?.fan?.set_minStep?.set_minStep_device) {
-        this.minStep = this.platform.config.options?.fan?.set_minStep?.set_minStep;
+      if (this.platform.config.options?.fan?.set_minStep) {
+        this.minStep = this.platform.config.options?.fan?.set_minStep;
       } else {
         this.minStep = 1;
       }
-      if (this.platform.config.options?.fan?.set_min?.set_min_device) {
-        this.minValue = this.platform.config.options?.fan?.set_min?.set_min;
+      if (this.platform.config.options?.fan?.set_min) {
+        this.minValue = this.platform.config.options?.fan?.set_min;
       } else {
         this.minValue = 1;
       }
-      if (this.platform.config.options?.fan?.set_max?.set_max_device) {
-        this.maxValue = this.platform.config.options?.fan?.set_max?.set_max;
+      if (this.platform.config.options?.fan?.set_max) {
+        this.maxValue = this.platform.config.options?.fan?.set_max;
       } else {
         this.maxValue = 100;
       }

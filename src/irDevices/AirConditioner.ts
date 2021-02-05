@@ -28,6 +28,7 @@ export class AirConditioner {
   static MODE_AUTO: number;
   static MODE_COOL: number;
   static MODE_HEAT: number;
+  validValues: number[];
 
 
   constructor(
@@ -87,20 +88,17 @@ export class AirConditioner {
       })
       .on(CharacteristicEventTypes.GET, this.handleCurrentTemperatureGet.bind(this));
 
-    
-    if (this.platform.config.options?.irairconditioner?.hide_automode) {
-      this.service.getCharacteristic(this.platform.Characteristic.TargetHeaterCoolerState)
-        .setProps({
-          validValues: [1, 2],
-        })
-        .on(CharacteristicEventTypes.SET, this.setMode.bind(this));
+    if (this.platform.config.options?.irair?.hide_automode) {
+      this.validValues = [1, 2];
     } else {
-      this.service.getCharacteristic(this.platform.Characteristic.TargetHeaterCoolerState)
-        .setProps({
-          validValues: [0, 1, 2],
-        })
-        .on(CharacteristicEventTypes.SET, this.setMode.bind(this));
+      this.validValues = [0, 1, 2];
     }
+    this.service.getCharacteristic(this.platform.Characteristic.TargetHeaterCoolerState)
+      .setProps({
+        validValues: this.validValues,
+      })
+      .on(CharacteristicEventTypes.SET, this.setMode.bind(this));
+    
 
     this.service.getCharacteristic(this.platform.Characteristic.CurrentHeaterCoolerState)
       .on(CharacteristicEventTypes.GET, this.getCurrentHeaterCoolerState.bind(this));  

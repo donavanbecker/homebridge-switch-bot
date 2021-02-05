@@ -123,22 +123,18 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
         this.config.options.curtain.set_max;
       }
 
-      // Curtain Config Options
+      // Fan Config Options
       if (this.config.options?.fan) {
         this.config.options.fan.swing_mode;
         this.config.options.fan.rotation_speed;
-        if (this.config.options.fan.set_minStep) {
-          this.config.options.fan.set_minStep.set_minStep_device; //For Potential Future Use
-          this.config.options.fan.set_minStep.set_minStep;
-        }
-        if (this.config.options.fan.set_min) {
-          this.config.options.fan.set_min.set_min_device; //For Potential Future Use
-          this.config.options.fan.set_min.set_min;
-        }
-        if (this.config.options.fan.set_max) {
-          this.config.options.fan.set_max.set_max_device; //For Potential Future Use
-          this.config.options.fan.set_max.set_max;
-        }
+        this.config.options.fan.set_minStep;
+        this.config.options.fan.set_min;
+        this.config.options.fan.set_max;
+      }
+
+      // AirConditioner Config Options
+      if (this.config.options?.irair) {
+        this.config.options.irair.hide_automode;
       }
 
       if (this.config.options!.refreshRate! < 120) {

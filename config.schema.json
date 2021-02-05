@@ -133,7 +133,7 @@
               }
             }
           },
-          "irairconditioner": {
+          "irair": {
             "type": "object",
             "properties": {
               "hide_automode": {
@@ -318,9 +318,9 @@
                         }
                       ]
                     },
-                    "options.fan.set_minStep.set_minStep",
-                    "options.fan.set_min.set_min",
-                    "options.fan.set_max.set_max"
+                    "options.fan.set_minStep",
+                    "options.fan.set_min",
+                    "options.fan.set_max"
                   ]
                 },
                 {
@@ -358,7 +358,7 @@
               "expandable": true,
               "expanded": false,
               "items": [
-                "options.irairconditioner.hide_automode"
+                "options.irair.hide_automode"
               ]
             }
           ]

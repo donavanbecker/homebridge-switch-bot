@@ -19,7 +19,7 @@ export type options = {
   humidifier?: humidifier;
   curtain?: curtain;
   fan?: irfan;
-  irairconditioner?: irairconditioner;
+  irair?: irair;
 };
 
 export type meter = {
@@ -46,27 +46,30 @@ export type curtain = {
 export type irfan = {
   swing_mode?: string[];
   rotation_speed?: string[];
-  set_max?: set_max;
-  set_min?: set_min;
-  set_minStep?: set_minStep;
+  set_minStep?: number; //set_minStep
+  set_max?: number; //set_max
+  set_min?: number; //set_min
 };
 
-export type set_max = {
-  set_max_device?: string[]; //For Potential Future Use
-  set_max?: number;
-};
-
-export type set_min = {
-  set_min_device?: string[]; //For Potential Future Use
-  set_min?: number;
-};
-
+//For Potential Future Use
 export type set_minStep = {
-  set_minStep_device?: string[]; //For Potential Future Use
+  set_minStep_device?: string[]; 
   set_minStep?: number;
 };
 
-export type irairconditioner = {
+//For Potential Future Use
+export type set_max = {
+  set_max_device?: string[]; 
+  set_max?: number;
+};
+
+//For Potential Future Use
+export type set_min = {
+  set_min_device?: string[]; 
+  set_min?: number;
+};
+
+export type irair = {
   hide_automode?: boolean;
 };
 
