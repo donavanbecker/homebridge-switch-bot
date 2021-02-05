@@ -24,6 +24,7 @@ export class Curtain {
     public device: device,
   ) {
     // default placeholders
+    this.setMinMax();
     this.CurrentPosition = 0;
     this.TargetPosition = 0;
     this.PositionState = this.platform.Characteristic.PositionState.STOPPED;
@@ -113,6 +114,7 @@ export class Curtain {
         } catch (e) {
           this.platform.log.error(JSON.stringify(e.message));
           this.platform.log.debug('Curtain %s -', this.accessory.displayName, JSON.stringify(e));
+          this.apiError(e);
         }
         this.curtainUpdateInProgress = false;
       });
@@ -206,6 +208,7 @@ export class Curtain {
         JSON.stringify(e.message),
         this.platform.log.debug('Curtain %s -', this.accessory.displayName, JSON.stringify(e)),
       );
+      this.apiError(e);
     }
   }
 
@@ -307,5 +310,11 @@ export class Curtain {
         this.CurrentPosition = 100;
       }
     }
+  }
+
+  public apiError(e: any) {
+    this.service.updateCharacteristic(this.platform.Characteristic.CurrentPosition, e);
+    this.service.updateCharacteristic(this.platform.Characteristic.PositionState, e);
+    this.service.updateCharacteristic(this.platform.Characteristic.TargetPosition, e);
   }
 }

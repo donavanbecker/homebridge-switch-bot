@@ -137,6 +137,7 @@ export class Humidifier {
         } catch (e) {
           this.platform.log.error(JSON.stringify(e.message));
           this.platform.log.debug('Humidifier %s -', this.accessory.displayName, JSON.stringify(e));
+          this.apiError(e);
         }
         this.humidifierUpdateInProgress = false;
       });
@@ -258,6 +259,7 @@ export class Humidifier {
         JSON.stringify(e.message),
         this.platform.log.debug('Humidifier %s -', this.accessory.displayName, JSON.stringify(e)),
       );
+      this.apiError(e);
     }
   }
 
@@ -478,5 +480,16 @@ export class Humidifier {
     }, 100);
 
     callback(null);
+  }
+
+  public apiError(e: any) {
+    this.service.updateCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, e);
+    this.service.updateCharacteristic(this.platform.Characteristic.WaterLevel, e);
+    this.service.updateCharacteristic(this.platform.Characteristic.CurrentHumidifierDehumidifierState, e);
+    this.service.updateCharacteristic(this.platform.Characteristic.TargetHumidifierDehumidifierState, e);
+    this.service.updateCharacteristic(this.platform.Characteristic.Active, e);
+    this.service.updateCharacteristic(this.platform.Characteristic.RelativeHumidityHumidifierThreshold, e);
+    this.service.updateCharacteristic(this.platform.Characteristic.LockPhysicalControls, e);
+    this.temperatureservice.updateCharacteristic(this.platform.Characteristic.CurrentTemperature, e);
   }
 }

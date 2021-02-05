@@ -133,20 +133,29 @@ export class Light {
   }
 
   public async pushChanges(payload: any) {
-    this.platform.log.info(
-      'Sending request for',
-      this.accessory.displayName,
-      'to SwitchBot API. command:',
-      payload.command,
-      'parameter:',
-      payload.parameter,
-      'commandType:',
-      payload.commandType,
-    );
-    this.platform.log.debug('Light %s pushChanges -', this.accessory.displayName, JSON.stringify(payload));
+    try {
+      this.platform.log.info(
+        'Sending request for',
+        this.accessory.displayName,
+        'to SwitchBot API. command:',
+        payload.command,
+        'parameter:',
+        payload.parameter,
+        'commandType:',
+        payload.commandType,
+      );
+      this.platform.log.debug('Light %s pushChanges -', this.accessory.displayName, JSON.stringify(payload));
 
-    // Make the API request
-    const push = await this.platform.axios.post(`${DeviceURL}/${this.device.deviceId}/commands`, payload);
-    this.platform.log.debug('Light %s Changes pushed -', this.accessory.displayName, push.data);
+      // Make the API request
+      const push = await this.platform.axios.post(`${DeviceURL}/${this.device.deviceId}/commands`, payload);
+      this.platform.log.debug('Light %s Changes pushed -', this.accessory.displayName, push.data);
+    } catch (e) {
+      this.apiError(e);
+    }
+  }
+
+  public apiError(e: any) {
+    this.service.updateCharacteristic(this.platform.Characteristic.On, e);
+    this.service.updateCharacteristic(this.platform.Characteristic.Active, e);
   }
 }

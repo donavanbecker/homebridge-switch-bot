@@ -167,6 +167,7 @@ export class Meter {
         JSON.stringify(e.message),
         this.platform.log.debug('Meter %s -', this.accessory.displayName, JSON.stringify(e)),
       );
+      this.apiError(e);
     }
   }
 
@@ -184,5 +185,12 @@ export class Meter {
       this.platform.Characteristic.CurrentTemperature,
       this.CurrentTemperature,
     );
+  }
+
+  public apiError(e: any) {
+    this.service.updateCharacteristic(this.platform.Characteristic.StatusLowBattery, e);
+    this.service.updateCharacteristic(this.platform.Characteristic.BatteryLevel, e);
+    this.humidityservice.updateCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, e);
+    this.temperatureservice.updateCharacteristic(this.platform.Characteristic.CurrentTemperature, e);
   }
 }

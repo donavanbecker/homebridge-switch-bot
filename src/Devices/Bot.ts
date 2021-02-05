@@ -93,6 +93,7 @@ export class Bot {
         } catch (e) {
           this.platform.log.error(JSON.stringify(e.message));
           this.platform.log.debug('Bot %s -', this.accessory.displayName, JSON.stringify(e));
+          this.apiError(e);
         }
         this.botUpdateInProgress = false;
       });
@@ -134,6 +135,7 @@ export class Bot {
         JSON.stringify(e.message),
         this.platform.log.debug('Bot %s -', this.accessory.displayName, JSON.stringify(e)),
       );
+      this.apiError(e);
     }
   }
 
@@ -201,5 +203,10 @@ export class Bot {
     this.On = value;
     this.service.updateCharacteristic(this.platform.Characteristic.On, this.On);
     callback(null);
+  }
+
+  public apiError(e: any) {
+    this.service.updateCharacteristic(this.platform.Characteristic.On, e);
+    this.service.updateCharacteristic(this.platform.Characteristic.OutletInUse, e);
   }
 }
