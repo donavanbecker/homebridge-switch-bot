@@ -87,8 +87,20 @@ export class AirConditioner {
       })
       .on(CharacteristicEventTypes.GET, this.handleCurrentTemperatureGet.bind(this));
 
-    this.service.getCharacteristic(this.platform.Characteristic.TargetHeaterCoolerState)
-      .on(CharacteristicEventTypes.SET, this.setMode.bind(this));
+    
+    if (this.platform.config.options?.irairconditioner?.hide_automode) {
+      this.service.getCharacteristic(this.platform.Characteristic.TargetHeaterCoolerState)
+        .setProps({
+          validValues: [1, 2],
+        })
+        .on(CharacteristicEventTypes.SET, this.setMode.bind(this));
+    } else {
+      this.service.getCharacteristic(this.platform.Characteristic.TargetHeaterCoolerState)
+        .setProps({
+          validValues: [0, 1, 2],
+        })
+        .on(CharacteristicEventTypes.SET, this.setMode.bind(this));
+    }
 
     this.service.getCharacteristic(this.platform.Characteristic.CurrentHeaterCoolerState)
       .on(CharacteristicEventTypes.GET, this.getCurrentHeaterCoolerState.bind(this));  
@@ -256,21 +268,25 @@ export class AirConditioner {
   }
 
   public async pushChanges(payload: any) {
-    this.platform.log.info(
-      'Sending request for',
-      this.accessory.displayName,
-      'to SwitchBot API. command:',
-      payload.command,
-      'parameter:',
-      payload.parameter,
-      'commandType:',
-      payload.commandType,
-    );
-    this.platform.log.debug('%s %s pushChanges -', this.device.remoteType, this.accessory.displayName, JSON.stringify(payload));
+    try {
+      this.platform.log.info(
+        'Sending request for',
+        this.accessory.displayName,
+        'to SwitchBot API. command:',
+        payload.command,
+        'parameter:',
+        payload.parameter,
+        'commandType:',
+        payload.commandType,
+      );
+      this.platform.log.debug('%s %s pushChanges -', this.device.remoteType, this.accessory.displayName, JSON.stringify(payload));
 
-    // Make the API request
-    const push = await this.platform.axios.post(`${DeviceURL}/${this.device.deviceId}/commands`, payload);
-    this.platform.log.debug('%s %s Changes pushed -', this.device.remoteType, this.accessory.displayName, push.data);
+      // Make the API request
+      const push = await this.platform.axios.post(`${DeviceURL}/${this.device.deviceId}/commands`, payload);
+      this.platform.log.debug('%s %s Changes pushed -', this.device.remoteType, this.accessory.displayName, push.data);
+    } catch (e) {
+      this.apiError(e);
+    }
   }
 
   public apiError(e: any) {

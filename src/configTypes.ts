@@ -19,6 +19,7 @@ export type options = {
   humidifier?: humidifier;
   curtain?: curtain;
   fan?: irfan;
+  irairconditioner?: irairconditioner;
 };
 
 export type meter = {
@@ -49,6 +50,7 @@ export type irfan = {
   set_min?: set_min;
   set_minStep?: set_minStep;
 };
+
 export type set_max = {
   set_max_device?: string[]; //For Potential Future Use
   set_max?: number;
@@ -62,6 +64,10 @@ export type set_min = {
 export type set_minStep = {
   set_minStep_device?: string[]; //For Potential Future Use
   set_minStep?: number;
+};
+
+export type irairconditioner = {
+  hide_automode?: boolean;
 };
 
 export interface AxiosRequestConfig {

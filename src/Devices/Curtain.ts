@@ -122,6 +122,7 @@ export class Curtain {
 
   parseStatus() {
     // CurrentPosition
+    this.setMinMax();
     this.CurrentPosition = 100 - this.deviceStatus.body.slidePosition;
     this.setMinMax();
     this.platform.log.debug(
@@ -198,7 +199,7 @@ export class Curtain {
           this.accessory.displayName,
           JSON.stringify(this.deviceStatus),
         );
-
+        this.setMinMax();
         this.parseStatus();
         this.updateHomeKitCharacteristics();
       }
@@ -213,30 +214,34 @@ export class Curtain {
   }
 
   async pushChanges() {
-    if (this.TargetPosition !== this.CurrentPosition) {
-      this.platform.log.debug(`Pushing ${this.TargetPosition}`);
-      const adjustedTargetPosition = 100 - this.TargetPosition;
-      const payload = {
-        commandType: 'command',
-        command: 'setPosition',
-        parameter: `0,ff,${adjustedTargetPosition}`,
-      } as any;
+    try {
+      if (this.TargetPosition !== this.CurrentPosition) {
+        this.platform.log.debug(`Pushing ${this.TargetPosition}`);
+        const adjustedTargetPosition = 100 - this.TargetPosition;
+        const payload = {
+          commandType: 'command',
+          command: 'setPosition',
+          parameter: `0,ff,${adjustedTargetPosition}`,
+        } as any;
 
-      this.platform.log.info(
-        'Sending request for',
-        this.accessory.displayName,
-        'to SwitchBot API. command:',
-        payload.command,
-        'parameter:',
-        payload.parameter,
-        'commandType:',
-        payload.commandType,
-      );
-      this.platform.log.debug('Curtain %s pushChanges -', this.accessory.displayName, JSON.stringify(payload));
+        this.platform.log.info(
+          'Sending request for',
+          this.accessory.displayName,
+          'to SwitchBot API. command:',
+          payload.command,
+          'parameter:',
+          payload.parameter,
+          'commandType:',
+          payload.commandType,
+        );
+        this.platform.log.debug('Curtain %s pushChanges -', this.accessory.displayName, JSON.stringify(payload));
 
-      // Make the API request
-      const push = await this.platform.axios.post(`${DeviceURL}/${this.device.deviceId}/commands`, payload);
-      this.platform.log.debug('Curtain %s Changes pushed -', this.accessory.displayName, push.data);
+        // Make the API request
+        const push = await this.platform.axios.post(`${DeviceURL}/${this.device.deviceId}/commands`, payload);
+        this.platform.log.debug('Curtain %s Changes pushed -', this.accessory.displayName, push.data);
+      }
+    } catch (e) {
+      this.apiError(e);
     }
   }
 
@@ -268,12 +273,15 @@ export class Curtain {
     if (value > this.CurrentPosition) {
       this.PositionState = this.platform.Characteristic.PositionState.INCREASING;
       this.setNewTarget = true;
+      this.setMinMax();
     } else if (value < this.CurrentPosition) {
       this.PositionState = this.platform.Characteristic.PositionState.DECREASING;
       this.setNewTarget = true;
+      this.setMinMax();
     } else {
       this.PositionState = this.platform.Characteristic.PositionState.STOPPED;
       this.setNewTarget = false;
+      this.setMinMax();
     }
     this.service.setCharacteristic(this.platform.Characteristic.PositionState, this.PositionState);
 

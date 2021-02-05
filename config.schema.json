@@ -115,6 +115,30 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "set_minStep": {
+                "title": "Set Min Step",
+                "type": "number",
+                "placeholder": "1"
+              },
+              "set_min": {
+                "title": "Set Min",
+                "type": "number",
+                "placeholder": "0"
+              },
+              "set_max": {
+                "title": "Set Max",
+                "type": "number",
+                "placeholder": "100"
+              }
+            }
+          },
+          "irairconditioner": {
+            "type": "object",
+            "properties": {
+              "hide_automode": {
+                "title": "Hide Auto Mode on IR Air Conditioners",
+                "type": "boolean"
               }
             }
           }
@@ -294,63 +318,9 @@
                         }
                       ]
                     },
-                    {
-                      "key": "options.fan.set_min.set_min",
-                      "notitle": false,
-                      "add": "Add Another Fan Device ID to Set Min Rotation Speed on Device",
-                      "type": "array",
-                      "items": [
-                        {
-                          "type": "div",
-                          "displayFlex": true,
-                          "flex-direction": "row",
-                          "items": [
-                            {
-                              "key": "options.fan.set_max.set_max",
-                              "placeholder": "100"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "key": "options.fan.set_max.set_max",
-                      "notitle": false,
-                      "add": "Add Another Fan Device ID to Set Max Rotation Speed on Device",
-                      "type": "array",
-                      "items": [
-                        {
-                          "type": "div",
-                          "displayFlex": true,
-                          "flex-direction": "row",
-                          "items": [
-                            {
-                              "key": "options.fan.set_max.set_max_device[]",
-                              "placeholder": "100"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "key": "options.fan.set_minStep.set_minStep",
-                      "notitle": false,
-                      "add": "Add Another Fan Device ID to Min Step for Rotation on Device",
-                      "type": "array",
-                      "items": [
-                        {
-                          "type": "div",
-                          "displayFlex": true,
-                          "flex-direction": "row",
-                          "items": [
-                            {
-                              "key": "options.fan.set_minStep.set_min",
-                              "placeholder": "1"
-                            }
-                          ]
-                        }
-                      ]
-                    }
+                    "options.fan.set_minStep.set_minStep",
+                    "options.fan.set_min.set_min",
+                    "options.fan.set_max.set_max"
                   ]
                 },
                 {
@@ -380,6 +350,15 @@
                     }
                   ]
                 }
+              ]
+            },
+            {
+              "type": "fieldset",
+              "title": "Air Conditioner Settings",
+              "expandable": true,
+              "expanded": false,
+              "items": [
+                "options.irairconditioner.hide_automode"
               ]
             }
           ]
