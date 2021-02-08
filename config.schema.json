@@ -68,6 +68,11 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "switch": {
+                "title": "Display as Switch",
+                "type": "boolean",
+                "description": "This allows you to display bot as a switch."
               }
             }
           },
@@ -269,7 +274,8 @@
                       ]
                     }
                   ]
-                }
+                },
+                "options.bot.switch"
               ]
             },
             {

@@ -106,6 +106,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
       // Bot Config Options
       if (this.config.options?.bot) {
+        this.config.options.bot.switch;
         this.config.options.bot.device_press;
         this.config.options.bot.device_switch;
       }

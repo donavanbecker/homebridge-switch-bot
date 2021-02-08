@@ -29,6 +29,7 @@ export type meter = {
 };
 
 export type bot = {
+  switch: boolean;
   device_switch: string[];
   device_press: string[];
 };

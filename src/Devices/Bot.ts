@@ -27,7 +27,9 @@ export class Bot {
   ) {
     // default placeholders
     this.On = false;
-    this.OutletInUse = true;
+    if (!this.platform.config.options?.bot?.switch) {
+      this.OutletInUse = true;
+    }
 
     // this is subject we use to track when we need to POST changes to the SwitchBot API
     this.doBotUpdate = new Subject();
@@ -45,10 +47,17 @@ export class Bot {
 
     // get the LightBulb service if it exists, otherwise create a new LightBulb service
     // you can create multiple services for each accessory
-    (this.service =
+    if (this.platform.config.options?.bot?.switch) {
+      (this.service =
+      this.accessory.getService(this.platform.Service.Switch) ||
+      this.accessory.addService(this.platform.Service.Switch)),
+      `${this.device.deviceName} ${this.device.deviceType}`;
+    } else {
+      (this.service =
       this.accessory.getService(this.platform.Service.Outlet) ||
       this.accessory.addService(this.platform.Service.Outlet)),
-    `${this.device.deviceName} ${this.device.deviceType}`;
+      `${this.device.deviceName} ${this.device.deviceType}`;
+    }
 
     // To avoid "Cannot add a Service with the same UUID another Service without also defining a unique 'subtype' property." error,
     // when creating multiple services of the same type, you need to use the following syntax to specify a name and subtype id:
@@ -103,11 +112,18 @@ export class Bot {
    * Parse the device status from the SwitchBot api
    */
   parseStatus() {
-    this.OutletInUse = true;
-    if (this.platform.config.options?.bot?.device_press?.includes(this.device.deviceId)) {
-      this.On = false;
+    if (!this.platform.config.options?.bot?.switch) {
+      this.OutletInUse = true;
+      if (this.platform.config.options?.bot?.device_press?.includes(this.device.deviceId)) {
+        this.On = false;
+      }
+      this.platform.log.debug('Bot %s OutletInUse: %s On: %s', this.accessory.displayName, this.OutletInUse, this.On);
+    } else {
+      if (this.platform.config.options?.bot?.device_press?.includes(this.device.deviceId)) {
+        this.On = false;
+      }
+      this.platform.log.debug('Bot %s On: %s', this.accessory.displayName, this.On);
     }
-    this.platform.log.debug('Bot %s OutletInUse: %s On: %s', this.accessory.displayName, this.OutletInUse, this.On);
   }
 
   /**
@@ -191,7 +207,9 @@ export class Bot {
    */
   updateHomeKitCharacteristics() {
     this.service.updateCharacteristic(this.platform.Characteristic.On, this.On);
-    this.service.updateCharacteristic(this.platform.Characteristic.OutletInUse, this.OutletInUse);
+    if (!this.platform.config.options?.bot?.switch) {
+      this.service.updateCharacteristic(this.platform.Characteristic.OutletInUse, this.OutletInUse);
+    }
   }
 
   /**
@@ -207,6 +225,8 @@ export class Bot {
 
   public apiError(e: any) {
     this.service.updateCharacteristic(this.platform.Characteristic.On, e);
-    this.service.updateCharacteristic(this.platform.Characteristic.OutletInUse, e);
+    if (!this.platform.config.options?.bot?.switch) {
+      this.service.updateCharacteristic(this.platform.Characteristic.OutletInUse, e);
+    }
   }
 }
