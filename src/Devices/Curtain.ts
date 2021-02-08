@@ -33,8 +33,8 @@ export class Curtain {
 
     // this is subject we use to track when we need to POST changes to the SwitchBot API
     this.doCurtainUpdate = new Queue(this.pushChanges.bind(this), {
-      afterProcessDelay: (this.platform.config.options!.pushRate! * 1000), 
       batchDelay: 2000,
+      batchDelayTimeout: (this.platform.config.options!.pushRate! * 1000), 
     });
     this.curtainUpdateInProgress = false;
     this.setNewTarget = false;
