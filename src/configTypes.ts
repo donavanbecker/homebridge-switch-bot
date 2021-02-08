@@ -13,6 +13,7 @@ export type credentials = {
 
 export type options = {
   refreshRate?: number;
+  pushRate?: number;
   hide_device: string[];
   bot?: bot;
   meter?: meter;

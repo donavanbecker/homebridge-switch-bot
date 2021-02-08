@@ -78,8 +78,14 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
   configureAccessory(accessory: PlatformAccessory) {
     this.log.info('Loading accessory from cache:', accessory.displayName);
 
+    //accessory.context.timeout = this.apiError(accessory);
+
     // add the restored accessory to the accessories cache so we can track if it has already been registered
     this.accessories.push(accessory);
+  }
+
+  apiError(accessory: PlatformAccessory) {
+    this.log.debug('API Error:', accessory.displayName);
   }
 
   /**
@@ -144,6 +150,11 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       if (!this.config.options.refreshRate) {
         this.config.options!.refreshRate! = 300;
         this.log.warn('Using Default Refresh Rate.');
+      }
+
+      if (!this.config.options.pushRate) {
+        this.config.options!.pushRate! = 1;
+        this.log.warn('Using Default Push Rate.');
       }
     }
 

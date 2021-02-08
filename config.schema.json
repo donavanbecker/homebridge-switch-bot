@@ -176,6 +176,14 @@
           "notitle": true
         },
         {
+          "type": "help",
+          "helpvalue": "<h5>Push Rate</h5><em class='primary-text'>Push Rate indicates the number of seconds between pushes to SwitchBot API, Currently only for Curtains.</em>"
+        },
+        {
+          "key": "options.pushRate",
+          "notitle": true
+        },
+        {
           "type": "fieldset",
           "title": "Hidden Devices",
           "expandable": true,

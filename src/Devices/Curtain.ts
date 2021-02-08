@@ -1,7 +1,7 @@
 import { Service, PlatformAccessory, CharacteristicEventTypes } from 'homebridge';
 import { SwitchBotPlatform } from '../platform';
-import { interval, Subject } from 'rxjs';
-import { debounceTime, skipWhile, tap } from 'rxjs/operators';
+import { interval } from 'rxjs';
+import { skipWhile } from 'rxjs/operators';
 import { DeviceURL } from '../settings';
 import { device, deviceStatusResponse } from '../configTypes';
 import Queue = require('better-queue');
@@ -33,8 +33,9 @@ export class Curtain {
     this.PositionState = this.platform.Characteristic.PositionState.STOPPED;
 
     // this is subject we use to track when we need to POST changes to the SwitchBot API
-    // this.doCurtainUpdate = new Subject();
-    this.doCurtainUpdate = new Queue(this.pushChanges.bind(this));
+    this.doCurtainUpdate = new Queue(this.pushChanges.bind(this), {
+      afterProcessDelay: (this.platform.config.options!.pushRate! * 1000), 
+    });
     this.curtainUpdateInProgress = false;
     this.setNewTarget = false;
 
@@ -102,28 +103,6 @@ export class Curtain {
         this.platform.log.debug('Refresh status when moving', this.PositionState);
         this.refreshStatus();
       });
-
-    // Watch for Curtain change events
-    // We put in a debounce of 100ms so we don't make duplicate calls
-    /*
-    this.doCurtainUpdate
-      .pipe(
-        tap(() => {
-          this.curtainUpdateInProgress = true;
-        }),
-        debounceTime(100),
-      )
-      .subscribe(async () => {
-        try {
-          await this.pushChanges();
-        } catch (e) {
-          this.platform.log.error(JSON.stringify(e.message));
-          this.platform.log.debug('Curtain %s -', this.accessory.displayName, JSON.stringify(e));
-          this.apiError(e);
-        }
-        this.curtainUpdateInProgress = false;
-      });
-      */
   }
 
   parseStatus() {
@@ -138,21 +117,6 @@ export class Curtain {
       this.CurrentPosition,
     );
 
-    // this.platform.log.info(
-    //   'Curtain %s -',
-    //   this.accessory.displayName,
-    //   'Current position:',
-    //   this.CurrentPosition,
-    //   'target position',
-    //   this.TargetPosition,
-    //   'moving',
-    //   this.deviceStatus.body.moving,
-    //   'setNewTarget',
-    //   this.setNewTarget,
-    //   'state',
-    //   this.PositionState
-    // );
-    // PositionState
     if (this.deviceStatus.body.moving) {
       if (this.TargetPosition > this.CurrentPosition) {
         this.platform.log.debug(
@@ -223,7 +187,7 @@ export class Curtain {
     try {
       this.curtainUpdateInProgress = true;
       if (value.value !== this.CurrentPosition) {
-        this.platform.log.info(`Pushing ${value.value}`);
+        this.platform.log.debug(`Pushing ${value.value}`);
         const adjustedTargetPosition = 100 - value.value;
         const payload = {
           commandType: 'command',
@@ -245,10 +209,11 @@ export class Curtain {
 
         // Make the API request
         const push = await this.platform.axios.post(`${DeviceURL}/${this.device.deviceId}/commands`, payload);
-        this.platform.log.info('Curtain %s Changes pushed -', this.accessory.displayName, push.data);
+        this.platform.log.debug('Curtain %s Changes pushed -', this.accessory.displayName, push.data);
       }
     } catch (e) {
-      console.log('ERROR', e);
+      this.platform.log.error(JSON.stringify(e.message));
+      this.platform.log.debug('Curtain %s -', this.accessory.displayName, JSON.stringify(e));
       this.apiError(e);
     }
     this.curtainUpdateInProgress = false;
@@ -275,7 +240,7 @@ export class Curtain {
    * Handle requests to set the value of the "Target Position" characteristic
    */
   handleTargetPositionSet(value, callback) {
-    this.platform.log.info('Curtain %s - Set TargetPosition: %s', this.accessory.displayName, value);
+    this.platform.log.debug('Curtain %s - Set TargetPosition: %s', this.accessory.displayName, value);
 
     this.TargetPosition = value;
     this.service.updateCharacteristic(this.platform.Characteristic.TargetPosition, this.TargetPosition);

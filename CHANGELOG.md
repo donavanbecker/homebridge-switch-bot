@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file. This projec
 
 ### Changes
 
+- Added `pushRate` to set the amount of time inbetween pushes to API.
+  - This sets how many seconds to wait before pushing to API.
+  - Currently only for Curtains.
 - Added Error Handling, shows device as unresponsive if there is an API issues.
 - Added option to Set `minStep` for SwitchBot Humidifiers.
 - Added option to disable Auto Mode on IR Air Conditioners.
