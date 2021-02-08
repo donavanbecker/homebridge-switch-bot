@@ -185,7 +185,6 @@ export class Curtain {
 
   async pushChanges(value, callback) {
     try {
-      await this.refreshStatus();
       this.curtainUpdateInProgress = true;
       if (value.value !== this.CurrentPosition) {
         this.platform.log.debug(`Pushing ${value.value}`);
