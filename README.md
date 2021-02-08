@@ -80,6 +80,7 @@ plugin allows you to access your SwitchBot Device(s) from HomeKit with
     - Allows for On/Off Controls
 - Air Conditioners
     - Allows for On/Off, Tempeture, and Mode Controls
+    - Optional Disable Auto Mode
 - Cameras    
     - Allows for On/Off Controls
 - Vacuum Cleaners    
