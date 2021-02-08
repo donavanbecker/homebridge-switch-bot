@@ -39,6 +39,12 @@
             "placeholder": 300,
             "description": "Indicates the number of seconds between polls of SwitchBot API."
           },
+          "pushRate": {
+            "title": "Push Rate",
+            "type": "number",
+            "placeholder": 1,
+            "description": "Indicates the number of seconds between pushes to SwitchBot API."
+          },
           "hide_device": {
             "title": "Hide Device",
             "type": "array",
