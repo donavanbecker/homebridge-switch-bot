@@ -4,6 +4,7 @@ import { interval, Subject } from 'rxjs';
 import { debounceTime, skipWhile, tap } from 'rxjs/operators';
 import { DeviceURL } from '../settings';
 import { device, deviceStatusResponse } from '../configTypes';
+import Queue = require('better-queue');
 
 export class Curtain {
   private service: Service;
@@ -16,7 +17,9 @@ export class Curtain {
   setNewTargetTimer!: NodeJS.Timeout;
 
   curtainUpdateInProgress!: boolean;
-  doCurtainUpdate!: any;
+  // doCurtainUpdate!: any;
+  doCurtainUpdate: Queue;
+
 
   constructor(
     private readonly platform: SwitchBotPlatform,
@@ -30,7 +33,8 @@ export class Curtain {
     this.PositionState = this.platform.Characteristic.PositionState.STOPPED;
 
     // this is subject we use to track when we need to POST changes to the SwitchBot API
-    this.doCurtainUpdate = new Subject();
+    // this.doCurtainUpdate = new Subject();
+    this.doCurtainUpdate = new Queue(this.pushChanges.bind(this));
     this.curtainUpdateInProgress = false;
     this.setNewTarget = false;
 
@@ -101,6 +105,7 @@ export class Curtain {
 
     // Watch for Curtain change events
     // We put in a debounce of 100ms so we don't make duplicate calls
+    /*
     this.doCurtainUpdate
       .pipe(
         tap(() => {
@@ -118,6 +123,7 @@ export class Curtain {
         }
         this.curtainUpdateInProgress = false;
       });
+      */
   }
 
   parseStatus() {
@@ -213,11 +219,12 @@ export class Curtain {
     }
   }
 
-  async pushChanges() {
+  async pushChanges(value, callback) {
     try {
-      if (this.TargetPosition !== this.CurrentPosition) {
-        this.platform.log.debug(`Pushing ${this.TargetPosition}`);
-        const adjustedTargetPosition = 100 - this.TargetPosition;
+      this.curtainUpdateInProgress = true;
+      if (value.value !== this.CurrentPosition) {
+        this.platform.log.info(`Pushing ${value.value}`);
+        const adjustedTargetPosition = 100 - value.value;
         const payload = {
           commandType: 'command',
           command: 'setPosition',
@@ -238,11 +245,14 @@ export class Curtain {
 
         // Make the API request
         const push = await this.platform.axios.post(`${DeviceURL}/${this.device.deviceId}/commands`, payload);
-        this.platform.log.debug('Curtain %s Changes pushed -', this.accessory.displayName, push.data);
+        this.platform.log.info('Curtain %s Changes pushed -', this.accessory.displayName, push.data);
       }
     } catch (e) {
+      console.log('ERROR', e);
       this.apiError(e);
     }
+    this.curtainUpdateInProgress = false;
+    callback();
   }
 
   updateHomeKitCharacteristics() {
@@ -265,7 +275,7 @@ export class Curtain {
    * Handle requests to set the value of the "Target Position" characteristic
    */
   handleTargetPositionSet(value, callback) {
-    this.platform.log.debug('Curtain %s - Set TargetPosition: %s', this.accessory.displayName, value);
+    this.platform.log.info('Curtain %s - Set TargetPosition: %s', this.accessory.displayName, value);
 
     this.TargetPosition = value;
     this.service.updateCharacteristic(this.platform.Characteristic.TargetPosition, this.TargetPosition);
@@ -303,7 +313,7 @@ export class Curtain {
       }, 10000);
     }
 
-    this.doCurtainUpdate.next();
+    this.doCurtainUpdate.push({ id: 'curtain', value: value });
     callback(null);
   }
 
