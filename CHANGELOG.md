@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. This project uses [Semantic Versioning](https://semver.org/)
 
+## [Version 2.4.0](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v2.3.0...v2.4.0) (2021-02-09)
+
+### Changes
+
+- Added options to hide temperature sensor or humidity sensor on SwitchBot Meter.
+- Added options to convert temperature to Celsius or Fahrenheit of SwitchBot Meter.
+- Removed LockPhysicalControls Characteristic since there is not a way to control it with the SwitchBot API.
+
 ## [Version 2.3.0](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v2.2.0...v2.3.0) (2021-02-08)
 
 ### Changes

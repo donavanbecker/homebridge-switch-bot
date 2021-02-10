@@ -76,6 +76,38 @@
               }
             }
           },
+          "meter": {
+            "type": "object",
+            "properties": {
+              "hide_temperature": {
+                "title": "Hide Meter's Temperature Sensor",
+                "type": "boolean"
+              },
+              "hide_humidity": {
+                "title": "Hide Meter's Humidity Sensor",
+                "type": "boolean"
+              },
+              "unit": {
+                "title": "Convert your Meter's Temperature to Celsius or Fahrenheit",
+                "type": "number",
+                "oneOf": [
+                  {
+                    "title": "Celsius",
+                    "enum": [
+                      0
+                    ]
+                  },
+                  {
+                    "title": "Fahrenheit",
+                    "enum": [
+                      1
+                    ]
+                  }
+                ],
+                "required": false
+              }
+            }
+          },
           "humidifier": {
             "type": "object",
             "properties": {
@@ -276,6 +308,17 @@
                   ]
                 },
                 "options.bot.switch"
+              ]
+            },
+            {
+              "type": "fieldset",
+              "title": "Meter Settings",
+              "expandable": true,
+              "expanded": false,
+              "items": [
+                "options.meter.hide_temperature",
+                "options.meter.hide_humidity",
+                "options.meter.unit"
               ]
             },
             {

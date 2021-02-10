@@ -19,7 +19,6 @@ export class Humidifier {
   TargetHumidifierDehumidifierState!: number;
   CurrentHumidifierDehumidifierState!: number;
   RelativeHumidityHumidifierThreshold!: number;
-  LockPhysicalControls!: number;
   Active!: number;
   WaterLevel!: number;
   deviceStatus!: deviceStatusResponse;
@@ -39,7 +38,6 @@ export class Humidifier {
     this.CurrentHumidifierDehumidifierState = this.platform.Characteristic.CurrentHumidifierDehumidifierState.INACTIVE;
     this.Active = this.platform.Characteristic.Active.ACTIVE;
     this.RelativeHumidityHumidifierThreshold = 100;
-    this.LockPhysicalControls = this.platform.Characteristic.LockPhysicalControls.CONTROL_LOCK_DISABLED;
     this.CurrentTemperature = 100;
     this.WaterLevel = 100;
 
@@ -103,8 +101,7 @@ export class Humidifier {
       .on(CharacteristicEventTypes.SET, this.handleRelativeHumidityHumidifierThresholdSet.bind(this));
 
     this.service
-      .getCharacteristic(this.platform.Characteristic.LockPhysicalControls)
-      .on(CharacteristicEventTypes.SET, this.handleLockPhysicalControlsSet.bind(this));
+      .setCharacteristic(this.platform.Characteristic.LockPhysicalControls, 0);
 
     // create a new Temperature Sensor service
     (this.temperatureservice =
@@ -211,18 +208,6 @@ export class Humidifier {
       this.accessory.displayName,
       'Device is Currently: ',
       this.CurrentHumidifierDehumidifierState,
-    );
-    // Lock Physical Controls
-    if (this.deviceStatus.body.childLock) {
-      this.LockPhysicalControls = this.platform.Characteristic.LockPhysicalControls.CONTROL_LOCK_ENABLED;
-    } else {
-      this.LockPhysicalControls = this.platform.Characteristic.LockPhysicalControls.CONTROL_LOCK_DISABLED;
-    }
-    this.platform.log.debug(
-      'Humidifier %s LockPhysicalControls -',
-      this.accessory.displayName,
-      'Device is Currently: ',
-      this.LockPhysicalControls,
     );
     // Current Temperature
     this.CurrentTemperature = this.deviceStatus.body.temperature;
@@ -407,7 +392,6 @@ export class Humidifier {
       this.platform.Characteristic.RelativeHumidityHumidifierThreshold,
       this.RelativeHumidityHumidifierThreshold,
     );
-    this.service.updateCharacteristic(this.platform.Characteristic.LockPhysicalControls, this.LockPhysicalControls);
     this.temperatureservice.updateCharacteristic(
       this.platform.Characteristic.CurrentTemperature,
       this.CurrentTemperature,
@@ -472,18 +456,6 @@ export class Humidifier {
     callback(null);
   }
 
-  handleLockPhysicalControlsSet(value, callback) {
-    this.platform.log.debug('Humidifier %s -', this.accessory.displayName, `Set LockPhysicalControls: ${value}`);
-    this.platform.log.warn('Changing the Child Lock from HomeKit is not supported.');
-
-    // change the child lock back to the one the SwitchBot API said the humidifier was set to.
-    setTimeout(() => {
-      this.service.updateCharacteristic(this.platform.Characteristic.LockPhysicalControls, this.LockPhysicalControls);
-    }, 100);
-
-    callback(null);
-  }
-
   public apiError(e: any) {
     this.service.updateCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, e);
     this.service.updateCharacteristic(this.platform.Characteristic.WaterLevel, e);
@@ -491,7 +463,6 @@ export class Humidifier {
     this.service.updateCharacteristic(this.platform.Characteristic.TargetHumidifierDehumidifierState, e);
     this.service.updateCharacteristic(this.platform.Characteristic.Active, e);
     this.service.updateCharacteristic(this.platform.Characteristic.RelativeHumidityHumidifierThreshold, e);
-    this.service.updateCharacteristic(this.platform.Characteristic.LockPhysicalControls, e);
     this.temperatureservice.updateCharacteristic(this.platform.Characteristic.CurrentTemperature, e);
   }
 }

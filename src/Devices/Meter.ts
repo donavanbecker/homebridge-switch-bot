@@ -1,4 +1,4 @@
-import { Service, PlatformAccessory } from 'homebridge';
+import { Service, PlatformAccessory, CharacteristicEventTypes, CharacteristicGetCallback } from 'homebridge';
 import { SwitchBotPlatform } from '../platform';
 import { interval, Subject } from 'rxjs';
 import { debounceTime, skipWhile, tap } from 'rxjs/operators';
@@ -12,8 +12,8 @@ import { device, deviceStatusResponse } from '../configTypes';
  */
 export class Meter {
   private service: Service;
-  temperatureservice: Service;
-  humidityservice: Service;
+  temperatureservice?: Service;
+  humidityservice?: Service;
 
   CurrentRelativeHumidity!: number;
   CurrentTemperature!: number;
@@ -24,6 +24,7 @@ export class Meter {
   WaterLevel!: number;
   deviceStatus!: deviceStatusResponse;
   humidity!: number;
+  TemperatureUnits!: number;
 
   meterUpdateInProgress!: boolean;
   doMeterUpdate!: any;
@@ -35,7 +36,7 @@ export class Meter {
   ) {
     // default placeholders
     this.BatteryLevel = 100;
-    this.ChargingState;
+    this.ChargingState = 2;
     this.StatusLowBattery = this.platform.Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW;
     this.CurrentRelativeHumidity = 100;
     this.CurrentTemperature = 100;
@@ -78,18 +79,37 @@ export class Meter {
     // create handlers for required characteristics
     this.service.setCharacteristic(this.platform.Characteristic.ChargingState, 2);
 
-    // create a new Humidity Sensor service
-    (this.humidityservice =
-      this.accessory.getService(this.platform.Service.HumiditySensor) ||
-      this.accessory.addService(this.platform.Service.HumiditySensor)),
-    `${this.device.deviceName} ${this.device.deviceType} Humidity Sensor`;
+    // Humidity Sensor Service
+    this.humidityservice = accessory.getService(this.platform.Service.HumiditySensor);
+    if (!this.humidityservice && !this.platform.config.options?.meter?.hide_humidity) {
+      this.humidityservice = accessory.addService(
+        this.platform.Service.HumiditySensor,
+        `${this.device.deviceName} ${this.device.deviceType} Humidity Sensor`,
+      );
+    } else if (this.humidityservice && this.platform.config.options?.meter?.hide_humidity) {
+      accessory.removeService(this.humidityservice);
+    }
 
-    // create a new Temperature Sensor service
-    (this.temperatureservice =
-      this.accessory.getService(this.platform.Service.TemperatureSensor) ||
-      this.accessory.addService(this.platform.Service.TemperatureSensor)),
-    `${this.device.deviceName} ${this.device.deviceType} Temperature Sensor`;
+    this.temperatureservice = accessory.getService(this.platform.Service.TemperatureSensor);
+    if (!this.temperatureservice && !this.platform.config.options?.meter?.hide_temperature) {
+      this.temperatureservice = accessory.addService(
+        this.platform.Service.TemperatureSensor,
+        `${this.device.deviceName} ${this.device.deviceType} Temperature Sensor`,
+      );
 
+      this.temperatureservice
+        .getCharacteristic(this.platform.Characteristic.CurrentTemperature)
+        .setProps({
+          minValue: -50,
+          maxValue: 212,
+          minStep: 0.1,
+        })
+        .on(CharacteristicEventTypes.GET, this.handleCurrentTemperatureGet.bind(this));
+
+    } else if (this.temperatureservice && this.platform.config.options?.meter?.hide_temperature) {
+      accessory.removeService(this.temperatureservice);
+    }
+    
     // Retrieve initial values and updateHomekit
     this.updateHomeKitCharacteristics();
 
@@ -130,15 +150,30 @@ export class Meter {
       this.StatusLowBattery = 0;
     }
     // Current Relative Humidity
-    this.CurrentRelativeHumidity = this.deviceStatus.body.humidity;
+    if (!this.platform.config.options?.meter?.hide_humidity) {
+      this.CurrentRelativeHumidity = this.deviceStatus.body.humidity;
+      this.platform.log.debug(
+        'Meter %s - Humidity: %s%',
+        this.accessory.displayName,
+        this.CurrentRelativeHumidity,
+      );
+    }
+
     // Current Temperature
-    this.CurrentTemperature = this.deviceStatus.body.temperature;
-    this.platform.log.debug(
-      'Meter %s - %s°c, %s%',
-      this.accessory.displayName,
-      this.CurrentTemperature,
-      this.CurrentRelativeHumidity,
-    );
+    if (!this.platform.config.options?.meter?.hide_temperature) {
+      if (this.platform.config.options?.meter?.unit === 1){
+        this.CurrentTemperature = this.toFahrenheit(this.deviceStatus.body.temperature);
+      } else if (this.platform.config.options?.meter?.unit === 0) {
+        this.CurrentTemperature = this.toCelsius(this.deviceStatus.body.temperature);
+      } else {
+        this.CurrentTemperature = this.deviceStatus.body.temperature;
+      }
+      this.platform.log.debug(
+        'Meter %s - Temperature: %s°c',
+        this.accessory.displayName,
+        this.CurrentTemperature,
+      );
+    }
   }
 
   /**
@@ -177,20 +212,57 @@ export class Meter {
   updateHomeKitCharacteristics() {
     this.service.updateCharacteristic(this.platform.Characteristic.StatusLowBattery, this.StatusLowBattery);
     this.service.updateCharacteristic(this.platform.Characteristic.BatteryLevel, this.BatteryLevel);
-    this.humidityservice.updateCharacteristic(
-      this.platform.Characteristic.CurrentRelativeHumidity,
-      this.CurrentRelativeHumidity,
-    );
-    this.temperatureservice.updateCharacteristic(
-      this.platform.Characteristic.CurrentTemperature,
-      this.CurrentTemperature,
-    );
+    if (!this.platform.config.options?.meter?.hide_humidity) {
+      this.humidityservice?.updateCharacteristic(
+        this.platform.Characteristic.CurrentRelativeHumidity,
+        this.CurrentRelativeHumidity,
+      );
+    }
+    if (!this.platform.config.options?.meter?.hide_temperature) {
+      this.temperatureservice?.updateCharacteristic(
+        this.platform.Characteristic.CurrentTemperature,
+        this.CurrentTemperature,
+      );
+    }
   }
 
   public apiError(e: any) {
     this.service.updateCharacteristic(this.platform.Characteristic.StatusLowBattery, e);
     this.service.updateCharacteristic(this.platform.Characteristic.BatteryLevel, e);
-    this.humidityservice.updateCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, e);
-    this.temperatureservice.updateCharacteristic(this.platform.Characteristic.CurrentTemperature, e);
+    if (!this.platform.config.options?.meter?.hide_humidity) {
+      this.humidityservice?.updateCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, e);
+    }
+    if (!this.platform.config.options?.meter?.hide_temperature) {
+      this.temperatureservice?.updateCharacteristic(this.platform.Characteristic.CurrentTemperature, e);
+    }
+  }
+
+  /**
+   * Handle requests to get the current value of the "Current Temperature" characteristic
+   */
+  handleCurrentTemperatureGet(callback: CharacteristicGetCallback) {
+    if (!this.platform.config.options?.meter?.hide_temperature) {
+      this.platform.log.debug('Meter %s - Get CurrentTemperature', this.accessory.displayName);
+
+      const currentValue = this.CurrentTemperature;
+
+      callback(null, currentValue);
+      this.platform.log.info('Meter %s - CurrentTemperature: %s', this.accessory.displayName, currentValue);
+    }
+  }
+
+  /**
+   * Converts the value to celsius if the temperature units are in Fahrenheit
+   */
+  toCelsius(value: number) {
+    // celsius should be to the nearest 0.5 degree
+    return Math.round((5 / 9) * (value - 32) * 2) / 2;
+  }
+
+  /**
+   * Converts the value to fahrenheit if the temperature units are in Fahrenheit
+   */
+  toFahrenheit(value: number) {
+    return Math.round((value * 9) / 5 + 32);
   }
 }

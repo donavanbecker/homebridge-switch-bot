@@ -24,6 +24,7 @@ export type options = {
 };
 
 export type meter = {
+  unit?: number;
   hide_temperature?: boolean;
   hide_humidity?: boolean;
 };

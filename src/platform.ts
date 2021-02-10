@@ -182,7 +182,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       this.log.info('Total SwitchBot Devices Found:', devices.body.deviceList.length);
       this.log.info('Total IR Devices Found:', devices.body.infraredRemoteList.length);
       for (const device of devices.body.deviceList) {
-        if (this.config.devicediscovery && !this.config.options?.hide_device.includes(device.deviceId)) {
+        if (this.config.devicediscovery) {
           this.deviceInfo(device);
         } else {
           this.log.debug(JSON.stringify(device));
@@ -190,41 +190,41 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
         // For Future Devices
         switch (device.deviceType) {
           case 'Humidifier':
-            if (!this.config.options?.hide_device.includes(device.deviceId)) {
+            if (this.config.devicediscovery) {
               this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
             }
             this.createHumidifier(device, devices);
             break;
           case 'Hub Mini':
-            if (!this.config.options?.hide_device.includes(device.deviceId)) {
+            if (this.config.devicediscovery) {
               this.log.info('Discovered a %s', device.deviceType);
             }
             break;
           case 'Hub Plus':
-            if (!this.config.options?.hide_device.includes(device.deviceId)) {
+            if (this.config.devicediscovery) {
               this.log.info('Discovered a %s', device.deviceType);
             }
             break;
           case 'Bot':
-            if (!this.config.options?.hide_device.includes(device.deviceId)) {
+            if (this.config.devicediscovery) {
               this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
             }
             this.createBot(device, devices);
             break;
           case 'Meter':
-            if (!this.config.options?.hide_device.includes(device.deviceId)) {
+            if (this.config.devicediscovery) {
               this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
             }
             this.createMeter(device, devices);
             break;
           case 'Curtain':
-            if (!this.config.options?.hide_device.includes(device.deviceId)) {
+            if (this.config.devicediscovery) {
               this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
             }
             this.createCurtain(device, devices);
             break;
           case 'Remote':
-            if (!this.config.options?.hide_device.includes(device.deviceId)) {
+            if (this.config.devicediscovery) {
               this.log.debug('Discovered %s, %s is Not Supported.', device.deviceName, device.deviceType);
             }
             break;
@@ -257,56 +257,56 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
           case 'DIY DVD':
           case 'Speaker':
           case 'DIY Speaker':
-            if (!this.config.options?.hide_device.includes(device.deviceId)) {
+            if (this.config.devicediscovery) {
               this.log.info('Discovered %s %s', device.deviceName, device.remoteType);
             }
             this.createTV(device);
             break;
           case 'Fan':
           case 'DIY Fan':
-            if (!this.config.options?.hide_device.includes(device.deviceId)) {
+            if (this.config.devicediscovery) {
               this.log.info('Discovered %s %s', device.deviceName, device.remoteType);
             }
             this.createFan(device);
             break;
           case 'Air Conditioner':
           case 'DIY Air Conditioner':
-            if (!this.config.options?.hide_device.includes(device.deviceId)) {
+            if (this.config.devicediscovery) {
               this.log.info('Discovered %s %s', device.deviceName, device.remoteType);
             }
             this.createAirConditioner(device);
             break;
           case 'Light':
           case 'DIY Light':
-            if (!this.config.options?.hide_device.includes(device.deviceId)) {
+            if (this.config.devicediscovery) {
               this.log.info('Discovered %s %s', device.deviceName, device.remoteType);
             }
             this.createLight(device);
             break;  
           case 'Air Purifier':
           case 'DIY Air Purifier':
-            if (!this.config.options?.hide_device.includes(device.deviceId)) {
+            if (this.config.devicediscovery) {
               this.log.info('Discovered %s %s', device.deviceName, device.remoteType);
             }
             this.createAirPurifier(device);
             break;  
           case 'Water Heater':
           case 'DIY Water Heater':
-            if (!this.config.options?.hide_device.includes(device.deviceId)) {
+            if (this.config.devicediscovery) {
               this.log.info('Discovered %s %s', device.deviceName, device.remoteType);
             }
             this.createWaterHeater(device);
             break;
           case 'Vacuum Cleaner':
           case 'DIY Vacuum Cleaner':
-            if (!this.config.options?.hide_device.includes(device.deviceId)) {
+            if (this.config.devicediscovery) {
               this.log.info('Discovered %s %s', device.deviceName, device.remoteType);
             }
             this.createVacuumCleaner(device);
             break; 
           case 'Camera':
           case 'DIY Camera':
-            if (!this.config.options?.hide_device.includes(device.deviceId)) {
+            if (this.config.devicediscovery) {
               this.log.info('Discovered %s %s', device.deviceName, device.remoteType);
             }
             this.createCamera(device);
