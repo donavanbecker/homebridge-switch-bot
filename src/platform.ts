@@ -1,19 +1,19 @@
 import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, Service, Characteristic } from 'homebridge';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { PLATFORM_NAME, PLUGIN_NAME, DeviceURL } from './settings';
-import { Humidifier } from './devices/humidifier';
-import { Bot } from './devices/bot';
-import { Meter } from './devices/meter';
-import { Curtain } from './devices/curtain';
-import { TV } from './irdevices/tv';
+import { Humidifier } from './devices/humidifiers';
+import { Bot } from './devices/bots';
+import { Meter } from './devices/meters';
+import { Curtain } from './devices/curtains';
+import { TV } from './irdevices/tvs';
 import { irdevice, device, SwitchBotPlatformConfig, deviceResponses, deviceStatusResponse } from './configTypes';
-import { Fan } from './irdevices/fan';
-import { WaterHeater } from './irdevices/waterheater';
-import { Light } from './irdevices/light';
-import { Camera } from './irdevices/camera';
-import { VacuumCleaner } from './irdevices/vacuumcleaner';
-import { AirConditioner } from './irdevices/airconditioner';
-import { AirPurifier } from './irdevices/airpurifier';
+import { Fan } from './irdevices/fans';
+import { WaterHeater } from './irdevices/waterheaters';
+import { Light } from './irdevices/lights';
+import { Camera } from './irdevices/cameras';
+import { VacuumCleaner } from './irdevices/vacuumcleaners';
+import { AirConditioner } from './irdevices/airconditioners';
+import { AirPurifier } from './irdevices/airpurifiers';
 
 /**
  * HomebridgePlatform
