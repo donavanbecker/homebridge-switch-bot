@@ -1,4 +1,4 @@
-import { Service, PlatformAccessory, CharacteristicEventTypes, CharacteristicGetCallback } from 'homebridge';
+import { Service, PlatformAccessory, CharacteristicEventTypes, CharacteristicGetCallback, Units } from 'homebridge';
 import { SwitchBotPlatform } from '../platform';
 import { interval, Subject } from 'rxjs';
 import { debounceTime, skipWhile, tap } from 'rxjs/operators';
@@ -100,6 +100,7 @@ export class Meter {
       this.temperatureservice
         .getCharacteristic(this.platform.Characteristic.CurrentTemperature)
         .setProps({
+          unit: Units['CELSIUS'],
           minValue: -50,
           maxValue: 212,
           minStep: 0.1,
