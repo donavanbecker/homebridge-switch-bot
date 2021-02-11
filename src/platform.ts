@@ -1,19 +1,19 @@
 import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, Service, Characteristic } from 'homebridge';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { PLATFORM_NAME, PLUGIN_NAME, DeviceURL } from './settings';
-import { Humidifier } from './Devices/Humidifier';
-import { Bot } from './Devices/Bot';
-import { Meter } from './Devices/Meter';
-import { Curtain } from './Devices/Curtain';
-import { TV } from './irDevices/TV';
+import { Humidifier } from './devices/Humidifier';
+import { Bot } from './devices/Bot';
+import { Meter } from './devices/Meter';
+import { Curtain } from './devices/Curtain';
+import { TV } from './irdevices/TV';
 import { irdevice, device, SwitchBotPlatformConfig, deviceResponses, deviceStatusResponse } from './configTypes';
-import { Fan } from './irDevices/Fan';
-import { WaterHeater } from './irDevices/WaterHeater';
-import { Light } from './irDevices/Light';
-import { Camera } from './irDevices/Camera';
-import { VacuumCleaner } from './irDevices/VacuumCleaner';
-import { AirConditioner } from './irDevices/AirConditioner';
-import { AirPurifier } from './irDevices/AirPurifier';
+import { Fan } from './irdevices/Fan';
+import { WaterHeater } from './irdevices/WaterHeater';
+import { Light } from './irdevices/Light';
+import { Camera } from './irdevices/Camera';
+import { VacuumCleaner } from './irdevices/VacuumCleaner';
+import { AirConditioner } from './irdevices/AirConditioner';
+import { AirPurifier } from './irdevices/AirPurifier';
 
 /**
  * HomebridgePlatform
@@ -149,12 +149,14 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       }
 
       if (!this.config.options.refreshRate) {
+        // default 300 seconds
         this.config.options!.refreshRate! = 300;
         this.log.warn('Using Default Refresh Rate.');
       }
 
       if (!this.config.options.pushRate) {
-        this.config.options!.pushRate! = 1;
+        // default 100 milliseconds
+        this.config.options!.pushRate! = 0.1;
         this.log.warn('Using Default Push Rate.');
       }
     }
