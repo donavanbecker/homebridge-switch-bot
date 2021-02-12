@@ -13,7 +13,7 @@
     "url": "https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/issues"
   },
   "engines": {
-    "node": ">=14.15.5",
+    "node": ">=14.15.4",
     "homebridge": ">=1.1.7"
   },
   "main": "dist/index.js",
