@@ -1,10 +1,10 @@
 import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, Service, Characteristic } from 'homebridge';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { PLATFORM_NAME, PLUGIN_NAME, DeviceURL } from './settings';
-import { Humidifier } from './devices/humidifiers';
-import { Bot } from './devices/bots';
-import { Meter } from './devices/meters';
-import { Curtain } from './devices/curtains';
+import { Humidifier } from './device/humidifiers';
+import { Bot } from './device/bots';
+import { Meter } from './device/meters';
+import { Curtain } from './device/curtains';
 import { TV } from './irdevices/tvs';
 import { irdevice, device, SwitchBotPlatformConfig, deviceResponses, deviceStatusResponse } from './configTypes';
 import { Fan } from './irdevices/fans';
