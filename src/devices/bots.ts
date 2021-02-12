@@ -94,7 +94,7 @@ export class Bot {
         tap(() => {
           this.botUpdateInProgress = true;
         }),
-        debounceTime(100),
+        debounceTime(this.platform.config.options!.pushRate! * 1000),
       )
       .subscribe(async () => {
         try {

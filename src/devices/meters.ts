@@ -1,7 +1,7 @@
 import { Service, PlatformAccessory, CharacteristicEventTypes, CharacteristicGetCallback, Units } from 'homebridge';
 import { SwitchBotPlatform } from '../platform';
 import { interval, Subject } from 'rxjs';
-import { debounceTime, skipWhile, tap } from 'rxjs/operators';
+import { skipWhile } from 'rxjs/operators';
 import { DeviceURL } from '../settings';
 import { device, deviceStatusResponse } from '../configTypes';
 
@@ -119,19 +119,6 @@ export class Meter {
       .pipe(skipWhile(() => this.meterUpdateInProgress))
       .subscribe(() => {
         this.refreshStatus();
-      });
-
-    // Watch for Meter change events
-    // We put in a debounce of 100ms so we don't make duplicate calls
-    this.doMeterUpdate
-      .pipe(
-        tap(() => {
-          this.meterUpdateInProgress = true;
-        }),
-        debounceTime(100),
-      )
-      .subscribe(async () => {
-        this.meterUpdateInProgress = false;
       });
   }
 

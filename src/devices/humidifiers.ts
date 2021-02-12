@@ -126,7 +126,7 @@ export class Humidifier {
         tap(() => {
           this.humidifierUpdateInProgress = true;
         }),
-        debounceTime(100),
+        debounceTime(this.platform.config.options!.pushRate! * 1000),
       )
       .subscribe(async () => {
         try {
