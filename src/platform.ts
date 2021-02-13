@@ -133,6 +133,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
       // Curtain Config Options
       if (this.config.options?.curtain) {
+        !this.config.options.curtain.disable_group;
         this.config.options.curtain.set_minStep;
         this.config.options.curtain.set_min;
         this.config.options.curtain.set_max;
@@ -576,9 +577,9 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
   }
 
   private isCurtainGrouped(device: device, devices: deviceResponses) {
-    if (device.group) {
+    if (device.group && !this.config.options?.curtain?.disable_group) {
       return (
-        device.curtainDevicesIds[0] === device.deviceId &&
+        device.master &&
         !this.config.options?.hide_device.includes(device.deviceId) &&
         devices.statusCode === 100
       );
