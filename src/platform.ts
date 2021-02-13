@@ -383,7 +383,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       this.accessories.push(accessory);
     } else {
-      if (!this.config.options?.hide_device.includes(device.deviceId)) {
+      if (this.config.devicediscovery) {
         this.log.error(
           'Unable to Register new device: %s %s - %s',
           device.deviceName,
@@ -444,7 +444,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       this.accessories.push(accessory);
     } else {
-      if (!this.config.options?.hide_device.includes(device.deviceId)) {
+      if (this.config.devicediscovery) {
         this.log.error(
           'Unable to Register new device: %s %s - %s',
           device.deviceName,
@@ -502,7 +502,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       this.accessories.push(accessory);
     } else {
-      if (!this.config.options?.hide_device.includes(device.deviceId)) {
+      if (this.config.devicediscovery) {
         this.log.error(
           'Unable to Register new device: %s %s - %s',
           device.deviceName,
@@ -522,7 +522,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
     if (existingAccessory) {
       // the accessory already exists
-      if (!this.config.options?.hide_device.includes(device.deviceId) && devices.statusCode === 100) {
+      if (this.isCurtainGrouped(device, devices)) {
         this.log.info(
           'Restoring existing accessory from cache: %s DeviceID: %s',
           existingAccessory.displayName,
@@ -539,14 +539,12 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       } else {
         this.unregisterPlatformAccessories(existingAccessory);
       }
-    } else if (!this.config.options?.hide_device.includes(device.deviceId)) {
+    } else if (this.isCurtainGrouped(device, devices)) {
       // the accessory does not yet exist, so we need to create it
       this.log.info('Adding new accessory: %s %s DeviceID: %s', device.deviceName, device.deviceType, device.deviceId);
 
       if (device.group) {
-        this.log.warn(
-          'Your Curtains are Grouped, you must hide your secondary curtian using the Hidden Device Setting',
-        );
+        this.log.warn('Your Curtains are grouped, we will automatically hide the secondary curtain.');
       }
 
       // create a new accessory
@@ -566,7 +564,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       this.accessories.push(accessory);
     } else {
-      if (!this.config.options?.hide_device.includes(device.deviceId)) {
+      if (this.config.devicediscovery) {
         this.log.error(
           'Unable to Register new device: %s %s - %s',
           device.deviceName,
@@ -574,6 +572,21 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
           device.deviceId,
         );
       }
+    }
+  }
+
+  private isCurtainGrouped(device: device, devices: deviceResponses) {
+    if (device.group) {
+      return (
+        device.curtainDevicesIds[0] === device.deviceId &&
+        !this.config.options?.hide_device.includes(device.deviceId) &&
+        devices.statusCode === 100
+      );
+    } else {
+      return (
+        !this.config.options?.hide_device.includes(device.deviceId) &&
+        devices.statusCode === 100
+      );
     }
   }
 
@@ -629,7 +642,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       this.api.publishExternalAccessories(PLUGIN_NAME, [accessory]);
       this.accessories.push(accessory);
     } else {
-      if (!this.config.options?.hide_device.includes(device.deviceId)) {
+      if (this.config.devicediscovery) {
         this.log.error(
           'Unable to Register new device: %s %s - %s',
           device.deviceName,
@@ -687,7 +700,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       this.accessories.push(accessory);
     } else {
-      if (!this.config.options?.hide_device.includes(device.deviceId)) {
+      if (this.config.devicediscovery) {
         this.log.error(
           'Unable to Register new device: %s %s - %s',
           device.deviceName,
@@ -745,7 +758,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       this.accessories.push(accessory);
     } else {
-      if (!this.config.options?.hide_device.includes(device.deviceId)) {
+      if (this.config.devicediscovery) {
         this.log.error(
           'Unable to Register new device: %s %s - %s',
           device.deviceName,
@@ -803,7 +816,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       this.accessories.push(accessory);
     } else {
-      if (!this.config.options?.hide_device.includes(device.deviceId)) {
+      if (this.config.devicediscovery) {
         this.log.error(
           'Unable to Register new device: %s %s - %s',
           device.deviceName,
@@ -861,7 +874,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       this.accessories.push(accessory);
     } else {
-      if (!this.config.options?.hide_device.includes(device.deviceId)) {
+      if (this.config.devicediscovery) {
         this.log.error(
           'Unable to Register new device: %s %s - %s',
           device.deviceName,
@@ -919,7 +932,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       this.accessories.push(accessory);
     } else {
-      if (!this.config.options?.hide_device.includes(device.deviceId)) {
+      if (this.config.devicediscovery) {
         this.log.error(
           'Unable to Register new device: %s %s - %s',
           device.deviceName,
@@ -977,7 +990,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       this.accessories.push(accessory);
     } else {
-      if (!this.config.options?.hide_device.includes(device.deviceId)) {
+      if (this.config.devicediscovery) {
         this.log.error(
           'Unable to Register new device: %s %s - %s',
           device.deviceName,
@@ -1035,7 +1048,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       this.accessories.push(accessory);
     } else {
-      if (!this.config.options?.hide_device.includes(device.deviceId)) {
+      if (this.config.devicediscovery) {
         this.log.error(
           'Unable to Register new device: %s %s - %s',
           device.deviceName,
