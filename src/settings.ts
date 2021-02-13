@@ -60,6 +60,7 @@ export type humidifier = {
 };
 
 export type curtain = {
+  disable_group?: boolean;
   set_max?: number;
   set_min?: number;
   set_minStep?: number;
