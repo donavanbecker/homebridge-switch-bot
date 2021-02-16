@@ -2,12 +2,13 @@
 
 All notable changes to this project will be documented in this file. This project uses [Semantic Versioning](https://semver.org/)
 
-## [Beta 3.1.0](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v3.0.1...v3.1.0) (2021-02-XX)
+## [Version 3.1.0](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v3.0.1...v3.1.0) (2021-02-16)
 
 ### Changes
 
 - Automatic Grouping for Grouped Curtains.
   - Added option to disable automatic Grouping of Grouped Curtains.
+- Fixed Issue where temperature sensor wouldn't hide if config was set to hide for humidifier.
 
 ## [Version 3.0.2](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v3.0.1...v3.0.2) (2021-02-13)
 
