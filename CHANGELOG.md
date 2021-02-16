@@ -6,7 +6,8 @@ All notable changes to this project will be documented in this file. This projec
 
 ### Changes
 
-- Automatic Grouping for Curtains.
+- Automatic Grouping for Grouped Curtains.
+  - Added option to disable automatic Grouping of Grouped Curtains.
 
 ## [Version 3.0.2](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v3.0.1...v3.0.2) (2021-02-13)
 
