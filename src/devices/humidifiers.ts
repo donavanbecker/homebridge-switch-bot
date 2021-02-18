@@ -113,7 +113,7 @@ export class Humidifier {
         this.platform.Service.TemperatureSensor,
         `${device.deviceName} ${device.deviceType} Temperature Sensor`,
       );
-      this.service.getCharacteristic(this.platform.Characteristic.CurrentTemperature)
+      this.temperatureservice.getCharacteristic(this.platform.Characteristic.CurrentTemperature)
         .setProps({
           validValueRanges: [-100, 100],
           minStep: 0.1,

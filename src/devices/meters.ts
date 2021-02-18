@@ -226,7 +226,7 @@ export class Meter {
       const currentValue = this.CurrentTemperature;
 
       callback(null, currentValue);
-      this.platform.log.info('Meter %s - CurrentTemperature: %s', this.accessory.displayName, currentValue);
+      this.platform.log.debug('Meter %s - CurrentTemperature: %s', this.accessory.displayName, currentValue);
     }
   }
 
