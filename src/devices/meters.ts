@@ -1,4 +1,4 @@
-import { Service, PlatformAccessory, CharacteristicEventTypes, CharacteristicGetCallback, Units } from 'homebridge';
+import { Service, PlatformAccessory, CharacteristicEventTypes, CharacteristicGetCallback } from 'homebridge';
 import { SwitchBotPlatform } from '../platform';
 import { interval, Subject } from 'rxjs';
 import { skipWhile } from 'rxjs/operators';
@@ -34,7 +34,11 @@ export class Meter {
     public device: device,
   ) {
     // default placeholders
+    this.BatteryLevel = 0;
+    this.ChargingState = 2;
     this.StatusLowBattery = this.platform.Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW;
+    this.CurrentRelativeHumidity = 0;
+    this.CurrentTemperature = 0;
 
     // this is subject we use to track when we need to POST changes to the SwitchBot API
     this.doMeterUpdate = new Subject();
@@ -95,9 +99,9 @@ export class Meter {
       this.temperatureservice
         .getCharacteristic(this.platform.Characteristic.CurrentTemperature)
         .setProps({
-          unit: Units['CELSIUS'],
-          minValue: -50,
-          maxValue: 212,
+          //unit: Units['CELSIUS'],
+          minValue: -100,
+          maxValue: 100,
           minStep: 0.1,
         })
         .on(CharacteristicEventTypes.GET, this.handleCurrentTemperatureGet.bind(this));
