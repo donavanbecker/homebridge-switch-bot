@@ -198,7 +198,11 @@ export class Humidifier {
         break;
       default:
         this.TargetHumidifierDehumidifierState = this.platform.Characteristic.TargetHumidifierDehumidifierState.HUMIDIFIER;
-        this.RelativeHumidityHumidifierThreshold = this.deviceStatus.body.nebulizationEfficiency;
+        if (this.deviceStatus.body.nebulizationEfficiency > 100) {
+          this.RelativeHumidityHumidifierThreshold = 100;
+        } else {
+          this.RelativeHumidityHumidifierThreshold = this.deviceStatus.body.nebulizationEfficiency;
+        }
         if (this.CurrentRelativeHumidity > this.RelativeHumidityHumidifierThreshold) {
           this.CurrentHumidifierDehumidifierState = this.platform.Characteristic.CurrentHumidifierDehumidifierState.IDLE;
         } else if (this.Active === this.platform.Characteristic.Active.INACTIVE) {
