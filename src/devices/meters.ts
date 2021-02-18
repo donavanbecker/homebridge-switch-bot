@@ -34,11 +34,7 @@ export class Meter {
     public device: device,
   ) {
     // default placeholders
-    this.BatteryLevel = 100;
-    this.ChargingState = 2;
     this.StatusLowBattery = this.platform.Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW;
-    this.CurrentRelativeHumidity = 100;
-    this.CurrentTemperature = 100;
 
     // this is subject we use to track when we need to POST changes to the SwitchBot API
     this.doMeterUpdate = new Subject();
