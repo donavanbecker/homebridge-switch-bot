@@ -32,13 +32,9 @@ export class Humidifier {
     public device: device,
   ) {
     // default placeholders
-    this.CurrentRelativeHumidity = 100;
     this.TargetHumidifierDehumidifierState = this.platform.Characteristic.TargetHumidifierDehumidifierState.HUMIDIFIER;
     this.CurrentHumidifierDehumidifierState = this.platform.Characteristic.CurrentHumidifierDehumidifierState.INACTIVE;
     this.Active = this.platform.Characteristic.Active.ACTIVE;
-    this.RelativeHumidityHumidifierThreshold = 100;
-    this.CurrentTemperature = 100;
-    this.WaterLevel = 100;
 
     // this is subject we use to track when we need to POST changes to the SwitchBot API
     this.doHumidifierUpdate = new Subject();
@@ -84,6 +80,8 @@ export class Humidifier {
     this.service
       .getCharacteristic(this.platform.Characteristic.TargetHumidifierDehumidifierState)
       .setProps({
+        minValue: 0,
+        maxValue: 100,
         validValues: [0, 1],
       })
       .on(CharacteristicEventTypes.SET, this.handleTargetHumidifierDehumidifierStateSet.bind(this));
@@ -95,6 +93,8 @@ export class Humidifier {
     this.service
       .getCharacteristic(this.platform.Characteristic.RelativeHumidityHumidifierThreshold)
       .setProps({
+        minValue: 0,
+        maxValue: 100,
         minStep: this.platform.config.options?.humidifier?.set_minStep || 1,
       })
       .on(CharacteristicEventTypes.SET, this.handleRelativeHumidityHumidifierThresholdSet.bind(this));
