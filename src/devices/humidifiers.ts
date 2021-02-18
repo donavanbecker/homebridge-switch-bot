@@ -84,6 +84,7 @@ export class Humidifier {
     this.service
       .getCharacteristic(this.platform.Characteristic.TargetHumidifierDehumidifierState)
       .setProps({
+        validValueRanges: [0, 100],
         minValue: 0,
         maxValue: 100,
         validValues: [0, 1],
@@ -97,6 +98,7 @@ export class Humidifier {
     this.service
       .getCharacteristic(this.platform.Characteristic.RelativeHumidityHumidifierThreshold)
       .setProps({
+        validValueRanges: [0, 100],
         minValue: 0,
         maxValue: 100,
         minStep: this.platform.config.options?.humidifier?.set_minStep || 1,
@@ -113,9 +115,10 @@ export class Humidifier {
       );
       this.service.getCharacteristic(this.platform.Characteristic.CurrentTemperature)
         .setProps({
-          minStep: 0.5,
-          minValue: -50,
-          maxValue: 212,
+          validValueRanges: [-100, 100],
+          minStep: 0.1,
+          minValue: -100,
+          maxValue: 100,
         })
         .on(CharacteristicEventTypes.GET, this.handleCurrentTemperatureGet.bind(this));
     } else if (this.temperatureservice && this.platform.config.options?.humidifier?.hide_temperature) {
