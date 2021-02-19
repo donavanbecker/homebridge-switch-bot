@@ -290,13 +290,11 @@ export class Curtain {
     if (this.platform.config.options?.curtain?.set_min) {
       if (this.CurrentPosition <= this.platform.config.options?.curtain?.set_min) {
         this.CurrentPosition = 0;
-        this.PositionState = this.platform.Characteristic.PositionState.STOPPED;
       }
     }
     if (this.platform.config.options?.curtain?.set_max) {
       if (this.CurrentPosition >= this.platform.config.options?.curtain?.set_max) {
         this.CurrentPosition = 100;
-        this.PositionState = this.platform.Characteristic.PositionState.STOPPED;
       }
     }
   }
