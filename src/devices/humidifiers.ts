@@ -84,9 +84,9 @@ export class Humidifier {
     this.service
       .getCharacteristic(this.platform.Characteristic.TargetHumidifierDehumidifierState)
       .setProps({
-        validValueRanges: [0, 100],
+        validValueRanges: [0, 1],
         minValue: 0,
-        maxValue: 100,
+        maxValue: 1,
         validValues: [0, 1],
       })
       .on(CharacteristicEventTypes.SET, this.handleTargetHumidifierDehumidifierStateSet.bind(this));

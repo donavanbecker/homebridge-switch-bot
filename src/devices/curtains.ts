@@ -88,7 +88,7 @@ export class Curtain {
       });
 
     // update slide progress
-    interval(1000)
+    interval(this.platform.config.options!.refreshRate! * 1000)
       .pipe(skipWhile(() => this.curtainUpdateInProgress))
       .subscribe(() => {
         if (this.PositionState === this.platform.Characteristic.PositionState.STOPPED) {
@@ -162,11 +162,11 @@ export class Curtain {
         this.CurrentPosition,
         'standby',
       );
-      if (!this.setNewTarget) {
-        /*If Curtain calibration distance is short, there will be an error between the current percentage and the target percentage.*/
-        this.TargetPosition = this.CurrentPosition;
-        this.PositionState = this.platform.Characteristic.PositionState.STOPPED;
-      }
+      // if (!this.setNewTarget) {
+      /*If Curtain calibration distance is short, there will be an error between the current percentage and the target percentage.*/
+      this.TargetPosition = this.CurrentPosition;
+      this.PositionState = this.platform.Characteristic.PositionState.STOPPED;
+      //}
     }
   }
 

@@ -4,8 +4,10 @@
 
 # Homebridge SwitchBot OpenAPI
 
-<a href="https://www.npmjs.com/package/homebridge-switchbot-openapi"><img title="npm version" src="https://badgen.net/npm/v/homebridge-switchbot-openapi" ></a>
-<a href="https://www.npmjs.com/package/homebridge-switchbot-openapi"><img title="npm downloads" src="https://badgen.net/npm/dt/homebridge-switchbot-openapi" ></a>
+<a href="https://www.npmjs.com/package/homebridge-switchbot-openapi"><img title="npm-version" src="https://badgen.net/npm/v/homebridge-switchbot-openapi?icon=npm&label" ></a>
+<a href="https://www.npmjs.com/package/homebridge-switchbot-openapi"><img title="npm downloads" src="https://badgen.net/npm/dt/homebridge-switchbot-openapi?label=downloads" ></a>
+<a href="https://discord.gg/5wYTbwP4ha"><img title="discord-switchbot-openapi" src="https://badgen.net/discord/online-members/5wYTbwP4ha?icon=discord&label=discord" ></a>
+
 
 <p>The Homebridge <a href="https://www.switch-bot.com">SwitchBot</a>  OpenAPI
 plugin allows you to access your SwitchBot Device(s) from HomeKit with
