@@ -124,7 +124,7 @@ export class Curtain {
 
   parseStatus() {
     // CurrentPosition
-    this.CurrentPosition = 100 - this.deviceStatus.body.slidePosition;
+    this.CurrentPosition = 100 - this.deviceStatus.body.slidePosition!;
 
     if (this.deviceStatus.body.moving) {
       if (this.TargetPosition > this.CurrentPosition) {
@@ -224,5 +224,5 @@ export class Curtain {
     this.doCurtainUpdate.next();
     callback();
   }
-   
+
 }

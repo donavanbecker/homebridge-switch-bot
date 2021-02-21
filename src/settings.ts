@@ -159,38 +159,38 @@ export type deviceStatus = {
   //device type.
   deviceType: string;
   //device's parent Hub ID.
-  hubDeviceId: string;
+  hubDeviceId?: string;
   //only available for Bot/Plug/Humidifier devices. ON/OFF state.
-  power: string;
+  power?: string;
   //only available for Meter/Humidifier devices. humidity percentage.
-  humidity: number;
+  humidity?: number;
   //only available for Meter/Humidifier devices. temperature in celsius.
-  temperature: number;
+  temperature?: number;
   //only available for Humidifier devices. atomization efficiency %.
-  nebulizationEfficiency: number;
+  nebulizationEfficiency?: number;
   //only available for Humidifier devices. determines if a Humidifier is in Auto Mode or not.
-  auto: boolean;
+  auto?: boolean;
   //only available for Humidifier devices. determines if a Humidifier's safety lock is on or not.
-  childLock: boolean;
+  childLock?: boolean;
   //only available for Humidifier devices. determines if a Humidifier is muted or not.
-  sound: boolean;
+  sound?: boolean;
   //only available for Curtain devices. determines if a Curtain has been calibrated or not.
-  calibrate: boolean;
+  calibrate?: boolean;
   //only available for Curtain devices. determines if a Curtain is paired with or grouped with another Curtain or not.
-  group: boolean;
+  group?: boolean;
   //only available for Curtain devices. determines if a Curtain is moving or not.
-  moving: boolean;
+  moving?: boolean;
   //only available for Curtain devices. the percentage of the distance between the
   //calibrated open position and close position that a Curtain has moved to.
-  slidePosition: number;
+  slidePosition?: number;
   //available for Smart Fan devices. the fan mode.
-  mode: number;
+  mode?: number;
   //available for Smart Fan devices. the fan speed.
-  speed: number;
+  speed?: number;
   //available for Smart Fan devices. determines if the fan is swinging or not.
-  shaking: boolean;
+  shaking?: boolean;
   //only available for Smart Fan devices. the fan's swing direciton.
-  shakeCenter: string;
+  shakeCenter?: string;
   //only available for Smart Fan devices. the fan's swing range, 0~120°.
-  shakeRange: string;
+  shakeRange?: string;
 };

@@ -1,4 +1,4 @@
-import { Service, PlatformAccessory, CharacteristicEventTypes, CharacteristicSetCallback, CharacteristicGetCallback } from 'homebridge';
+import { Service, PlatformAccessory, CharacteristicSetCallback, CharacteristicValue } from 'homebridge';
 import { SwitchBotPlatform } from '../platform';
 import { interval, Subject } from 'rxjs';
 import { debounceTime, skipWhile, tap } from 'rxjs/operators';
@@ -13,15 +13,14 @@ export class Humidifier {
   private service: Service;
   temperatureservice?: Service;
 
-  CurrentRelativeHumidity!: number;
-  CurrentTemperature!: number;
-  TargetHumidifierDehumidifierState!: number;
-  CurrentHumidifierDehumidifierState!: number;
-  RelativeHumidityHumidifierThreshold!: number;
-  Active!: number;
-  WaterLevel!: number;
+  CurrentRelativeHumidity!: CharacteristicValue;
+  CurrentTemperature!: CharacteristicValue;
+  TargetHumidifierDehumidifierState!: CharacteristicValue;
+  CurrentHumidifierDehumidifierState!: CharacteristicValue;
+  RelativeHumidityHumidifierThreshold!: CharacteristicValue;
+  Active!: CharacteristicValue;
+  WaterLevel!: CharacteristicValue;
   deviceStatus!: deviceStatusResponse;
-  humidity!: number;
 
   humidifierUpdateInProgress!: boolean;
   doHumidifierUpdate!: any;
@@ -89,11 +88,15 @@ export class Humidifier {
         maxValue: 1,
         validValues: [0, 1],
       })
-      .on(CharacteristicEventTypes.SET, this.handleTargetHumidifierDehumidifierStateSet.bind(this));
+      .onSet(async (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
+        this.handleTargetHumidifierDehumidifierStateSet(value, callback);
+      });
 
     this.service
       .getCharacteristic(this.platform.Characteristic.Active)
-      .on(CharacteristicEventTypes.SET, this.handleActiveSet.bind(this));
+      .onSet(async (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
+        this.handleActiveSet(value, callback);
+      });
 
     this.service
       .getCharacteristic(this.platform.Characteristic.RelativeHumidityHumidifierThreshold)
@@ -103,7 +106,9 @@ export class Humidifier {
         maxValue: 100,
         minStep: this.platform.config.options?.humidifier?.set_minStep || 1,
       })
-      .on(CharacteristicEventTypes.SET, this.handleRelativeHumidityHumidifierThresholdSet.bind(this));
+      .onSet(async (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
+        this.handleRelativeHumidityHumidifierThresholdSet(value, callback);
+      });
 
     // create a new Temperature Sensor service
     // Temperature Sensor Service
@@ -113,14 +118,12 @@ export class Humidifier {
         this.platform.Service.TemperatureSensor,
         `${device.deviceName} ${device.deviceType} Temperature Sensor`,
       );
-      this.temperatureservice.getCharacteristic(this.platform.Characteristic.CurrentTemperature)
-        .setProps({
-          validValueRanges: [-100, 100],
-          minStep: 0.1,
-          minValue: -100,
-          maxValue: 100,
-        })
-        .on(CharacteristicEventTypes.GET, this.handleCurrentTemperatureGet.bind(this));
+      this.temperatureservice.getCharacteristic(this.platform.Characteristic.CurrentTemperature).setProps({
+        validValueRanges: [-100, 100],
+        minStep: 0.1,
+        minValue: -100,
+        maxValue: 100,
+      });
     } else if (this.temperatureservice && this.platform.config.options?.humidifier?.hide_temperature) {
       accessory.removeService(this.temperatureservice);
     }
@@ -161,7 +164,7 @@ export class Humidifier {
    */
   parseStatus() {
     // Current Relative Humidity
-    this.CurrentRelativeHumidity = this.deviceStatus.body.humidity;
+    this.CurrentRelativeHumidity = this.deviceStatus.body.humidity!;
     this.platform.log.debug(
       'Humidifier %s CurrentRelativeHumidity -',
       this.accessory.displayName,
@@ -198,10 +201,10 @@ export class Humidifier {
         break;
       default:
         this.TargetHumidifierDehumidifierState = this.platform.Characteristic.TargetHumidifierDehumidifierState.HUMIDIFIER;
-        if (this.deviceStatus.body.nebulizationEfficiency > 100) {
+        if (this.deviceStatus.body.nebulizationEfficiency! > 100) {
           this.RelativeHumidityHumidifierThreshold = 100;
         } else {
-          this.RelativeHumidityHumidifierThreshold = this.deviceStatus.body.nebulizationEfficiency;
+          this.RelativeHumidityHumidifierThreshold = this.deviceStatus.body.nebulizationEfficiency!;
         }
         if (this.CurrentRelativeHumidity > this.RelativeHumidityHumidifierThreshold) {
           this.CurrentHumidifierDehumidifierState = this.platform.Characteristic.CurrentHumidifierDehumidifierState.IDLE;
@@ -231,7 +234,7 @@ export class Humidifier {
     );
     // Current Temperature
     if (!this.platform.config.options?.humidifier?.hide_temperature) {
-      this.CurrentTemperature = this.deviceStatus.body.temperature;
+      this.CurrentTemperature = this.deviceStatus.body.temperature!;
       this.platform.log.debug(
         'Humidifier %s CurrentTemperature -',
         this.accessory.displayName,
@@ -430,14 +433,14 @@ export class Humidifier {
     this.service.updateCharacteristic(this.platform.Characteristic.Active, e);
     this.service.updateCharacteristic(this.platform.Characteristic.RelativeHumidityHumidifierThreshold, e);
     if (!this.platform.config.options?.humidifier?.hide_temperature) {
-    this.temperatureservice!.updateCharacteristic(this.platform.Characteristic.CurrentTemperature, e);
+      this.temperatureservice!.updateCharacteristic(this.platform.Characteristic.CurrentTemperature, e);
     }
   }
-  
+
   /**
    * Handle requests to set the "Target Humidifier Dehumidifier State" characteristic
    */
-  handleTargetHumidifierDehumidifierStateSet(value: any, callback: CharacteristicSetCallback) {
+  private handleTargetHumidifierDehumidifierStateSet(value: CharacteristicValue, callback: CharacteristicSetCallback) {
     this.platform.log.debug(
       'Humidifier %s -',
       this.accessory.displayName,
@@ -450,24 +453,27 @@ export class Humidifier {
       this.TargetHumidifierDehumidifierState,
     );
     this.doHumidifierUpdate.next();
-    callback(null);
+    callback();
   }
 
   /**
    * Handle requests to set the "Active" characteristic
    */
-  async handleActiveSet(value: any, callback: CharacteristicSetCallback) {
+  private handleActiveSet(value: CharacteristicValue, callback: CharacteristicSetCallback) {
     this.platform.log.debug('Humidifier %s -', this.accessory.displayName, `Set Active: ${value}`);
     this.Active = value;
     this.service.updateCharacteristic(this.platform.Characteristic.Active, this.Active);
     this.doHumidifierUpdate.next();
-    callback(null);
+    callback();
   }
 
   /**
    * Handle requests to set the "Relative Humidity Humidifier Threshold" characteristic
    */
-  handleRelativeHumidityHumidifierThresholdSet(value: any, callback: CharacteristicSetCallback) {
+  private handleRelativeHumidityHumidifierThresholdSet(
+    value: CharacteristicValue,
+    callback: CharacteristicSetCallback,
+  ) {
     this.platform.log.debug(
       'Humidifier %s -',
       this.accessory.displayName,
@@ -489,20 +495,6 @@ export class Humidifier {
     );
     this.service.updateCharacteristic(this.platform.Characteristic.Active, this.Active);
     this.doHumidifierUpdate.next();
-    callback(null);
-  }
-
-  /**
-   * Handle requests to get the current value of the "Current Temperature" characteristic
-   */
-  handleCurrentTemperatureGet(callback: CharacteristicGetCallback) {
-    if (!this.platform.config.options?.humidifier?.hide_temperature) {
-      this.platform.log.debug('Humidifier %s - Get CurrentTemperature', this.accessory.displayName);
-
-      const currentValue = this.CurrentTemperature;
-
-      callback(null, currentValue);
-      this.platform.log.info('Humidifier %s - CurrentTemperature: %s', this.accessory.displayName, currentValue);
-    }
+    callback();
   }
 }
