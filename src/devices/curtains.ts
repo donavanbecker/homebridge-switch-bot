@@ -122,7 +122,7 @@ export class Curtain {
   parseStatus() {
     // CurrentPosition
     this.setMinMax();
-    this.CurrentPosition = 100 - this.deviceStatus.body.slidePosition;
+    this.CurrentPosition = 100 - this.deviceStatus.body.slidePosition!;
     this.setMinMax();
     this.platform.log.debug(
       'Curtain %s CurrentPosition -',
