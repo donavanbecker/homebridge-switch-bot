@@ -184,15 +184,19 @@ export class Meter {
    * Updates the status for each of the HomeKit Characteristics
    */
   updateHomeKitCharacteristics() {
-    this.service.updateCharacteristic(this.platform.Characteristic.StatusLowBattery, this.StatusLowBattery);
-    this.service.updateCharacteristic(this.platform.Characteristic.BatteryLevel, this.BatteryLevel);
-    if (!this.platform.config.options?.meter?.hide_humidity) {
+    if (this.StatusLowBattery !== undefined) {
+      this.service.updateCharacteristic(this.platform.Characteristic.StatusLowBattery, this.StatusLowBattery);
+    }
+    if (this.BatteryLevel !== undefined) {
+      this.service.updateCharacteristic(this.platform.Characteristic.BatteryLevel, this.BatteryLevel);
+    }
+    if (!this.platform.config.options?.meter?.hide_humidity && this.CurrentRelativeHumidity !== undefined) {
       this.humidityservice?.updateCharacteristic(
         this.platform.Characteristic.CurrentRelativeHumidity,
         this.CurrentRelativeHumidity,
       );
     }
-    if (!this.platform.config.options?.meter?.hide_temperature) {
+    if (!this.platform.config.options?.meter?.hide_temperature && this.CurrentTemperature !== undefined) {
       this.temperatureservice?.updateCharacteristic(
         this.platform.Characteristic.CurrentTemperature,
         this.CurrentTemperature,

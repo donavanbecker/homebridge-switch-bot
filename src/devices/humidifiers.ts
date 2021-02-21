@@ -397,25 +397,37 @@ export class Humidifier {
    * Updates the status for each of the HomeKit Characteristics
    */
   updateHomeKitCharacteristics() {
-    this.service.updateCharacteristic(
-      this.platform.Characteristic.CurrentRelativeHumidity,
-      this.CurrentRelativeHumidity,
-    );
-    this.service.updateCharacteristic(this.platform.Characteristic.WaterLevel, this.WaterLevel);
-    this.service.updateCharacteristic(
-      this.platform.Characteristic.CurrentHumidifierDehumidifierState,
-      this.CurrentHumidifierDehumidifierState,
-    );
-    this.service.updateCharacteristic(
-      this.platform.Characteristic.TargetHumidifierDehumidifierState,
-      this.TargetHumidifierDehumidifierState,
-    );
-    this.service.updateCharacteristic(this.platform.Characteristic.Active, this.Active);
-    this.service.updateCharacteristic(
-      this.platform.Characteristic.RelativeHumidityHumidifierThreshold,
-      this.RelativeHumidityHumidifierThreshold,
-    );
-    if (!this.platform.config.options?.humidifier?.hide_temperature) {
+    if (this.CurrentRelativeHumidity !== undefined) {
+      this.service.updateCharacteristic(
+        this.platform.Characteristic.CurrentRelativeHumidity,
+        this.CurrentRelativeHumidity,
+      );
+    }
+    if (this.WaterLevel !== undefined) {
+      this.service.updateCharacteristic(this.platform.Characteristic.WaterLevel, this.WaterLevel);
+    }
+    if (this.CurrentHumidifierDehumidifierState !== undefined) {
+      this.service.updateCharacteristic(
+        this.platform.Characteristic.CurrentHumidifierDehumidifierState,
+        this.CurrentHumidifierDehumidifierState,
+      );
+    }
+    if (this.TargetHumidifierDehumidifierState !== undefined) {
+      this.service.updateCharacteristic(
+        this.platform.Characteristic.TargetHumidifierDehumidifierState,
+        this.TargetHumidifierDehumidifierState,
+      );
+    }
+    if (this.Active !== undefined) {
+      this.service.updateCharacteristic(this.platform.Characteristic.Active, this.Active);
+    }
+    if (this.RelativeHumidityHumidifierThreshold !== undefined) {
+      this.service.updateCharacteristic(
+        this.platform.Characteristic.RelativeHumidityHumidifierThreshold,
+        this.RelativeHumidityHumidifierThreshold,
+      );
+    }
+    if (!this.platform.config.options?.humidifier?.hide_temperature && this.CurrentTemperature !== undefined) {
       this.temperatureservice!.updateCharacteristic(
         this.platform.Characteristic.CurrentTemperature,
         this.CurrentTemperature,

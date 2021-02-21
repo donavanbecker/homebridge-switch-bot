@@ -195,9 +195,15 @@ export class Curtain {
   }
 
   updateHomeKitCharacteristics() {
-    this.service.updateCharacteristic(this.platform.Characteristic.CurrentPosition, this.CurrentPosition);
-    this.service.updateCharacteristic(this.platform.Characteristic.PositionState, this.PositionState);
-    this.service.updateCharacteristic(this.platform.Characteristic.TargetPosition, this.TargetPosition);
+    if (this.CurrentPosition !== undefined) {
+      this.service.updateCharacteristic(this.platform.Characteristic.CurrentPosition, this.CurrentPosition);
+    }
+    if (this.PositionState !== undefined) {
+      this.service.updateCharacteristic(this.platform.Characteristic.PositionState, this.PositionState);
+    }
+    if (this.TargetPosition !== undefined) {
+      this.service.updateCharacteristic(this.platform.Characteristic.TargetPosition, this.TargetPosition);
+    }
   }
 
   public apiError(e: any) {

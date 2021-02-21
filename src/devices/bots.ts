@@ -207,8 +207,10 @@ export class Bot {
    * Updates the status for each of the HomeKit Characteristics
    */
   updateHomeKitCharacteristics() {
-    this.service.updateCharacteristic(this.platform.Characteristic.On, this.On);
-    if (!this.platform.config.options?.bot?.switch) {
+    if (this.On !== undefined) {
+      this.service.updateCharacteristic(this.platform.Characteristic.On, this.On);
+    }
+    if (!this.platform.config.options?.bot?.switch && this.OutletInUse !== undefined) {
       this.service.updateCharacteristic(this.platform.Characteristic.OutletInUse, this.OutletInUse);
     }
   }
