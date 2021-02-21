@@ -1,4 +1,4 @@
-import { Service, PlatformAccessory, CharacteristicSetCallback, CharacteristicValue } from 'homebridge';
+import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
 import { SwitchBotPlatform } from '../platform';
 import { interval, Subject } from 'rxjs';
 import { debounceTime, skipWhile, tap } from 'rxjs/operators';
@@ -74,8 +74,8 @@ export class Bot {
 
     this.service
       .getCharacteristic(this.platform.Characteristic.On)
-      .onSet(async (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
-        this.handleOnSet(value, callback);
+      .onSet(async (value: CharacteristicValue) => {
+        this.handleOnSet(value);
       });
 
     // Retrieve initial values and updateHomekit
@@ -223,11 +223,10 @@ export class Bot {
   /**
    * Handle requests to set the "On" characteristic
    */
-  private handleOnSet(value: CharacteristicValue, callback: CharacteristicSetCallback) {
+  private handleOnSet(value: CharacteristicValue) {
     this.platform.log.debug('Bot %s -', this.accessory.displayName, `Set On: ${value}`);
     this.doBotUpdate.next();
     this.On = value;
     this.service.updateCharacteristic(this.platform.Characteristic.On, this.On);
-    callback(null);
   }
 }
