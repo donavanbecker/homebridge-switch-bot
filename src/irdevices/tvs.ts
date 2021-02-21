@@ -1,10 +1,4 @@
-import {
-  CharacteristicEventTypes,
-  CharacteristicGetCallback,
-  CharacteristicValue,
-  PlatformAccessory,
-  Service,
-} from 'homebridge';
+import { CharacteristicValue, PlatformAccessory, Service } from 'homebridge';
 import { SwitchBotPlatform } from '../platform';
 import { DeviceURL, irdevice, deviceStatusResponse } from '../settings';
 
@@ -78,102 +72,23 @@ export class TV {
     );
 
     // handle on / off events using the Active characteristic
-    this.service
-      .getCharacteristic(this.platform.Characteristic.Active)
-      .on(CharacteristicEventTypes.SET, (value: any, callback: CharacteristicGetCallback) => {
-        this.platform.log.debug('TV %s Set Active: %s', this.accessory.displayName, value);
-        if (value === this.platform.Characteristic.Active.INACTIVE) {
-          this.pushTvOffChanges();
-        } else {
-          this.pushTvOnChanges();
-        }
-        this.Active = value;
-        this.service.updateCharacteristic(this.platform.Characteristic.Active, this.Active);
-        callback(null);
-      });
+    this.service.getCharacteristic(this.platform.Characteristic.Active).onSet(async (value: CharacteristicValue) => {
+      this.ActiveSet(value);
+    });
 
     this.service.setCharacteristic(this.platform.Characteristic.ActiveIdentifier, 1);
 
     // handle input source changes
     this.service
       .getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
-      .on(CharacteristicEventTypes.SET, (value: any, callback: CharacteristicGetCallback) => {
-        // the value will be the value you set for the Identifier Characteristic
-        // on the Input Source service that was selected - see input sources below.
-
-        this.platform.log.debug('TV %s Set Active Identifier: %s', this.accessory.displayName, value);
-        callback(null);
+      .onSet(async (value: CharacteristicValue) => {
+        this.ActiveIdentifierSet(value);
       });
 
     // handle remote control input
-    this.service
-      .getCharacteristic(this.platform.Characteristic.RemoteKey)
-      .on(CharacteristicEventTypes.SET, (value: any, callback: CharacteristicGetCallback) => {
-        switch (value) {
-          case this.platform.Characteristic.RemoteKey.REWIND: {
-            this.platform.log.debug('TV %s Set Remote Key Pressed: REWIND', this.accessory.displayName);
-            break;
-          }
-          case this.platform.Characteristic.RemoteKey.FAST_FORWARD: {
-            this.platform.log.debug('TV %s Set Remote Key Pressed: FAST_FORWARD', this.accessory.displayName);
-            break;
-          }
-          case this.platform.Characteristic.RemoteKey.NEXT_TRACK: {
-            this.platform.log.debug('TV %s Set Remote Key Pressed: NEXT_TRACK', this.accessory.displayName);
-            break;
-          }
-          case this.platform.Characteristic.RemoteKey.PREVIOUS_TRACK: {
-            this.platform.log.debug('TV %s Set Remote Key Pressed: PREVIOUS_TRACK', this.accessory.displayName);
-            break;
-          }
-          case this.platform.Characteristic.RemoteKey.ARROW_UP: {
-            this.platform.log.debug('TV %s Set Remote Key Pressed: ARROW_UP', this.accessory.displayName);
-            //this.pushUpChanges();
-            break;
-          }
-          case this.platform.Characteristic.RemoteKey.ARROW_DOWN: {
-            this.platform.log.debug('TV %s Set Remote Key Pressed: ARROW_DOWN', this.accessory.displayName);
-            //this.pushDownChanges();
-            break;
-          }
-          case this.platform.Characteristic.RemoteKey.ARROW_LEFT: {
-            this.platform.log.debug('TV %s Set Remote Key Pressed: ARROW_LEFT', this.accessory.displayName);
-            //this.pushLeftChanges();
-            break;
-          }
-          case this.platform.Characteristic.RemoteKey.ARROW_RIGHT: {
-            this.platform.log.debug('TV %s Set Remote Key Pressed: ARROW_RIGHT', this.accessory.displayName);
-            //this.pushRightChanges();
-            break;
-          }
-          case this.platform.Characteristic.RemoteKey.SELECT: {
-            this.platform.log.debug('TV %s Set Remote Key Pressed: SELECT', this.accessory.displayName);
-            //this.pushOkChanges();
-            break;
-          }
-          case this.platform.Characteristic.RemoteKey.BACK: {
-            this.platform.log.debug('TV %s Set Remote Key Pressed: BACK', this.accessory.displayName);
-            //this.pushBackChanges();
-            break;
-          }
-          case this.platform.Characteristic.RemoteKey.EXIT: {
-            this.platform.log.debug('TV %s Set Remote Key Pressed: EXIT', this.accessory.displayName);
-            break;
-          }
-          case this.platform.Characteristic.RemoteKey.PLAY_PAUSE: {
-            this.platform.log.debug('TV %s Set Remote Key Pressed: PLAY_PAUSE', this.accessory.displayName);
-            break;
-          }
-          case this.platform.Characteristic.RemoteKey.INFORMATION: {
-            this.platform.log.debug('TV %s Set Remote Key Pressed: INFORMATION', this.accessory.displayName);
-            //this.pushMenuChanges();
-            break;
-          }
-        }
-
-        // don't forget to callback!
-        callback(null);
-      });
+    this.service.getCharacteristic(this.platform.Characteristic.RemoteKey).onSet(async (value: CharacteristicValue) => {
+      this.RemoteKeySet(value);
+    });
 
     /**
      * Create a speaker service to allow volume control
@@ -194,15 +109,99 @@ export class TV {
     // handle volume control
     this.speakerService
       .getCharacteristic(this.platform.Characteristic.VolumeSelector)
-      .on(CharacteristicEventTypes.SET, (value, callback: CharacteristicGetCallback) => {
-        this.platform.log.debug('TV %s Set VolumeSelector: %s', this.accessory.displayName, value);
-        if (value === this.platform.Characteristic.VolumeSelector.INCREMENT) {
-          this.pushVolumeUpChanges();
-        } else {
-          this.pushVolumeDownChanges();
-        }
-        callback(null);
+      .onSet(async (value: CharacteristicValue) => {
+        this.VolumeSelectorSet(value);
       });
+  }
+
+  private VolumeSelectorSet(value: CharacteristicValue) {
+    this.platform.log.debug('TV %s Set VolumeSelector: %s', this.accessory.displayName, value);
+    if (value === this.platform.Characteristic.VolumeSelector.INCREMENT) {
+      this.pushVolumeUpChanges();
+    } else {
+      this.pushVolumeDownChanges();
+    }
+  }
+
+  private RemoteKeySet(value: CharacteristicValue) {
+    switch (value) {
+      case this.platform.Characteristic.RemoteKey.REWIND: {
+        this.platform.log.debug('TV %s Set Remote Key Pressed: REWIND', this.accessory.displayName);
+        break;
+      }
+      case this.platform.Characteristic.RemoteKey.FAST_FORWARD: {
+        this.platform.log.debug('TV %s Set Remote Key Pressed: FAST_FORWARD', this.accessory.displayName);
+        break;
+      }
+      case this.platform.Characteristic.RemoteKey.NEXT_TRACK: {
+        this.platform.log.debug('TV %s Set Remote Key Pressed: NEXT_TRACK', this.accessory.displayName);
+        break;
+      }
+      case this.platform.Characteristic.RemoteKey.PREVIOUS_TRACK: {
+        this.platform.log.debug('TV %s Set Remote Key Pressed: PREVIOUS_TRACK', this.accessory.displayName);
+        break;
+      }
+      case this.platform.Characteristic.RemoteKey.ARROW_UP: {
+        this.platform.log.debug('TV %s Set Remote Key Pressed: ARROW_UP', this.accessory.displayName);
+        //this.pushUpChanges();
+        break;
+      }
+      case this.platform.Characteristic.RemoteKey.ARROW_DOWN: {
+        this.platform.log.debug('TV %s Set Remote Key Pressed: ARROW_DOWN', this.accessory.displayName);
+        //this.pushDownChanges();
+        break;
+      }
+      case this.platform.Characteristic.RemoteKey.ARROW_LEFT: {
+        this.platform.log.debug('TV %s Set Remote Key Pressed: ARROW_LEFT', this.accessory.displayName);
+        //this.pushLeftChanges();
+        break;
+      }
+      case this.platform.Characteristic.RemoteKey.ARROW_RIGHT: {
+        this.platform.log.debug('TV %s Set Remote Key Pressed: ARROW_RIGHT', this.accessory.displayName);
+        //this.pushRightChanges();
+        break;
+      }
+      case this.platform.Characteristic.RemoteKey.SELECT: {
+        this.platform.log.debug('TV %s Set Remote Key Pressed: SELECT', this.accessory.displayName);
+        //this.pushOkChanges();
+        break;
+      }
+      case this.platform.Characteristic.RemoteKey.BACK: {
+        this.platform.log.debug('TV %s Set Remote Key Pressed: BACK', this.accessory.displayName);
+        //this.pushBackChanges();
+        break;
+      }
+      case this.platform.Characteristic.RemoteKey.EXIT: {
+        this.platform.log.debug('TV %s Set Remote Key Pressed: EXIT', this.accessory.displayName);
+        break;
+      }
+      case this.platform.Characteristic.RemoteKey.PLAY_PAUSE: {
+        this.platform.log.debug('TV %s Set Remote Key Pressed: PLAY_PAUSE', this.accessory.displayName);
+        break;
+      }
+      case this.platform.Characteristic.RemoteKey.INFORMATION: {
+        this.platform.log.debug('TV %s Set Remote Key Pressed: INFORMATION', this.accessory.displayName);
+        //this.pushMenuChanges();
+        break;
+      }
+    }
+  }
+
+  private ActiveIdentifierSet(value: CharacteristicValue) {
+    this.platform.log.debug('TV %s Set Active Identifier: %s', this.accessory.displayName, value);
+  }
+
+  private ActiveSet(value: CharacteristicValue) {
+    this.platform.log.debug('TV %s Set Active: %s', this.accessory.displayName, value);
+    if (value === this.platform.Characteristic.Active.INACTIVE) {
+      this.pushTvOffChanges();
+    } else {
+      this.pushTvOnChanges();
+    }
+    this.ActiveIdentifier = value;
+    if (this.ActiveIdentifier !== undefined) {
+      this.service.updateCharacteristic(this.platform.Characteristic.Active, this.ActiveIdentifier);
+    }
   }
 
   /**

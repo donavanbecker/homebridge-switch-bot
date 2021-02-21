@@ -116,12 +116,17 @@ export class Humidifier {
         this.platform.Service.TemperatureSensor,
         `${device.deviceName} ${device.deviceType} Temperature Sensor`,
       );
-      this.temperatureservice.getCharacteristic(this.platform.Characteristic.CurrentTemperature).setProps({
-        validValueRanges: [-100, 100],
-        minStep: 0.1,
-        minValue: -100,
-        maxValue: 100,
-      });
+      this.temperatureservice
+        .getCharacteristic(this.platform.Characteristic.CurrentTemperature)
+        .setProps({
+          validValueRanges: [-100, 100],
+          minStep: 0.1,
+          minValue: -100,
+          maxValue: 100,
+        })
+        .onGet(async () => {
+          return this.CurrentTemperature;
+        });
     } else if (this.temperatureservice && this.platform.config.options?.humidifier?.hide_temperature) {
       accessory.removeService(this.temperatureservice);
     }

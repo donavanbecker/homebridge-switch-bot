@@ -1,13 +1,6 @@
-import {
-  Characteristic,
-  CharacteristicEventTypes,
-  CharacteristicGetCallback,
-  CharacteristicValue,
-  PlatformAccessory,
-  Service,
-} from 'homebridge';
+import { CharacteristicValue, PlatformAccessory, Service } from 'homebridge';
 import { SwitchBotPlatform } from '../platform';
-import { DeviceURL, irdevice, deviceStatusResponse} from '../settings';
+import { DeviceURL, irdevice, deviceStatusResponse } from '../settings';
 
 /**
  * Platform Accessory
@@ -19,15 +12,13 @@ export class Fan {
 
   Active!: CharacteristicValue;
   ActiveIdentifier!: CharacteristicValue;
-  deviceStatus!: deviceStatusResponse;
-  RotationSpeed: any;
-  SwingMode: any;
+  RotationSpeed!: CharacteristicValue;
+  SwingMode!: CharacteristicValue;
   RotationDirection!: CharacteristicValue;
+  deviceStatus!: deviceStatusResponse;
   minStep: number | undefined;
   minValue: number | undefined;
   maxValue: number | undefined;
-  rotationSpeedCharacteristic!: Characteristic;
-  swingModeCharacteristic!: Characteristic;
 
   constructor(
     private readonly platform: SwitchBotPlatform,
@@ -59,19 +50,9 @@ export class Fan {
     );
 
     // handle on / off events using the Active characteristic
-    this.service
-      .getCharacteristic(this.platform.Characteristic.Active)
-      .on(CharacteristicEventTypes.SET, (value: any, callback: CharacteristicGetCallback) => {
-        this.platform.log.debug('Fan %s Set Active: %s', this.accessory.displayName, value);
-        if (value === this.platform.Characteristic.Active.INACTIVE) {
-          this.pushFanOffChanges();
-        } else {
-          this.pushFanOnChanges();
-        }
-        this.Active = value;
-        this.service.updateCharacteristic(this.platform.Characteristic.Active, this.Active);
-        callback(null);
-      });
+    this.service.getCharacteristic(this.platform.Characteristic.Active).onSet(async (value: CharacteristicValue) => {
+      this.ActiveSet(value);
+    });
 
     if (this.platform.config.options?.fan?.rotation_speed?.includes(device.deviceId)) {
       if (this.platform.config.options?.fan?.set_minStep) {
@@ -97,19 +78,8 @@ export class Fan {
           minValue: this.minValue,
           maxValue: this.maxValue,
         })
-        .on(CharacteristicEventTypes.SET, (value: any, callback: CharacteristicGetCallback) => {
-          this.platform.log.debug('Fan %s Set Active: %s', this.accessory.displayName, value);
-          if (value > this.RotationSpeed) {
-            this.RotationSpeed = 1;
-            this.pushFanSpeedUpChanges();
-            this.pushFanOnChanges();
-          } else {
-            this.RotationSpeed = 0;
-            this.pushFanSpeedDownChanges();
-          }
-          this.Active = value;
-          this.service.updateCharacteristic(this.platform.Characteristic.RotationSpeed, this.RotationSpeed);
-          callback(null);
+        .onSet(async (value: CharacteristicValue) => {
+          this.RotationSpeedSet(value);
         });
     } else if (
       this.service.testCharacteristic(this.platform.Characteristic.RotationSpeed) &&
@@ -128,20 +98,8 @@ export class Fan {
       // handle Osolcation events using the SwingMode characteristic
       this.service
         .getCharacteristic(this.platform.Characteristic.SwingMode)
-        .on(CharacteristicEventTypes.SET, (value: any, callback: CharacteristicGetCallback) => {
-          this.platform.log.debug('Fan %s Set Active: %s', this.accessory.displayName, value);
-          if (value > this.SwingMode) {
-            this.SwingMode = 1;
-            this.pushFanOnChanges();
-            this.pushFanSwingChanges();
-          } else {
-            this.SwingMode = 0;
-            this.pushFanOnChanges();
-            this.pushFanSwingChanges();
-          }
-          this.Active = value;
-          this.service.updateCharacteristic(this.platform.Characteristic.SwingMode, this.SwingMode);
-          callback(null);
+        .onSet(async (value: CharacteristicValue) => {
+          this.SwingModeSet(value);
         });
     } else if (
       this.service.testCharacteristic(this.platform.Characteristic.SwingMode) &&
@@ -154,6 +112,52 @@ export class Fan {
       this.platform.log.debug(
         'Swing Mode Characteristic was not removed or not added. To Remove Chracteristic, Clear Cache on this Accessory.',
       );
+    }
+  }
+
+  private SwingModeSet(value: CharacteristicValue) {
+    this.platform.log.debug('Fan %s Set SwingMode: %s', this.accessory.displayName, value);
+    if (value > this.SwingMode) {
+      this.SwingMode = 1;
+      this.pushFanOnChanges();
+      this.pushFanSwingChanges();
+    } else {
+      this.SwingMode = 0;
+      this.pushFanOnChanges();
+      this.pushFanSwingChanges();
+    }
+    this.SwingMode = value;
+    if (this.SwingMode !== undefined) {
+      this.service.updateCharacteristic(this.platform.Characteristic.SwingMode, this.SwingMode);
+    }
+  }
+
+  private RotationSpeedSet(value: CharacteristicValue) {
+    this.platform.log.debug('Fan %s Set Active: %s', this.accessory.displayName, value);
+    if (value > this.RotationSpeed) {
+      this.RotationSpeed = 1;
+      this.pushFanSpeedUpChanges();
+      this.pushFanOnChanges();
+    } else {
+      this.RotationSpeed = 0;
+      this.pushFanSpeedDownChanges();
+    }
+    this.RotationSpeed = value;
+    if (this.RotationSpeed !== undefined) {
+      this.service.updateCharacteristic(this.platform.Characteristic.RotationSpeed, this.RotationSpeed);
+    }
+  }
+
+  private ActiveSet(value: CharacteristicValue) {
+    this.platform.log.debug('Fan %s Set Active: %s', this.accessory.displayName, value);
+    if (value === this.platform.Characteristic.Active.INACTIVE) {
+      this.pushFanOffChanges();
+    } else {
+      this.pushFanOnChanges();
+    }
+    this.Active = value;
+    if (this.Active !== undefined) {
+      this.service.updateCharacteristic(this.platform.Characteristic.Active, this.Active);
     }
   }
 

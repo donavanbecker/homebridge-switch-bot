@@ -1,6 +1,4 @@
 import {
-  CharacteristicEventTypes,
-  CharacteristicGetCallback,
   CharacteristicValue,
   PlatformAccessory,
   Service,
@@ -56,22 +54,27 @@ export class WaterHeater {
     // handle on / off events using the Active characteristic
     this.service
       .getCharacteristic(this.platform.Characteristic.Active)
-      .on(CharacteristicEventTypes.SET, (value: any, callback: CharacteristicGetCallback) => {
-        this.platform.log.debug('WaterHeater %s Set Active: %s', this.accessory.displayName, value);
-        if (value === this.platform.Characteristic.Active.INACTIVE) {
-          this.pushWaterHeaterOffChanges();
-          this.service.setCharacteristic(
-            this.platform.Characteristic.InUse,
-            this.platform.Characteristic.InUse.NOT_IN_USE,
-          );
-        } else {
-          this.pushWaterHeaterOnChanges();
-          this.service.setCharacteristic(this.platform.Characteristic.InUse, this.platform.Characteristic.InUse.IN_USE);
-        }
-        this.Active = value;
-        this.service.updateCharacteristic(this.platform.Characteristic.Active, this.Active);
-        callback(null);
+      .onSet(async (value: CharacteristicValue) => {
+        this.ActiveSet(value);
       });
+  }
+
+  private ActiveSet(value: CharacteristicValue) {
+    this.platform.log.debug('WaterHeater %s Set Active: %s', this.accessory.displayName, value);
+    if (value === this.platform.Characteristic.Active.INACTIVE) {
+      this.pushWaterHeaterOffChanges();
+      this.service.setCharacteristic(
+        this.platform.Characteristic.InUse,
+        this.platform.Characteristic.InUse.NOT_IN_USE,
+      );
+    } else {
+      this.pushWaterHeaterOnChanges();
+      this.service.setCharacteristic(this.platform.Characteristic.InUse, this.platform.Characteristic.InUse.IN_USE);
+    }
+    this.Active = value;
+    if (this.Active !== undefined) {
+      this.service.updateCharacteristic(this.platform.Characteristic.Active, this.Active);
+    }
   }
 
   /**

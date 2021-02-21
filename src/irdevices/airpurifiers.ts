@@ -1,10 +1,4 @@
-import {
-  CharacteristicEventTypes,
-  CharacteristicGetCallback,
-  CharacteristicValue,
-  PlatformAccessory,
-  Service,
-} from 'homebridge';
+import { CharacteristicValue, PlatformAccessory, Service } from 'homebridge';
 import { SwitchBotPlatform } from '../platform';
 import { DeviceURL, irdevice } from '../settings';
 
@@ -17,13 +11,14 @@ export class AirPurifier {
   service!: Service;
 
   Active!: CharacteristicValue;
-  RotationSpeed!: number;
-  lastTemperature!: number;
-  currentTemperature!: number;
-  currentMode!: number;
-  currentFanSpeed!: number;
-  busy: any;
-  timeout: any = null;
+  RotationSpeed!: CharacteristicValue;
+  CurrentAirPurifierState!: CharacteristicValue;
+  CurrentTemperature!: CharacteristicValue;
+  LastTemperature!: number;
+  CurrentMode!: number;
+  CurrentFanSpeed!: number;
+  Busy: any;
+  Timeout: any = null;
   static PURIFYING_AIR: number;
   static IDLE: number;
   static INACTIVE: number;
@@ -59,57 +54,57 @@ export class AirPurifier {
     );
 
     // handle on / off events using the Active characteristic
-    this.service
-      .getCharacteristic(this.platform.Characteristic.Active)
-      .on(CharacteristicEventTypes.SET, (value: any, callback: CharacteristicGetCallback) => {
-        this.platform.log.debug('%s %s Set Active: %s', this.device.remoteType, this.accessory.displayName, value);
-        try {
-          if (value === this.platform.Characteristic.Active.INACTIVE) {
-            this.pushAirConditionerOffChanges();
-          } else {
-            this.pushAirConditionerOnChanges();
-          }
-          this.Active = value;
-          this.service.updateCharacteristic(this.platform.Characteristic.Active, this.Active);
-          callback(null);
-        } catch (errror) {
-          callback(errror);
-        }
-      });
+    this.service.getCharacteristic(this.platform.Characteristic.Active).onSet(async (value: CharacteristicValue) => {
+      this.ActiveSet(value);
+    });
 
-    this.service
-      .getCharacteristic(this.platform.Characteristic.CurrentAirPurifierState)
-      .on(CharacteristicEventTypes.GET, this.getCurrentAirPurifierState.bind(this));
+    this.service.getCharacteristic(this.platform.Characteristic.CurrentAirPurifierState).onGet(async () => {
+      return this.CurrentAirPurifierStateGet();
+    });
 
     this.service
       .getCharacteristic(this.platform.Characteristic.TargetAirPurifierState)
-      .on(CharacteristicEventTypes.SET, this.setCurrentAirPurifierState.bind(this));
+      .onSet(async (value: CharacteristicValue) => {
+        this.TargetAirPurifierStateSet(value);
+      });
   }
 
-  setCurrentAirPurifierState(state, callback: CharacteristicGetCallback) {
-    switch (state) {
+  private ActiveSet(value: CharacteristicValue) {
+    this.platform.log.debug('%s %s Set Active: %s', this.device.remoteType, this.accessory.displayName, value);
+    if (value === this.platform.Characteristic.Active.INACTIVE) {
+      this.pushAirConditionerOffChanges();
+    } else {
+      this.pushAirConditionerOnChanges();
+    }
+    this.Active = value;
+    if (this.Active !== undefined) {
+      this.service.updateCharacteristic(this.platform.Characteristic.Active, this.Active);
+    }
+  }
+
+  private TargetAirPurifierStateSet(value: CharacteristicValue) {
+    switch (value) {
       case this.platform.Characteristic.CurrentAirPurifierState.PURIFYING_AIR:
-        this.currentMode = AirPurifier.PURIFYING_AIR;
+        this.CurrentMode = AirPurifier.PURIFYING_AIR;
         break;
       case this.platform.Characteristic.CurrentAirPurifierState.IDLE:
-        this.currentMode = AirPurifier.IDLE;
+        this.CurrentMode = AirPurifier.IDLE;
         break;
       case this.platform.Characteristic.CurrentAirPurifierState.INACTIVE:
-        this.currentMode = AirPurifier.INACTIVE;
+        this.CurrentMode = AirPurifier.INACTIVE;
         break;
       default:
         break;
     }
-    //this.pushAirConditionerStatusChanges();
-    callback(null);
   }
 
-  getCurrentAirPurifierState(callback: CharacteristicGetCallback) {
+  private CurrentAirPurifierStateGet() {
     if (this.Active === 1) {
-      callback(null, this.platform.Characteristic.CurrentAirPurifierState.PURIFYING_AIR);
+      this.CurrentAirPurifierState = this.platform.Characteristic.CurrentAirPurifierState.PURIFYING_AIR;
     } else {
-      callback(null, this.platform.Characteristic.CurrentAirPurifierState.INACTIVE);
+      this.CurrentAirPurifierState = this.platform.Characteristic.CurrentAirPurifierState.INACTIVE;
     }
+    return this.CurrentAirPurifierState;
   }
 
   /**
@@ -146,30 +141,30 @@ export class AirPurifier {
   }
 
   async pushAirConditionerStatusChanges() {
-    if (!this.busy) {
-      this.busy = true;
+    if (!this.Busy) {
+      this.Busy = true;
       this.service.updateCharacteristic(
         this.platform.Characteristic.CurrentHeaterCoolerState,
         this.platform.Characteristic.CurrentHeaterCoolerState.IDLE,
       );
     }
-    clearTimeout(this.timeout);
+    clearTimeout(this.Timeout);
 
-    // Make a new timeout set to go off in 1000ms (1 second)
-    this.timeout = setTimeout(this.pushAirConditionerDetailsChanges.bind(this), 1500);
+    // Make a new Timeout set to go off in 1000ms (1 second)
+    this.Timeout = setTimeout(this.pushAirConditionerDetailsChanges.bind(this), 1500);
   }
 
   async pushAirConditionerDetailsChanges() {
     const payload = {
       commandType: 'command',
-      parameter: `${this.currentTemperature || 24},${this.currentMode || 1},${this.currentFanSpeed || 1},${
+      parameter: `${this.CurrentTemperature || 24},${this.CurrentMode || 1},${this.CurrentFanSpeed || 1},${
         this.Active === 1 ? 'on' : 'off'
       }`,
       command: 'setAll',
     } as any;
 
     if (this.Active === 1) {
-      if ((this.currentTemperature || 24) < (this.lastTemperature || 30)) {
+      if ((this.CurrentTemperature || 24) < (this.LastTemperature || 30)) {
         this.service.updateCharacteristic(
           this.platform.Characteristic.CurrentHeaterCoolerState,
           this.platform.Characteristic.CurrentHeaterCoolerState.COOLING,

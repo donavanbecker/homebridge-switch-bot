@@ -1,10 +1,4 @@
-import {
-  CharacteristicEventTypes,
-  CharacteristicGetCallback,
-  CharacteristicValue,
-  PlatformAccessory,
-  Service,
-} from 'homebridge';
+import { CharacteristicValue, PlatformAccessory, Service } from 'homebridge';
 import { SwitchBotPlatform } from '../platform';
 import { DeviceURL, irdevice } from '../settings';
 
@@ -17,14 +11,12 @@ export class Light {
   service!: Service;
 
   On!: CharacteristicValue;
-  Brightness!: number;
 
   constructor(
     private readonly platform: SwitchBotPlatform,
     private accessory: PlatformAccessory,
     public device: irdevice,
   ) {
-    this.Brightness = 0;
     // set accessory information
     this.accessory
       .getService(this.platform.Service.AccessoryInformation)!
@@ -51,19 +43,9 @@ export class Light {
     );
 
     // handle on / off events using the On characteristic
-    this.service
-      .getCharacteristic(this.platform.Characteristic.On)
-      .on(CharacteristicEventTypes.SET, (value: any, callback: CharacteristicGetCallback) => {
-        this.platform.log.debug('%s %s Set On: %s', this.device.remoteType, this.accessory.displayName, value);
-        this.On = value;
-        if (this.On) {
-          this.pushLightOnChanges();
-        } else {
-          this.pushLightOffChanges();
-        }
-        this.service.updateCharacteristic(this.platform.Characteristic.Active, this.On);
-        callback(null);
-      });
+    this.service.getCharacteristic(this.platform.Characteristic.On).onSet(async (value: CharacteristicValue) => {
+      this.OnSet(value);
+    });
 
     // handle Brightness events using the Brightness characteristic
     /* this.service
@@ -79,6 +61,17 @@ export class Light {
         this.service.updateCharacteristic(this.platform.Characteristic.Active, this.Brightness);
         callback(null);
       });*/
+  }
+
+  private OnSet(value: CharacteristicValue) {
+    this.platform.log.debug('%s %s Set On: %s', this.device.remoteType, this.accessory.displayName, value);
+    this.On = value;
+    if (this.On) {
+      this.pushLightOnChanges();
+    } else {
+      this.pushLightOffChanges();
+    }
+    this.service.updateCharacteristic(this.platform.Characteristic.Active, this.On);
   }
 
   /**

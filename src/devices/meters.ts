@@ -94,13 +94,18 @@ export class Meter {
         `${this.device.deviceName} ${this.device.deviceType} Temperature Sensor`,
       );
 
-      this.temperatureservice.getCharacteristic(this.platform.Characteristic.CurrentTemperature).setProps({
-        unit: Units['CELSIUS'],
-        validValueRanges: [-100, 100],
-        minValue: -100,
-        maxValue: 100,
-        minStep: 0.1,
-      });
+      this.temperatureservice
+        .getCharacteristic(this.platform.Characteristic.CurrentTemperature)
+        .setProps({
+          unit: Units['CELSIUS'],
+          validValueRanges: [-100, 100],
+          minValue: -100,
+          maxValue: 100,
+          minStep: 0.1,
+        })
+        .onGet(async () => {
+          return this.CurrentTemperature;
+        });
     } else if (this.temperatureservice && this.platform.config.options?.meter?.hide_temperature) {
       accessory.removeService(this.temperatureservice);
     }
