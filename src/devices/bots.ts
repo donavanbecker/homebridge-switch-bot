@@ -228,6 +228,6 @@ export class Bot {
     this.doBotUpdate.next();
     this.On = value;
     this.service.updateCharacteristic(this.platform.Characteristic.On, this.On);
-    callback();
+    callback(null);
   }
 }

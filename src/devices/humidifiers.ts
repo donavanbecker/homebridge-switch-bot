@@ -453,7 +453,7 @@ export class Humidifier {
       this.TargetHumidifierDehumidifierState,
     );
     this.doHumidifierUpdate.next();
-    callback();
+    callback(null);
   }
 
   /**
@@ -464,7 +464,7 @@ export class Humidifier {
     this.Active = value;
     this.service.updateCharacteristic(this.platform.Characteristic.Active, this.Active);
     this.doHumidifierUpdate.next();
-    callback();
+    callback(null);
   }
 
   /**
@@ -495,6 +495,6 @@ export class Humidifier {
     );
     this.service.updateCharacteristic(this.platform.Characteristic.Active, this.Active);
     this.doHumidifierUpdate.next();
-    callback();
+    callback(null);
   }
 }
