@@ -135,7 +135,7 @@ export class Curtain {
     );
     if (this.setNewTarget){
       this.platform.log.info(
-        '%s Checking Status...',
+        'Checking %s Status ...',
         this.accessory.displayName,
       );
     }

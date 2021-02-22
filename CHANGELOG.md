@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file. This projec
 
 ### Changes
 
+- Add curtain refresh option.
 - Add support and set new requirement for Homebridge v1.3.0.
 - Characteristics are now only updated if defined with a valid `CharacteristicValue`.
 
