@@ -129,6 +129,13 @@
                 "title": "Disable Grouping",
                 "type": "boolean"
               },
+              "refreshRate": {
+                "title": "Refresh Rate",
+                "type": "number",
+                "minimum": 120,
+                "placeholder": 300,
+                "description": "Indicates the number of seconds between before refreshing Curtain status while updating slide progress."
+              },
               "set_minStep": {
                 "title": "Set Min Step",
                 "type": "number",
@@ -342,6 +349,7 @@
               "expanded": false,
               "items": [
                 "options.curtain.disable_group",
+                "options.curtain.refreshRate",
                 "options.curtain.set_minStep",
                 "options.curtain.set_min",
                 "options.curtain.set_max"

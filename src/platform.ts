@@ -133,10 +133,16 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
       // Curtain Config Options
       if (this.config.options?.curtain) {
-        !this.config.options.curtain.disable_group;
+        this.config.options.curtain.disable_group;
+        this.config.options.curtain.refreshRate;
         this.config.options.curtain.set_minStep;
         this.config.options.curtain.set_min;
         this.config.options.curtain.set_max;
+
+        if (!this.config.options.curtain.refreshRate) {
+        // default 300 seconds
+        this.config.options!.curtain.refreshRate! = 5;
+        }
       }
 
       // Fan Config Options
