@@ -52,11 +52,11 @@ export class Meter {
       .setCharacteristic(this.platform.Characteristic.Model, 'SWITCHBOT-METERTH-S1')
       .setCharacteristic(this.platform.Characteristic.SerialNumber, this.device.deviceId);
 
-    // get the BatteryService service if it exists, otherwise create a new Battery service
+    // get the Battery service if it exists, otherwise create a new Battery service
     // you can create multiple services for each accessory
     (this.service =
-      this.accessory.getService(this.platform.Service.BatteryService) ||
-      this.accessory.addService(this.platform.Service.BatteryService)),
+      this.accessory.getService(this.platform.Service.Battery) ||
+      this.accessory.addService(this.platform.Service.Battery)),
     `${this.device.deviceName} ${this.device.deviceType}`;
 
     // To avoid "Cannot add a Service with the same UUID another Service without also defining a unique 'subtype' property." error,
@@ -71,7 +71,7 @@ export class Meter {
     );
 
     // each service must implement at-minimum the "required characteristics" for the given service type
-    // see https://developers.homebridge.io/#/service/BatteryService
+    // see https://developers.homebridge.io/#/service/Battery
 
     // create handlers for required characteristics
     this.service.setCharacteristic(this.platform.Characteristic.ChargingState, 2);
