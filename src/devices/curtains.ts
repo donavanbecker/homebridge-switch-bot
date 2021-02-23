@@ -48,7 +48,7 @@ export class Curtain {
     (this.service =
       this.accessory.getService(this.platform.Service.WindowCovering) ||
       this.accessory.addService(this.platform.Service.WindowCovering)),
-    `${this.device.deviceName} ${this.device.deviceType}`;
+      `${this.device.deviceName} ${this.device.deviceType}`;
 
     // To avoid "Cannot add a Service with the same UUID another Service without also defining a unique 'subtype' property." error,
     // when creating multiple services of the same type, you need to use the following syntax to specify a name and subtype id:
@@ -67,7 +67,17 @@ export class Curtain {
     // create handlers for required characteristics
     this.service.setCharacteristic(this.platform.Characteristic.PositionState, this.PositionState);
 
-    this.service.setCharacteristic(this.platform.Characteristic.CurrentPosition, this.CurrentPosition);
+    this.service
+      .getCharacteristic(this.platform.Characteristic.CurrentPosition)
+      .setProps({
+        minStep: this.platform.config.options?.curtain?.set_minStep || 1,
+        minValue: 0,
+        maxValue: 100,
+        validValueRanges: [0, 100],
+      })
+      .onGet(async () => {
+        return this.CurrentPosition;
+      });
 
     this.service
       .getCharacteristic(this.platform.Characteristic.TargetPosition)
@@ -99,7 +109,7 @@ export class Curtain {
         this.platform.log.debug('Refresh status when moving', this.PositionState);
         this.refreshStatus();
       });
-      
+
 
     // Watch for Curtain change events
     // We put in a debounce of 100ms so we don't make duplicate calls
@@ -133,7 +143,7 @@ export class Curtain {
       'Device is Currently: ',
       this.CurrentPosition,
     );
-    if (this.setNewTarget){
+    if (this.setNewTarget) {
       this.platform.log.info(
         'Checking %s Status ...',
         this.accessory.displayName,
