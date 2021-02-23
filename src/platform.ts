@@ -361,7 +361,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
         //existingAccessory.context.firmwareRevision = firmware;
-        this.api.updatePlatformAccessories([existingAccessory]);
+        //this.api.updatePlatformAccessories([existingAccessory]);
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
         new Humidifier(this, existingAccessory, device);
@@ -419,7 +419,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
         //existingAccessory.context.firmwareRevision = firmware;
-        this.api.updatePlatformAccessories([existingAccessory]);
+        //this.api.updatePlatformAccessories([existingAccessory]);
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
         new Bot(this, existingAccessory, device);
@@ -480,7 +480,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
         //existingAccessory.context.firmwareRevision = firmware;
-        this.api.updatePlatformAccessories([existingAccessory]);
+        //this.api.updatePlatformAccessories([existingAccessory]);
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
         new Meter(this, existingAccessory, device);
@@ -538,7 +538,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
         //existingAccessory.context.firmwareRevision = firmware;
-        this.api.updatePlatformAccessories([existingAccessory]);
+        //this.api.updatePlatformAccessories([existingAccessory]);
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
         new Curtain(this, existingAccessory, device);
@@ -617,7 +617,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
       // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
       //existingAccessory.context.firmwareRevision = firmware;
-      this.api.updatePlatformAccessories([existingAccessory]);
+      //this.api.updatePlatformAccessories([existingAccessory]);
       // create the accessory handler for the restored accessory
       // this is imported from `platformAccessory.ts`
       new TV(this, existingAccessory, device);
@@ -680,7 +680,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
         //existingAccessory.context.firmwareRevision = firmware;
-        this.api.updatePlatformAccessories([existingAccessory]);
+        //this.api.updatePlatformAccessories([existingAccessory]);
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
         new Fan(this, existingAccessory, device);
@@ -738,7 +738,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
         //existingAccessory.context.firmwareRevision = firmware;
-        this.api.updatePlatformAccessories([existingAccessory]);
+        //this.api.updatePlatformAccessories([existingAccessory]);
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
         new Light(this, existingAccessory, device);
@@ -796,7 +796,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
         //existingAccessory.context.firmwareRevision = firmware;
-        this.api.updatePlatformAccessories([existingAccessory]);
+        //this.api.updatePlatformAccessories([existingAccessory]);
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
         new AirConditioner(this, existingAccessory, device);
@@ -854,7 +854,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
         //existingAccessory.context.firmwareRevision = firmware;
-        this.api.updatePlatformAccessories([existingAccessory]);
+        //this.api.updatePlatformAccessories([existingAccessory]);
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
         new AirPurifier(this, existingAccessory, device);
@@ -912,7 +912,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
         //existingAccessory.context.firmwareRevision = firmware;
-        this.api.updatePlatformAccessories([existingAccessory]);
+        //this.api.updatePlatformAccessories([existingAccessory]);
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
         new WaterHeater(this, existingAccessory, device);
@@ -970,7 +970,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
         //existingAccessory.context.firmwareRevision = firmware;
-        this.api.updatePlatformAccessories([existingAccessory]);
+        //this.api.updatePlatformAccessories([existingAccessory]);
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
         new VacuumCleaner(this, existingAccessory, device);
@@ -1028,7 +1028,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
 
         // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
         //existingAccessory.context.firmwareRevision = firmware;
-        this.api.updatePlatformAccessories([existingAccessory]);
+        //this.api.updatePlatformAccessories([existingAccessory]);
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
         new Camera(this, existingAccessory, device);

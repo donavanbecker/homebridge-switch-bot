@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. This project uses [Semantic Versioning](https://semver.org/)
 
+## [Version 3.2.1](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v3.2.0...v3.2.1) (2021-02-23)
+
+### Changes
+- Fixed CurrentPosition issue with `minValue` and `maxValue`, also set `validValueRange`.
+- Updated BatteryService Characteristic to Battery to meeting Homebridge 1.3.0 Standards.
+- Housekeeping and updated dependencies.
+
 ## [Version 3.2.0](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v3.1.0...v3.2.0) (2021-02-22)
 
 ### Changes
