@@ -202,7 +202,15 @@
               "deviceType": {
                 "title": "What Type of Device do you want to display in the Home App?",
                 "type": "string",
-                "placeholder": "Fan"
+                "oneOf": [
+                  {
+                    "title": "Fan",
+                    "enum": [
+                      "Fan"
+                    ]
+                  }
+                ],
+                "required": false
               },
               "commandOn": {
                 "title": "Command sent to turn On Device.",
@@ -459,7 +467,7 @@
             },
             {
               "type": "fieldset",
-              "title": "'Other' Settings",
+              "title": "Others Settings",
               "expandable": true,
               "expanded": false,
               "items": [

@@ -88,7 +88,11 @@ plugin allows you to access your SwitchBot Device(s) from HomeKit with
 - Vacuum Cleaners    
     - Allows for On/Off Controls
 - Water Heaters    
-    - Allows for On/Off Controls       
+    - Allows for On/Off Controls  
+- Others 
+    - Option to Dispaly as differenet Device Type
+        - Supports Fan Device Type
+    - Allows for On/Off Controls           
 
 ## SwitchBotAPI
 
