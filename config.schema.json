@@ -195,6 +195,26 @@
                 "type": "boolean"
               }
             }
+          },
+          "other": {
+            "type": "object",
+            "properties": {
+              "deviceType": {
+                "title": "What Type of Device do you want to display in the Home App?",
+                "type": "string",
+                "placeholder": "Fan"
+              },
+              "commandOn": {
+                "title": "Command sent to turn On Device.",
+                "type": "string",
+                "placeholder": "On"
+              },
+              "commandOff": {
+                "title": "Command sent to turn Off Device.",
+                "type": "string",
+                "placeholder": "Off"
+              }
+            }
           }
         }
       },
@@ -435,6 +455,17 @@
               "expanded": false,
               "items": [
                 "options.irair.hide_automode"
+              ]
+            },
+            {
+              "type": "fieldset",
+              "title": "'Other' Settings",
+              "expandable": true,
+              "expanded": false,
+              "items": [
+                "options.other.deviceType",
+                "options.other.commandOn",
+                "options.other.commandOff"
               ]
             }
           ]

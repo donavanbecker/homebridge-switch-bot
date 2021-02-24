@@ -3,6 +3,7 @@ import { SwitchBotPlatform } from '../platform';
 import { interval, Subject } from 'rxjs';
 import { debounceTime, skipWhile, tap } from 'rxjs/operators';
 import { DeviceURL, device, deviceStatusResponse } from '../settings';
+import { AxiosResponse } from 'axios';
 
 /**
  * Platform Accessory
@@ -200,6 +201,7 @@ export class Bot {
     // Make the API request
     const push = await this.platform.axios.post(`${DeviceURL}/${this.device.deviceId}/commands`, payload);
     this.platform.log.debug('Bot %s Changes pushed -', this.accessory.displayName, push.data);
+    this.statusCode(push);
     this.refreshStatus();
   }
 
@@ -219,6 +221,34 @@ export class Bot {
     this.service.updateCharacteristic(this.platform.Characteristic.On, e);
     if (!this.platform.config.options?.bot?.switch) {
       this.service.updateCharacteristic(this.platform.Characteristic.OutletInUse, e);
+    }
+  }
+
+  private statusCode(push: AxiosResponse<any>) {
+    switch (push.data.statusCode) {
+      case 151:
+        this.platform.log.error('Command not supported by this device type.');
+        break;
+      case 152:
+        this.platform.log.error('Device not found.');
+        break;
+      case 160:
+        this.platform.log.error('Command is not supported.');
+        break;
+      case 161:
+        this.platform.log.error('Device is offline.');
+        break;
+      case 171:
+        this.platform.log.error('Hub Device is offline.');
+        break;
+      case 190:
+        this.platform.log.error('Device internal error due to device states not synchronized with server. Or command fomrat is invalid.');
+        break;
+      case 100:
+        this.platform.log.debug('Command successfully sent.');
+        break;  
+      default:
+        this.platform.log.debug('Unknown statusCode.');
     }
   }
 

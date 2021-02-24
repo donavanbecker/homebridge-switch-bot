@@ -40,6 +40,7 @@ export type options = {
   curtain?: curtain;
   fan?: irfan;
   irair?: irair;
+  other: other;
 };
 
 export type meter = {
@@ -95,6 +96,12 @@ export type set_min = {
 
 export type irair = {
   hide_automode?: boolean;
+};
+
+export type other = {
+  deviceType?: string;
+  commandOn?: string;
+  commandOff?: string;
 };
 
 export interface AxiosRequestConfig {

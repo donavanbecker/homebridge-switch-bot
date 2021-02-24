@@ -1,3 +1,4 @@
+import { AxiosResponse } from 'axios';
 import {
   CharacteristicValue,
   PlatformAccessory,
@@ -113,8 +114,37 @@ export class Camera {
       // Make the API request
       const push = await this.platform.axios.post(`${DeviceURL}/${this.device.deviceId}/commands`, payload);
       this.platform.log.debug('Light %s Changes pushed -', this.accessory.displayName, push.data);
+      this.statusCode(push);
     } catch (e) {
       this.apiError(e);
+    }
+  }
+  
+  private statusCode(push: AxiosResponse<any>) {
+    switch (push.data.statusCode) {
+      case 151:
+        this.platform.log.error('Command not supported by this device type.');
+        break;
+      case 152:
+        this.platform.log.error('Device not found.');
+        break;
+      case 160:
+        this.platform.log.error('Command is not supported.');
+        break;
+      case 161:
+        this.platform.log.error('Device is offline.');
+        break;
+      case 171:
+        this.platform.log.error('Hub Device is offline.');
+        break;
+      case 190:
+        this.platform.log.error('Device internal error due to device states not synchronized with server. Or command fomrat is invalid.');
+        break;
+      case 100:
+        this.platform.log.debug('Command successfully sent.');
+        break;  
+      default:
+        this.platform.log.debug('Unknown statusCode.');
     }
   }
 

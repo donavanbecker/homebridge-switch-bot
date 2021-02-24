@@ -83,8 +83,8 @@ export class Meter {
         this.platform.Service.HumiditySensor,
         `${device.deviceName} ${device.deviceType} Humidity Sensor`,
       );
-    } else if (this.humidityservice && this.platform.config.options?.meter?.hide_humidity) {
-      accessory.removeService(this.humidityservice);
+    } else {
+      accessory.removeService(this.humidityservice!);
     }
 
     this.temperatureservice = accessory.getService(this.platform.Service.TemperatureSensor);
@@ -106,8 +106,8 @@ export class Meter {
         .onGet(async () => {
           return this.CurrentTemperature;
         });
-    } else if (this.temperatureservice && this.platform.config.options?.meter?.hide_temperature) {
-      accessory.removeService(this.temperatureservice);
+    } else {
+      accessory.removeService(this.temperatureservice!);
     }
 
     // Retrieve initial values and updateHomekit
