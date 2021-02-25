@@ -76,30 +76,27 @@ export class Meter {
     // create handlers for required characteristics
     this.service.setCharacteristic(this.platform.Characteristic.ChargingState, 2);
 
-    // Humidity Sensor Service
-    this.humidityservice = accessory.getService(this.platform.Service.HumiditySensor);
-    if (!this.humidityservice && !this.platform.config.options?.meter?.hide_humidity) {
-      this.humidityservice = accessory.addService(
-        this.platform.Service.HumiditySensor,
-        `${device.deviceName} ${device.deviceType} Humidity Sensor`,
-      );
-    } else {
-      accessory.removeService(this.humidityservice!);
-    }
-
-    this.temperatureservice = accessory.getService(this.platform.Service.TemperatureSensor);
-    if (!this.temperatureservice && !this.platform.config.options?.meter?.hide_temperature) {
-      this.temperatureservice = accessory.addService(
-        this.platform.Service.TemperatureSensor,
-        `${device.deviceName} ${device.deviceType} Temperature Sensor`,
-      );
+    // Temperature Sensor Service
+    if (this.platform.config.options?.meter?.hide_temperature) {
+      if (this.platform.debugMode) {
+        this.platform.log.error('Removing service');
+      }
+      accessory.removeService(this.temperatureservice!);
+    } else if (!this.temperatureservice) {
+      if (this.platform.debugMode) {
+        this.platform.log.warn('Adding service');
+      }
+      (this.temperatureservice =
+        this.accessory.getService(this.platform.Service.TemperatureSensor) ||
+        this.accessory.addService(this.platform.Service.TemperatureSensor)),
+      `${device.deviceName} ${device.deviceType} TemperatureSensor`;
 
       this.temperatureservice
         .getCharacteristic(this.platform.Characteristic.CurrentTemperature)
         .setProps({
           unit: Units['CELSIUS'],
-          validValueRanges: [-100, 100],
-          minValue: -100,
+          validValueRanges: [-273.15, 100],
+          minValue: -273.15,
           maxValue: 100,
           minStep: 0.1,
         })
@@ -107,7 +104,35 @@ export class Meter {
           return this.CurrentTemperature;
         });
     } else {
-      accessory.removeService(this.temperatureservice!);
+      if (this.platform.debugMode){
+        this.platform.log.warn('TemperatureSensor not added.');
+      }
+    }
+
+    // Humidity Sensor Service
+    if (this.platform.config.options?.meter?.hide_humidity) {
+      if (this.platform.debugMode) {
+        this.platform.log.error('Removing service');
+      }
+      accessory.removeService(this.humidityservice!);
+    } else if (!this.humidityservice) {
+      (this.humidityservice =
+        this.accessory.getService(this.platform.Service.HumiditySensor) ||
+        this.accessory.addService(this.platform.Service.HumiditySensor)),
+      `${device.deviceName} ${device.deviceType} HumiditySensor`;
+
+      this.humidityservice
+        .getCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity)
+        .setProps({
+          minStep: 0.1,
+        })
+        .onGet(async () => {
+          return this.CurrentRelativeHumidity;
+        });
+    } else {
+      if (this.platform.debugMode){
+        this.platform.log.warn('HumiditySensor not added.');
+      }
     }
 
     // Retrieve initial values and updateHomekit

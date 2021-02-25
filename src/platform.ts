@@ -40,6 +40,8 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
     responseType: 'json',
   });
 
+  debugMode!: boolean;
+
   constructor(public readonly log: Logger, public readonly config: SwitchBotPlatformConfig, public readonly api: API) {
     this.log.debug('Finished initializing platform:', this.config.name);
     // only load if configured
@@ -56,6 +58,8 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       this.log.debug(JSON.stringify(e));
       return;
     }
+
+    this.debugMode = process.argv.includes('-D') || process.argv.includes('--debug');
 
     // setup axios interceptor to add headers / api key to each request
     this.axios.interceptors.request.use((request: AxiosRequestConfig) => {

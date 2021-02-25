@@ -111,25 +111,35 @@ export class Humidifier {
 
     // create a new Temperature Sensor service
     // Temperature Sensor Service
-    this.temperatureservice = accessory.getService(this.platform.Service.TemperatureSensor);
-    if (!this.temperatureservice && !this.platform.config.options?.humidifier?.hide_temperature) {
-      this.temperatureservice = accessory.addService(
-        this.platform.Service.TemperatureSensor,
-        `${device.deviceName} ${device.deviceType} Temperature Sensor`,
-      );
+    if (this.platform.config.options?.humidifier?.hide_temperature) {
+      if (this.platform.debugMode) {
+        this.platform.log.error('Removing service');
+      }
+      accessory.removeService(this.temperatureservice!);
+    } else if (!this.temperatureservice) {
+      if (this.platform.debugMode) {
+        this.platform.log.warn('Adding service');
+      }
+      (this.temperatureservice =
+        this.accessory.getService(this.platform.Service.TemperatureSensor) ||
+        this.accessory.addService(this.platform.Service.TemperatureSensor)),
+      `${device.deviceName} ${device.deviceType} TemperatureSensor`;
+
       this.temperatureservice
         .getCharacteristic(this.platform.Characteristic.CurrentTemperature)
         .setProps({
-          validValueRanges: [-100, 100],
-          minStep: 0.1,
-          minValue: -100,
+          validValueRanges: [-273.15, 100],
+          minValue: -273.15,
           maxValue: 100,
+          minStep: 0.1,
         })
         .onGet(async () => {
           return this.CurrentTemperature;
         });
     } else {
-      accessory.removeService(this.temperatureservice!);
+      if (this.platform.debugMode){
+        this.platform.log.warn('TemperatureSensor not added.');
+      }
     }
 
     // Retrieve initial values and updateHomekit
