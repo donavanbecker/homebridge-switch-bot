@@ -146,28 +146,24 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
     this.config.options.curtain.set_max;
 
     // Fan Config Options
-    if (this.config.options?.fan) {
-      this.config.options.fan = this.config.options.fan || {};
-      this.config.options.fan.swing_mode;
-      this.config.options.fan.rotation_speed;
-      this.config.options.fan.set_minStep;
-      this.config.options.fan.set_min;
-      this.config.options.fan.set_max;
-    }
+    this.config.options.fan = this.config.options.fan || {};
+    this.config.options.fan.swing_mode;
+    this.config.options.fan.rotation_speed;
+    this.config.options.fan.set_minStep;
+    this.config.options.fan.set_min;
+    this.config.options.fan.set_max;
+    
 
     // AirConditioner Config Options
-    if (this.config.options?.irair) {
-      this.config.options.irair = this.config.options.irair || {};
-      this.config.options.irair.hide_automode;
-    }
+    this.config.options.irair = this.config.options.irair || {};
+    this.config.options.irair.hide_automode;
+    
 
     // Others Config Options
-    if (this.config.options?.other) {
-      this.config.options.other = this.config.options.other || {};
-      this.config.options.other.deviceType;
-      this.config.options.other.commandOn;
-      this.config.options.other.commandOff;
-    }
+    this.config.options.other = this.config.options.other || {};
+    this.config.options.other.deviceType;
+    this.config.options.other.commandOn;
+    this.config.options.other.commandOff;
 
     if (this.config.options!.refreshRate! < 120) {
       throw new Error('Refresh Rate must be above 120 (2 minutes).');
