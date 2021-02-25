@@ -145,7 +145,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
         this.config.options.curtain.set_max;
 
         if (!this.config.options.curtain.refreshRate) {
-          this.config.options!.curtain.refreshRate = 5;
+          this.config.options!.curtain!.refreshRate! = 5;
           this.log.debug('Using Default Curtain Refresh Rate.');
         }
       }
