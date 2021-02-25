@@ -115,6 +115,7 @@ export class Humidifier {
       if (this.platform.debugMode) {
         this.platform.log.error('Removing service');
       }
+      this.temperatureservice = this.accessory.getService(this.platform.Service.TemperatureSensor);
       accessory.removeService(this.temperatureservice!);
     } else if (!this.temperatureservice) {
       if (this.platform.debugMode) {

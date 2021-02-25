@@ -81,6 +81,7 @@ export class Meter {
       if (this.platform.debugMode) {
         this.platform.log.error('Removing service');
       }
+      this.temperatureservice = this.accessory.getService(this.platform.Service.TemperatureSensor);
       accessory.removeService(this.temperatureservice!);
     } else if (!this.temperatureservice) {
       if (this.platform.debugMode) {
@@ -114,6 +115,7 @@ export class Meter {
       if (this.platform.debugMode) {
         this.platform.log.error('Removing service');
       }
+      this.humidityservice = this.accessory.getService(this.platform.Service.HumiditySensor);
       accessory.removeService(this.humidityservice!);
     } else if (!this.humidityservice) {
       (this.humidityservice =
