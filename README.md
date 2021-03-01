@@ -56,6 +56,7 @@ plugin allows you to access your SwitchBot Device(s) from HomeKit with
         - Switch Mode - Turns on and keep it on until it is turned off
             - This can get out of sync, since API doesn't give me a status
             - To Correct you must go into the SwitchBot App and correct the status of either `On` or `Off`
+- SwitchBot Plug
 
 ## Supported IR Devices
 ### _(All IR Devices require [Hub Plus](https://www.switch-bot.com/products/switchbot-hub-plus) or [Hub Mini](https://www.switch-bot.com/products/switchbot-hub-mini))_
