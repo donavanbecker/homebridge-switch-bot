@@ -11,6 +11,7 @@ import {
   deviceStatusResponse,
 } from './settings';
 import { Bot } from './devices/bots';
+import { Plug } from './devices/plugs';
 import { Meter } from './devices/meters';
 import { Curtain } from './devices/curtains';
 import { Humidifier } from './devices/humidifiers';
@@ -47,6 +48,12 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
     // only load if configured
     if (!this.config) {
       return;
+    }
+
+    // HOOBS notice
+    if (__dirname.includes('hoobs')) {
+      this.log.warn('This plugin has not been tested under HOOBS, it is highly recommended that ' +
+            'you switch to Homebridge: https://git.io/Jtxb0');
     }
 
     // verify the config
@@ -245,6 +252,12 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
               this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
             }
             this.createCurtain(device);
+            break;
+          case 'Plug':
+            if (this.config.devicediscovery) {
+              this.log.info('Discovered %s %s', device.deviceName, device.deviceType);
+            }
+            this.createPlug(device);
             break;
           case 'Remote':
             if (this.config.devicediscovery) {
@@ -608,6 +621,64 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       return device.master && !this.config.options?.hide_device.includes(device.deviceId) && device.enableCloudService;
     } else {
       return !this.config.options?.hide_device.includes(device.deviceId) && device.enableCloudService;
+    }
+  }
+
+  private async createPlug(device: device) {
+    const uuid = this.api.hap.uuid.generate(`${device.deviceName}-${device.deviceId}-${device.deviceType}`);
+
+    // see if an accessory with the same uuid has already been registered and restored from
+    // the cached devices we stored in the `configureAccessory` method above
+    const existingAccessory = this.accessories.find((accessory) => accessory.UUID === uuid);
+
+    if (existingAccessory) {
+    // the accessory already exists
+      if (!this.config.options?.hide_device.includes(device.deviceId) && device.enableCloudService) {
+        this.log.info(
+          'Restoring existing accessory from cache: %s DeviceID: %s',
+          existingAccessory.displayName,
+          device.deviceId,
+        );
+
+        // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
+        //existingAccessory.context.firmwareRevision = firmware;
+        //this.api.updatePlatformAccessories([existingAccessory]);
+        // create the accessory handler for the restored accessory
+        // this is imported from `platformAccessory.ts`
+        new Plug(this, existingAccessory, device);
+        this.log.debug(`${device.deviceType} UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}`);
+      } else {
+        this.unregisterPlatformAccessories(existingAccessory);
+      }
+    } else if (!this.config.options?.hide_device.includes(device.deviceId) && device.enableCloudService) {
+    // the accessory does not yet exist, so we need to create it
+      this.log.info('Adding new accessory: %s %s DeviceID: %s', device.deviceName, device.deviceType, device.deviceId);
+
+      // create a new accessory
+      const accessory = new this.api.platformAccessory(`${device.deviceName} ${device.deviceType}`, uuid);
+
+      // store a copy of the device object in the `accessory.context`
+      // the `context` property can be used to store any data about the accessory you may need
+      //accessory.context.firmwareRevision = firmware;
+      accessory.context.device = device;
+      // accessory.context.firmwareRevision = findaccessories.accessoryAttribute.softwareRevision;
+      // create the accessory handler for the newly create accessory
+      // this is imported from `platformAccessory.ts`
+      new Plug(this, accessory, device);
+      this.log.debug(`${device.deviceType} UDID: ${device.deviceName}-${device.deviceId}-${device.deviceType}`);
+
+      // link the accessory to your platform
+      this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
+      this.accessories.push(accessory);
+    } else {
+      if (this.config.devicediscovery) {
+        this.log.error(
+          'Unable to Register new device: %s %s - %s',
+          device.deviceName,
+          device.deviceType,
+          device.deviceId,
+        );
+      }
     }
   }
 
