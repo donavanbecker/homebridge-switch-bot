@@ -2,11 +2,12 @@
 
 All notable changes to this project will be documented in this file. This project uses [Semantic Versioning](https://semver.org/)
 
-## [Beta Version 3.4.0](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v3.3.4...v3.4.0) (2021-03-XX)
+## [Version 3.4.0](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v3.3.4...v3.4.0) (2021-03-02)
 
 ### Changes
 
 - Add Support for SwitchBot Plug.
+- Housekeeping and updated dependencies.
 
 ## [Version 3.3.4](https://github.com/OpenWonderLabs/homebridge-switchbot-openapi/compare/v3.3.3...v3.3.4) (2021-02-25)
 
