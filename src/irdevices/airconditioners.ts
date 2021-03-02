@@ -15,6 +15,10 @@ export class AirConditioner {
   RotationSpeed!: CharacteristicValue;
   CurrentHeaterCoolerState!: CharacteristicValue;
   CurrentTemperature!: CharacteristicValue;
+  CurrentARTemp!: CharacteristicValue;
+  CurrentARMode!: CharacteristicValue;
+  CurrentARFanSpeed!: CharacteristicValue;
+  ARActive!: CharacteristicValue;
   LastTemperature!: number;
   CurrentMode!: number;
   CurrentFanSpeed!: number;
@@ -41,8 +45,7 @@ export class AirConditioner {
     // you can create multiple services for each accessory
     (this.service =
       accessory.getService(this.platform.Service.HeaterCooler) ||
-      accessory.addService(this.platform.Service.HeaterCooler)),
-    `${device.deviceName} ${device.remoteType}`;
+      accessory.addService(this.platform.Service.HeaterCooler)), '%s %s', device.deviceName, device.remoteType;
 
     // To avoid "Cannot add a Service with the same UUID another Service without also defining a unique 'subtype' property." error,
     // when creating multiple services of the same type, you need to use the following syntax to specify a name and subtype id:
@@ -50,15 +53,10 @@ export class AirConditioner {
 
     // set the service name, this is what is displayed as the default name on the Home app
     // in this example we are using the name we stored in the `accessory.context` in the `discoverDevices` method.
-    this.service.setCharacteristic(
-      this.platform.Characteristic.Name,
-      `${device.deviceName} ${device.remoteType}`,
-    );
+    this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.displayName);
 
     // handle on / off events using the Active characteristic
-    this.service.getCharacteristic(this.platform.Characteristic.Active).onSet(async (value: CharacteristicValue) => {
-      this.ActiveSet(value);
-    });
+    this.service.getCharacteristic(this.platform.Characteristic.Active).onSet(this.ActiveSet.bind(this));
 
     this.service
       .getCharacteristic(this.platform.Characteristic.CurrentTemperature)
@@ -67,7 +65,7 @@ export class AirConditioner {
         maxValue: 100,
         minStep: 0.01,
       })
-      .onGet(async (value: CharacteristicValue) => {
+      .onGet((value: CharacteristicValue) => {
         return this.CurrentTemperatureGet(value);
       });
 
@@ -81,9 +79,7 @@ export class AirConditioner {
       .setProps({
         validValues: this.ValidValues,
       })
-      .onSet(async (value: CharacteristicValue) => {
-        this.TargetHeaterCoolerStateSet(value);
-      });
+      .onSet(this.TargetHeaterCoolerStateSet.bind(this));
 
     this.service.getCharacteristic(this.platform.Characteristic.CurrentHeaterCoolerState).onGet(async () => {
       return this.CurrentHeaterCoolerStateGet();
@@ -96,12 +92,10 @@ export class AirConditioner {
         maxValue: 30,
         minStep: 1,
       })
-      .onGet(async () => {
+      .onGet(() => {
         return this.HeatingThresholdTemperatureGet();
       })
-      .onSet(async (value: CharacteristicValue) => {
-        this.HeatingThresholdTemperatureSet(value);
-      });
+      .onSet(this.HeatingThresholdTemperatureSet.bind(this));
 
     this.service
       .getCharacteristic(this.platform.Characteristic.CoolingThresholdTemperature)
@@ -110,12 +104,10 @@ export class AirConditioner {
         maxValue: 30,
         minStep: 1,
       })
-      .onGet(async () => {
+      .onGet(() => {
         return this.HeatingThresholdTemperatureGet();
       })
-      .onSet(async (value: CharacteristicValue) => {
-        this.HeatingThresholdTemperatureSet(value);
-      });
+      .onSet(this.HeatingThresholdTemperatureSet.bind(this));
 
     this.service
       .getCharacteristic(this.platform.Characteristic.RotationSpeed)
@@ -127,9 +119,7 @@ export class AirConditioner {
       .onGet(async () => {
         return this.RotationSpeedGet();
       })
-      .onSet(async (value: CharacteristicValue) => {
-        this.RotationSpeedSet(value);
-      });
+      .onSet(this.RotationSpeedSet.bind(this));
   }
 
   private RotationSpeedSet(value: CharacteristicValue) {
@@ -264,11 +254,15 @@ export class AirConditioner {
   async pushAirConditionerDetailsChanges() {
     const payload = {
       commandType: 'command',
-      parameter: `${this.CurrentTemperature || 24},${this.CurrentMode || 1},${this.CurrentFanSpeed || 1},${
-        this.Active === 1 ? 'on' : 'off'
-      }`,
       command: 'setAll',
     } as any;
+
+    this.CurrentARTemp = this.CurrentTemperature || 24;
+    this.CurrentARMode = this.CurrentMode || 1;
+    this.CurrentARFanSpeed = this.CurrentFanSpeed || 1;
+    this.ARActive = this.Active === 1 ? 'on' : 'off';
+    payload.parameter = '%s,%s,%s,%s', this.CurrentARTemp, this.CurrentARMode, this.CurrentARFanSpeed, this.ARActive;
+
 
     if (this.Active === 1) {
       if ((this.CurrentTemperature || 24) < (this.LastTemperature || 30)) {
@@ -342,7 +336,7 @@ export class AirConditioner {
         break;
       case 100:
         this.platform.log.debug('Command successfully sent.');
-        break;  
+        break;
       default:
         this.platform.log.debug('Unknown statusCode.');
     }

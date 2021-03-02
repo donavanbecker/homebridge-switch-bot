@@ -36,8 +36,8 @@ export class Fan {
     // get the Television service if it exists, otherwise create a new Television service
     // you can create multiple services for each accessory
     (this.service =
-      accessory.getService(this.platform.Service.Fanv2) || accessory.addService(this.platform.Service.Fanv2)),
-    `${device.deviceName} ${device.remoteType}`;
+      accessory.getService(this.platform.Service.Fanv2) ||
+      accessory.addService(this.platform.Service.Fanv2)), '%s %s', device.deviceName, device.remoteType;
 
     // To avoid "Cannot add a Service with the same UUID another Service without also defining a unique 'subtype' property." error,
     // when creating multiple services of the same type, you need to use the following syntax to specify a name and subtype id:
@@ -45,15 +45,10 @@ export class Fan {
 
     // set the service name, this is what is displayed as the default name on the Home app
     // in this example we are using the name we stored in the `accessory.context` in the `discoverDevices` method.
-    this.service.setCharacteristic(
-      this.platform.Characteristic.Name,
-      `${device.deviceName} ${device.remoteType}`,
-    );
+    this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.displayName);
 
     // handle on / off events using the Active characteristic
-    this.service.getCharacteristic(this.platform.Characteristic.Active).onSet(async (value: CharacteristicValue) => {
-      this.ActiveSet(value);
-    });
+    this.service.getCharacteristic(this.platform.Characteristic.Active).onSet(this.ActiveSet.bind(this));
 
     if (this.platform.config.options?.fan?.rotation_speed?.includes(device.deviceId)) {
       if (this.platform.config.options?.fan?.set_minStep) {
@@ -79,9 +74,7 @@ export class Fan {
           minValue: this.minValue,
           maxValue: this.maxValue,
         })
-        .onSet(async (value: CharacteristicValue) => {
-          this.RotationSpeedSet(value);
-        });
+        .onSet(this.RotationSpeedSet.bind(this));
     } else if (
       this.service.testCharacteristic(this.platform.Characteristic.RotationSpeed) &&
       !this.platform.config.options?.fan?.swing_mode?.includes(device.deviceId)
@@ -97,11 +90,7 @@ export class Fan {
 
     if (this.platform.config.options?.fan?.swing_mode?.includes(device.deviceId)) {
       // handle Osolcation events using the SwingMode characteristic
-      this.service
-        .getCharacteristic(this.platform.Characteristic.SwingMode)
-        .onSet(async (value: CharacteristicValue) => {
-          this.SwingModeSet(value);
-        });
+      this.service.getCharacteristic(this.platform.Characteristic.SwingMode).onSet(this.SwingModeSet.bind(this));
     } else if (
       this.service.testCharacteristic(this.platform.Characteristic.SwingMode) &&
       !this.platform.config.options?.fan?.swing_mode?.includes(device.deviceId)
@@ -263,7 +252,7 @@ export class Fan {
         break;
       case 100:
         this.platform.log.debug('Command successfully sent.');
-        break;  
+        break;
       default:
         this.platform.log.debug('Unknown statusCode.');
     }

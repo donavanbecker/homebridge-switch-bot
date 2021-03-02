@@ -48,8 +48,7 @@ export class Curtain {
     // you can create multiple services for each accessory
     (this.service =
       accessory.getService(this.platform.Service.WindowCovering) ||
-      accessory.addService(this.platform.Service.WindowCovering)),
-    `${device.deviceName} ${device.deviceType}`;
+      accessory.addService(this.platform.Service.WindowCovering)), '%s %s', device.deviceName, device.deviceType;
 
     // To avoid "Cannot add a Service with the same UUID another Service without also defining a unique 'subtype' property." error,
     // when creating multiple services of the same type, you need to use the following syntax to specify a name and subtype id:
@@ -57,10 +56,7 @@ export class Curtain {
 
     // set the service name, this is what is displayed as the default name on the Home app
     // in this example we are using the name we stored in the `accessory.context` in the `discoverDevices` method.
-    this.service.setCharacteristic(
-      this.platform.Characteristic.Name,
-      `${device.deviceName} ${device.deviceType}`,
-    );
+    this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.displayName);
 
     // each service must implement at-minimum the "required characteristics" for the given service type
     // see https://developers.homebridge.io/#/service/WindowCovering
@@ -76,7 +72,7 @@ export class Curtain {
         maxValue: 100,
         validValueRanges: [0, 100],
       })
-      .onGet(async () => {
+      .onGet(() => {
         return this.CurrentPosition;
       });
 
@@ -86,9 +82,7 @@ export class Curtain {
         minStep: this.platform.config.options?.curtain?.set_minStep || 1,
         validValueRanges: [0, 100],
       })
-      .onSet(async (value: CharacteristicValue) => {
-        this.TargetPositionSet(value);
-      });
+      .onSet(this.TargetPositionSet.bind(this));
 
     // Update Homekit
     this.updateHomeKitCharacteristics();
@@ -281,7 +275,7 @@ export class Curtain {
     this.service.updateCharacteristic(this.platform.Characteristic.TargetPosition, e);
   }
 
-  
+
   private statusCode(push: AxiosResponse<any>) {
     switch (push.data.statusCode) {
       case 151:
@@ -304,7 +298,7 @@ export class Curtain {
         break;
       case 100:
         this.platform.log.debug('Command successfully sent.');
-        break;  
+        break;
       default:
         this.platform.log.debug('Unknown statusCode.');
     }
@@ -317,7 +311,6 @@ export class Curtain {
     this.platform.log.debug('Curtain %s - Set TargetPosition: %s', this.accessory.displayName, value);
 
     this.TargetPosition = value;
-    this.service.updateCharacteristic(this.platform.Characteristic.TargetPosition, this.TargetPosition);
 
     if (value > this.CurrentPosition) {
       this.PositionState = this.platform.Characteristic.PositionState.INCREASING;

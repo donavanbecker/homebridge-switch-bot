@@ -37,16 +37,9 @@ export class Others {
         this.platform.Service.Fanv2,
         `${device.deviceName} ${device.remoteType} Temperature Sensor`,
       );
-      this.service.setCharacteristic(
-        this.platform.Characteristic.Name,
-        `${device.deviceName} ${device.remoteType}`,
-      );
+      this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.displayName);
 
-      this.service
-        .getCharacteristic(this.platform.Characteristic.Active)
-        .onSet(async (value: CharacteristicValue) => {
-          this.ActiveSet(value);
-        });
+      this.service.getCharacteristic(this.platform.Characteristic.Active).onSet(this.ActiveSet.bind(this));
     } else {
       accessory.removeService(this.service!);
       this.platform.log.error('No Device Type Set');
@@ -164,7 +157,7 @@ export class Others {
         break;
       case 100:
         this.platform.log.debug('Command successfully sent.');
-        break;  
+        break;
       default:
         this.platform.log.debug('Unknown statusCode.');
     }

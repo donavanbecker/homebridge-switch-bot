@@ -53,8 +53,7 @@ export class TV {
     // you can create multiple services for each accessory
     (this.service =
       accessory.getService(this.platform.Service.Television) ||
-      accessory.addService(this.platform.Service.Television)),
-    `${device.deviceName} ${device.remoteType}`;
+      accessory.addService(this.platform.Service.Television)), '%s %s', device.deviceName, device.remoteType;
 
     // To avoid "Cannot add a Service with the same UUID another Service without also defining a unique 'subtype' property." error,
     // when creating multiple services of the same type, you need to use the following syntax to specify a name and subtype id:
@@ -63,7 +62,7 @@ export class TV {
     // set the service name, this is what is displayed as the default name on the Home app
     // in this example we are using the name we stored in the `accessory.context` in the `discoverDevices` method.
     this.service.getCharacteristic(this.platform.Characteristic.ConfiguredName);
-    
+
     //this.service.setCharacteristic(this.platform.Characteristic.Name, `${device.deviceName} ${device.remoteType}`);
 
     // set sleep discovery characteristic
@@ -73,23 +72,15 @@ export class TV {
     );
 
     // handle on / off events using the Active characteristic
-    this.service.getCharacteristic(this.platform.Characteristic.Active).onSet(async (value: CharacteristicValue) => {
-      this.ActiveSet(value);
-    });
+    this.service.getCharacteristic(this.platform.Characteristic.Active).onSet(this.ActiveSet.bind(this));
 
     this.service.setCharacteristic(this.platform.Characteristic.ActiveIdentifier, 1);
 
     // handle input source changes
-    this.service
-      .getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
-      .onSet(async (value: CharacteristicValue) => {
-        this.ActiveIdentifierSet(value);
-      });
+    this.service.getCharacteristic(this.platform.Characteristic.ActiveIdentifier).onSet(this.ActiveIdentifierSet.bind(this));
 
     // handle remote control input
-    this.service.getCharacteristic(this.platform.Characteristic.RemoteKey).onSet(async (value: CharacteristicValue) => {
-      this.RemoteKeySet(value);
-    });
+    this.service.getCharacteristic(this.platform.Characteristic.RemoteKey).onSet(this.RemoteKeySet.bind(this));
 
     /**
      * Create a speaker service to allow volume control
@@ -97,8 +88,7 @@ export class TV {
     // create a new Television Speaker service
     (this.speakerService =
       accessory.getService(this.platform.Service.TelevisionSpeaker) ||
-      accessory.addService(this.platform.Service.TelevisionSpeaker)),
-    `${device.deviceName} ${device.remoteType} Speaker`;
+      accessory.addService(this.platform.Service.TelevisionSpeaker)), '%s %s Speaker', device.deviceName, device.remoteType;
 
     this.speakerService
       .setCharacteristic(this.platform.Characteristic.Active, this.platform.Characteristic.Active.ACTIVE)
@@ -110,9 +100,7 @@ export class TV {
     // handle volume control
     this.speakerService
       .getCharacteristic(this.platform.Characteristic.VolumeSelector)
-      .onSet(async (value: CharacteristicValue) => {
-        this.VolumeSelectorSet(value);
-      });
+      .onSet(this.VolumeSelectorSet.bind(this));
   }
 
   private VolumeSelectorSet(value: CharacteristicValue) {
@@ -339,7 +327,7 @@ export class TV {
     }
   }
 
-  
+
   private statusCode(push: AxiosResponse<any>) {
     switch (push.data.statusCode) {
       case 151:
@@ -362,7 +350,7 @@ export class TV {
         break;
       case 100:
         this.platform.log.debug('Command successfully sent.');
-        break;  
+        break;
       default:
         this.platform.log.debug('Unknown statusCode.');
     }

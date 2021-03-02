@@ -50,13 +50,11 @@ export class Bot {
     if (this.platform.config.options?.bot?.switch) {
       (this.service =
         accessory.getService(this.platform.Service.Switch) ||
-        accessory.addService(this.platform.Service.Switch)),
-      `${device.deviceName} ${device.deviceType}`;
+        accessory.addService(this.platform.Service.Switch)), '%s %s', device.deviceName, device.deviceType;
     } else {
       (this.service =
         accessory.getService(this.platform.Service.Outlet) ||
-        accessory.addService(this.platform.Service.Outlet)),
-      `${device.deviceName} ${device.deviceType}`;
+        accessory.addService(this.platform.Service.Outlet)), '%s %s', device.deviceName, device.deviceType;
     }
 
     // To avoid "Cannot add a Service with the same UUID another Service without also defining a unique 'subtype' property." error,
@@ -65,19 +63,12 @@ export class Bot {
 
     // set the service name, this is what is displayed as the default name on the Home app
     // in this example we are using the name we stored in the `accessory.context` in the `discoverDevices` method.
-    this.service.setCharacteristic(
-      this.platform.Characteristic.Name,
-      `${device.deviceName} ${device.deviceType}`,
-    );
+    this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.displayName);
 
     // each service must implement at-minimum the "required characteristics" for the given service type
     // see https://developers.homebridge.io/#/service/Outlet
 
-    this.service
-      .getCharacteristic(this.platform.Characteristic.On)
-      .onSet(async (value: CharacteristicValue) => {
-        this.handleOnSet(value);
-      });
+    this.service.getCharacteristic(this.platform.Characteristic.On).onSet(this.handleOnSet.bind(this));
 
     // Retrieve initial values and updateHomekit
     this.updateHomeKitCharacteristics();
@@ -246,7 +237,7 @@ export class Bot {
         break;
       case 100:
         this.platform.log.debug('Command successfully sent.');
-        break;  
+        break;
       default:
         this.platform.log.debug('Unknown statusCode.');
     }
@@ -257,8 +248,7 @@ export class Bot {
    */
   private handleOnSet(value: CharacteristicValue) {
     this.platform.log.debug('Bot %s -', this.accessory.displayName, `Set On: ${value}`);
-    this.doBotUpdate.next();
     this.On = value;
-    this.service.updateCharacteristic(this.platform.Characteristic.On, this.On);
+    this.doBotUpdate.next();
   }
 }

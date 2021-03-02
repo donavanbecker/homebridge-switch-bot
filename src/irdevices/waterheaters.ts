@@ -53,11 +53,7 @@ export class WaterHeater {
     );
 
     // handle on / off events using the Active characteristic
-    this.service
-      .getCharacteristic(this.platform.Characteristic.Active)
-      .onSet(async (value: CharacteristicValue) => {
-        this.ActiveSet(value);
-      });
+    this.service.getCharacteristic(this.platform.Characteristic.Active).onSet(this.ActiveSet.bind(this));
   }
 
   private ActiveSet(value: CharacteristicValue) {
@@ -133,7 +129,7 @@ export class WaterHeater {
     }
   }
 
-  
+
   private statusCode(push: AxiosResponse<any>) {
     switch (push.data.statusCode) {
       case 151:
@@ -156,7 +152,7 @@ export class WaterHeater {
         break;
       case 100:
         this.platform.log.debug('Command successfully sent.');
-        break;  
+        break;
       default:
         this.platform.log.debug('Unknown statusCode.');
     }

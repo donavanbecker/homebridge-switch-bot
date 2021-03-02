@@ -44,9 +44,7 @@ export class VacuumCleaner {
     );
 
     // handle on / off events using the On characteristic
-    this.service.getCharacteristic(this.platform.Characteristic.On).onSet(async (value: CharacteristicValue) => {
-      this.OnSet(value);
-    });
+    this.service.getCharacteristic(this.platform.Characteristic.On).onSet(this.OnSet.bind(this));
   }
 
   private OnSet(value: CharacteristicValue) {
@@ -114,7 +112,7 @@ export class VacuumCleaner {
     }
   }
 
-  
+
   private statusCode(push: AxiosResponse<any>) {
     switch (push.data.statusCode) {
       case 151:
@@ -137,7 +135,7 @@ export class VacuumCleaner {
         break;
       case 100:
         this.platform.log.debug('Command successfully sent.');
-        break;  
+        break;
       default:
         this.platform.log.debug('Unknown statusCode.');
     }

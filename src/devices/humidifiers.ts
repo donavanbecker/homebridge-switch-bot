@@ -58,8 +58,7 @@ export class Humidifier {
     // you can create multiple services for each accessory
     (this.service =
       accessory.getService(this.platform.Service.HumidifierDehumidifier) ||
-      accessory.addService(this.platform.Service.HumidifierDehumidifier)),
-    `${device.deviceName} ${device.deviceType}`;
+      accessory.addService(this.platform.Service.HumidifierDehumidifier)), '%s %s', device.deviceName, device.deviceType;
 
     // To avoid "Cannot add a Service with the same UUID another Service without also defining a unique 'subtype' property." error,
     // when creating multiple services of the same type, you need to use the following syntax to specify a name and subtype id:
@@ -67,10 +66,7 @@ export class Humidifier {
 
     // set the service name, this is what is displayed as the default name on the Home app
     // in this example we are using the name we stored in the `accessory.context` in the `discoverDevices` method.
-    this.service.setCharacteristic(
-      this.platform.Characteristic.Name,
-      `${device.deviceName} ${device.deviceType}`,
-    );
+    this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.displayName);
 
     // each service must implement at-minimum the "required characteristics" for the given service type
     // see https://developers.homebridge.io/#/service/HumidifierDehumidifier
@@ -89,13 +85,9 @@ export class Humidifier {
         maxValue: 1,
         validValues: [0, 1],
       })
-      .onSet(async (value: CharacteristicValue) => {
-        this.handleTargetHumidifierDehumidifierStateSet(value);
-      });
+      .onSet(this.handleTargetHumidifierDehumidifierStateSet.bind(this));
 
-    this.service.getCharacteristic(this.platform.Characteristic.Active).onSet(async (value: CharacteristicValue) => {
-      this.handleActiveSet(value);
-    });
+    this.service.getCharacteristic(this.platform.Characteristic.Active).onSet(this.handleActiveSet.bind(this));
 
     this.service
       .getCharacteristic(this.platform.Characteristic.RelativeHumidityHumidifierThreshold)
@@ -105,9 +97,7 @@ export class Humidifier {
         maxValue: 100,
         minStep: this.platform.config.options?.humidifier?.set_minStep || 1,
       })
-      .onSet(async (value: CharacteristicValue) => {
-        this.handleRelativeHumidityHumidifierThresholdSet(value);
-      });
+      .onSet(this.handleRelativeHumidityHumidifierThresholdSet.bind(this));
 
     // create a new Temperature Sensor service
     // Temperature Sensor Service
@@ -123,8 +113,7 @@ export class Humidifier {
       }
       (this.temperatureservice =
         this.accessory.getService(this.platform.Service.TemperatureSensor) ||
-        this.accessory.addService(this.platform.Service.TemperatureSensor)),
-      `${device.deviceName} ${device.deviceType} TemperatureSensor`;
+        this.accessory.addService(this.platform.Service.TemperatureSensor)), '%s %s TemperatureSensor', device.deviceName, device.deviceType;
 
       this.temperatureservice
         .getCharacteristic(this.platform.Characteristic.CurrentTemperature)
@@ -134,11 +123,11 @@ export class Humidifier {
           maxValue: 100,
           minStep: 0.1,
         })
-        .onGet(async () => {
+        .onGet(() => {
           return this.CurrentTemperature;
         });
     } else {
-      if (this.platform.debugMode){
+      if (this.platform.debugMode) {
         this.platform.log.warn('TemperatureSensor not added.');
       }
     }
@@ -294,7 +283,7 @@ export class Humidifier {
   async pushChanges() {
     if (
       this.TargetHumidifierDehumidifierState ===
-        this.platform.Characteristic.TargetHumidifierDehumidifierState.HUMIDIFIER &&
+      this.platform.Characteristic.TargetHumidifierDehumidifierState.HUMIDIFIER &&
       this.Active === this.platform.Characteristic.Active.ACTIVE
     ) {
       this.platform.log.debug(`Pushing Manual: ${this.RelativeHumidityHumidifierThreshold}!`);
@@ -322,7 +311,7 @@ export class Humidifier {
       this.statusCode(push);
     } else if (
       this.TargetHumidifierDehumidifierState ===
-        this.platform.Characteristic.TargetHumidifierDehumidifierState.HUMIDIFIER_OR_DEHUMIDIFIER &&
+      this.platform.Characteristic.TargetHumidifierDehumidifierState.HUMIDIFIER_OR_DEHUMIDIFIER &&
       this.Active === this.platform.Characteristic.Active.ACTIVE
     ) {
       await this.pushAutoChanges();
@@ -338,7 +327,7 @@ export class Humidifier {
     try {
       if (
         this.TargetHumidifierDehumidifierState ===
-          this.platform.Characteristic.TargetHumidifierDehumidifierState.HUMIDIFIER_OR_DEHUMIDIFIER &&
+        this.platform.Characteristic.TargetHumidifierDehumidifierState.HUMIDIFIER_OR_DEHUMIDIFIER &&
         this.Active === this.platform.Characteristic.Active.ACTIVE
       ) {
         this.platform.log.debug('Pushing Auto!');
@@ -467,7 +456,6 @@ export class Humidifier {
     }
   }
 
-  
   private statusCode(push: AxiosResponse<any>) {
     switch (push.data.statusCode) {
       case 151:
@@ -490,7 +478,7 @@ export class Humidifier {
         break;
       case 100:
         this.platform.log.debug('Command successfully sent.');
-        break;  
+        break;
       default:
         this.platform.log.debug('Unknown statusCode.');
     }
@@ -518,7 +506,7 @@ export class Humidifier {
         break;
       case 100:
         this.platform.log.debug('Command successfully sent.');
-        break;  
+        break;
       default:
         this.platform.log.debug('Unknown statusCode.');
     }
@@ -546,7 +534,7 @@ export class Humidifier {
         break;
       case 100:
         this.platform.log.debug('Command successfully sent.');
-        break;  
+        break;
       default:
         this.platform.log.debug('Unknown statusCode.');
     }
@@ -563,10 +551,6 @@ export class Humidifier {
     );
 
     this.TargetHumidifierDehumidifierState = value;
-    this.service.updateCharacteristic(
-      this.platform.Characteristic.TargetHumidifierDehumidifierState,
-      this.TargetHumidifierDehumidifierState,
-    );
     this.doHumidifierUpdate.next();
   }
 
@@ -576,7 +560,6 @@ export class Humidifier {
   private handleActiveSet(value: CharacteristicValue) {
     this.platform.log.debug('Humidifier %s -', this.accessory.displayName, `Set Active: ${value}`);
     this.Active = value;
-    this.service.updateCharacteristic(this.platform.Characteristic.Active, this.Active);
     this.doHumidifierUpdate.next();
   }
 
@@ -595,15 +578,6 @@ export class Humidifier {
       this.Active = this.platform.Characteristic.Active.ACTIVE;
       this.CurrentHumidifierDehumidifierState = this.platform.Characteristic.CurrentHumidifierDehumidifierState.IDLE;
     }
-    this.service.updateCharacteristic(
-      this.platform.Characteristic.RelativeHumidityHumidifierThreshold,
-      this.RelativeHumidityHumidifierThreshold,
-    );
-    this.service.updateCharacteristic(
-      this.platform.Characteristic.CurrentHumidifierDehumidifierState,
-      this.CurrentHumidifierDehumidifierState,
-    );
-    this.service.updateCharacteristic(this.platform.Characteristic.Active, this.Active);
     this.doHumidifierUpdate.next();
   }
 }

@@ -29,8 +29,7 @@ export class Light {
     // you can create multiple services for each accessory
     (this.service =
       accessory.getService(this.platform.Service.Lightbulb) ||
-      accessory.addService(this.platform.Service.Lightbulb)),
-    `${device.deviceName} ${device.remoteType}`;
+      accessory.addService(this.platform.Service.Lightbulb)), '%s %s', device.deviceName, device.remoteType;
 
     // To avoid "Cannot add a Service with the same UUID another Service without also defining a unique 'subtype' property." error,
     // when creating multiple services of the same type, you need to use the following syntax to specify a name and subtype id:
@@ -38,15 +37,10 @@ export class Light {
 
     // set the service name, this is what is displayed as the default name on the Home app
     // in this example we are using the name we stored in the `accessory.context` in the `discoverDevices` method.
-    this.service.setCharacteristic(
-      this.platform.Characteristic.Name,
-      `${device.deviceName} ${device.remoteType}`,
-    );
+    this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.displayName);
 
     // handle on / off events using the On characteristic
-    this.service.getCharacteristic(this.platform.Characteristic.On).onSet(async (value: CharacteristicValue) => {
-      this.OnSet(value);
-    });
+    this.service.getCharacteristic(this.platform.Characteristic.On).onSet(this.OnSet.bind(this));
 
     // handle Brightness events using the Brightness characteristic
     /* this.service
@@ -148,7 +142,7 @@ export class Light {
     }
   }
 
-  
+
   private statusCode(push: AxiosResponse<any>) {
     switch (push.data.statusCode) {
       case 151:
@@ -171,7 +165,7 @@ export class Light {
         break;
       case 100:
         this.platform.log.debug('Command successfully sent.');
-        break;  
+        break;
       default:
         this.platform.log.debug('Unknown statusCode.');
     }

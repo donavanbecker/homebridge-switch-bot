@@ -15,6 +15,10 @@ export class AirPurifier {
   RotationSpeed!: CharacteristicValue;
   CurrentAirPurifierState!: CharacteristicValue;
   CurrentTemperature!: CharacteristicValue;
+  CurrentAPTemp!: CharacteristicValue;
+  CurrentAPMode!: CharacteristicValue;
+  CurrentAPFanSpeed!: CharacteristicValue;
+  APActive!: CharacteristicValue;
   LastTemperature!: number;
   CurrentMode!: number;
   CurrentFanSpeed!: number;
@@ -40,8 +44,7 @@ export class AirPurifier {
     // you can create multiple services for each accessory
     (this.service =
       accessory.getService(this.platform.Service.AirPurifier) ||
-      accessory.addService(this.platform.Service.AirPurifier)),
-    `${device.deviceName} ${device.remoteType}`;
+      accessory.addService(this.platform.Service.AirPurifier)), '%s %s', device.deviceName, device.remoteType;
 
     // To avoid "Cannot add a Service with the same UUID another Service without also defining a unique 'subtype' property." error,
     // when creating multiple services of the same type, you need to use the following syntax to specify a name and subtype id:
@@ -49,25 +52,16 @@ export class AirPurifier {
 
     // set the service name, this is what is displayed as the default name on the Home app
     // in this example we are using the name we stored in the `accessory.context` in the `discoverDevices` method.
-    this.service.setCharacteristic(
-      this.platform.Characteristic.Name,
-      `${device.deviceName} ${device.remoteType}`,
-    );
+    this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.displayName);
 
     // handle on / off events using the Active characteristic
-    this.service.getCharacteristic(this.platform.Characteristic.Active).onSet(async (value: CharacteristicValue) => {
-      this.ActiveSet(value);
-    });
+    this.service.getCharacteristic(this.platform.Characteristic.Active).onSet(this.ActiveSet.bind(this));
 
-    this.service.getCharacteristic(this.platform.Characteristic.CurrentAirPurifierState).onGet(async () => {
+    this.service.getCharacteristic(this.platform.Characteristic.CurrentAirPurifierState).onGet(() => {
       return this.CurrentAirPurifierStateGet();
     });
 
-    this.service
-      .getCharacteristic(this.platform.Characteristic.TargetAirPurifierState)
-      .onSet(async (value: CharacteristicValue) => {
-        this.TargetAirPurifierStateSet(value);
-      });
+    this.service.getCharacteristic(this.platform.Characteristic.TargetAirPurifierState).onSet(this.TargetAirPurifierStateSet.bind(this));
   }
 
   private ActiveSet(value: CharacteristicValue) {
@@ -158,11 +152,14 @@ export class AirPurifier {
   async pushAirConditionerDetailsChanges() {
     const payload = {
       commandType: 'command',
-      parameter: `${this.CurrentTemperature || 24},${this.CurrentMode || 1},${this.CurrentFanSpeed || 1},${
-        this.Active === 1 ? 'on' : 'off'
-      }`,
       command: 'setAll',
     } as any;
+
+    this.CurrentAPTemp = this.CurrentTemperature || 24;
+    this.CurrentAPMode = this.CurrentMode || 1;
+    this.CurrentAPFanSpeed = this.CurrentFanSpeed || 1;
+    this.APActive = this.Active === 1 ? 'on' : 'off';
+    payload.parameter = '%s,%s,%s,%s', this.CurrentAPTemp, this.CurrentAPMode, this.CurrentAPFanSpeed, this.APActive;
 
     if (this.Active === 1) {
       if ((this.CurrentTemperature || 24) < (this.LastTemperature || 30)) {
@@ -236,7 +233,7 @@ export class AirPurifier {
         break;
       case 100:
         this.platform.log.debug('Command successfully sent.');
-        break;  
+        break;
       default:
         this.platform.log.debug('Unknown statusCode.');
     }

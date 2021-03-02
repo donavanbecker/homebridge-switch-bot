@@ -56,8 +56,7 @@ export class Meter {
     // you can create multiple services for each accessory
     (this.service =
       accessory.getService(this.platform.Service.Battery) ||
-      accessory.addService(this.platform.Service.Battery)),
-    `${device.deviceName} ${device.deviceType}`;
+      accessory.addService(this.platform.Service.Battery)), '%s %s', device.deviceName, device.deviceType;
 
     // To avoid "Cannot add a Service with the same UUID another Service without also defining a unique 'subtype' property." error,
     // when creating multiple services of the same type, you need to use the following syntax to specify a name and subtype id:
@@ -65,10 +64,7 @@ export class Meter {
 
     // set the service name, this is what is displayed as the default name on the Home app
     // in this example we are using the name we stored in the `accessory.context` in the `discoverDevices` method.
-    this.service.setCharacteristic(
-      this.platform.Characteristic.Name,
-      `${device.deviceName} ${device.deviceType}`,
-    );
+    this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.displayName);
 
     // each service must implement at-minimum the "required characteristics" for the given service type
     // see https://developers.homebridge.io/#/service/Battery
@@ -89,8 +85,7 @@ export class Meter {
       }
       (this.temperatureservice =
         this.accessory.getService(this.platform.Service.TemperatureSensor) ||
-        this.accessory.addService(this.platform.Service.TemperatureSensor)),
-      `${device.deviceName} ${device.deviceType} TemperatureSensor`;
+        this.accessory.addService(this.platform.Service.TemperatureSensor)), '%s %s TemperatureSensor', device.deviceName, device.deviceType;
 
       this.temperatureservice
         .getCharacteristic(this.platform.Characteristic.CurrentTemperature)
@@ -101,11 +96,11 @@ export class Meter {
           maxValue: 100,
           minStep: 0.1,
         })
-        .onGet(async () => {
+        .onGet(() => {
           return this.CurrentTemperature;
         });
     } else {
-      if (this.platform.debugMode){
+      if (this.platform.debugMode) {
         this.platform.log.warn('TemperatureSensor not added.');
       }
     }
@@ -120,19 +115,18 @@ export class Meter {
     } else if (!this.humidityservice) {
       (this.humidityservice =
         this.accessory.getService(this.platform.Service.HumiditySensor) ||
-        this.accessory.addService(this.platform.Service.HumiditySensor)),
-      `${device.deviceName} ${device.deviceType} HumiditySensor`;
+        this.accessory.addService(this.platform.Service.HumiditySensor)), '%s %s HumiditySensor', device.deviceName, device.deviceType;
 
       this.humidityservice
         .getCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity)
         .setProps({
           minStep: 0.1,
         })
-        .onGet(async () => {
+        .onGet(() => {
           return this.CurrentRelativeHumidity;
         });
     } else {
-      if (this.platform.debugMode){
+      if (this.platform.debugMode) {
         this.platform.log.warn('HumiditySensor not added.');
       }
     }
