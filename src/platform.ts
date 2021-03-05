@@ -188,7 +188,6 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       this.log.warn('Using Default Push Rate.');
     }
 
-
     if (!this.config.credentials) {
       throw new Error('Missing Credentials');
     }

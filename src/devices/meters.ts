@@ -1,4 +1,4 @@
-import { Service, PlatformAccessory, Units, CharacteristicValue } from 'homebridge';
+import { Service, PlatformAccessory, Units, CharacteristicValue, HAPStatus } from 'homebridge';
 import { SwitchBotPlatform } from '../platform';
 import { interval, Subject } from 'rxjs';
 import { skipWhile } from 'rxjs/operators';
@@ -239,6 +239,7 @@ export class Meter {
     if (!this.platform.config.options?.meter?.hide_temperature) {
       this.temperatureservice?.updateCharacteristic(this.platform.Characteristic.CurrentTemperature, e);
     }
+    new this.platform.api.hap.HapStatusError(HAPStatus.OPERATION_TIMED_OUT);
   }
 
   /**

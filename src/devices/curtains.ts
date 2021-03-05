@@ -1,4 +1,4 @@
-import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
+import { Service, PlatformAccessory, CharacteristicValue, HAPStatus } from 'homebridge';
 import { SwitchBotPlatform } from '../platform';
 import { interval, Subject } from 'rxjs';
 import { debounceTime, skipWhile, tap } from 'rxjs/operators';
@@ -273,6 +273,7 @@ export class Curtain {
     this.service.updateCharacteristic(this.platform.Characteristic.CurrentPosition, e);
     this.service.updateCharacteristic(this.platform.Characteristic.PositionState, e);
     this.service.updateCharacteristic(this.platform.Characteristic.TargetPosition, e);
+    new this.platform.api.hap.HapStatusError(HAPStatus.OPERATION_TIMED_OUT);
   }
 
 

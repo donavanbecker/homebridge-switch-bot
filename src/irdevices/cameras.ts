@@ -1,6 +1,7 @@
 import { AxiosResponse } from 'axios';
 import {
   CharacteristicValue,
+  HAPStatus,
   PlatformAccessory,
   Service,
 } from 'homebridge';
@@ -142,5 +143,6 @@ export class Camera {
 
   public apiError(e: any) {
     this.service.updateCharacteristic(this.platform.Characteristic.On, e);
+    new this.platform.api.hap.HapStatusError(HAPStatus.OPERATION_TIMED_OUT);
   }
 }

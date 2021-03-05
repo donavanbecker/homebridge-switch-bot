@@ -1,6 +1,7 @@
 import { AxiosResponse } from 'axios';
 import {
   CharacteristicValue,
+  HAPStatus,
   PlatformAccessory,
   Service,
 } from 'homebridge';
@@ -162,5 +163,6 @@ export class WaterHeater {
     this.service.updateCharacteristic(this.platform.Characteristic.ValveType, e);
     this.service.updateCharacteristic(this.platform.Characteristic.Active, e);
     this.service.updateCharacteristic(this.platform.Characteristic.InUse, e);
+    new this.platform.api.hap.HapStatusError(HAPStatus.OPERATION_TIMED_OUT);
   }
 }

@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import { CharacteristicValue, PlatformAccessory, Service } from 'homebridge';
+import { CharacteristicValue, HAPStatus, PlatformAccessory, Service } from 'homebridge';
 import { SwitchBotPlatform } from '../platform';
 import { DeviceURL, irdevice } from '../settings';
 
@@ -143,5 +143,6 @@ export class VacuumCleaner {
 
   public apiError(e: any) {
     this.service.updateCharacteristic(this.platform.Characteristic.On, e);
+    new this.platform.api.hap.HapStatusError(HAPStatus.OPERATION_TIMED_OUT);
   }
 }

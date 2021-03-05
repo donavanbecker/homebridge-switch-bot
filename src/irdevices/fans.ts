@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import { CharacteristicValue, PlatformAccessory, Service } from 'homebridge';
+import { CharacteristicValue, HAPStatus, PlatformAccessory, Service } from 'homebridge';
 import { SwitchBotPlatform } from '../platform';
 import { DeviceURL, irdevice, deviceStatusResponse } from '../settings';
 
@@ -262,5 +262,6 @@ export class Fan {
     this.service.updateCharacteristic(this.platform.Characteristic.Active, e);
     this.service.updateCharacteristic(this.platform.Characteristic.RotationSpeed, e);
     this.service.updateCharacteristic(this.platform.Characteristic.SwingMode, e);
+    new this.platform.api.hap.HapStatusError(HAPStatus.OPERATION_TIMED_OUT);
   }
 }
