@@ -193,12 +193,8 @@ export class Curtain {
 
   async refreshStatus() {
     try {
-      this.platform.log.debug('Curtain - Reading', `${DeviceURL}/${this.device.deviceId}/status`);
-      const deviceStatus: deviceStatusResponse = (
-        await this.platform.axios.get(`${DeviceURL}/${this.device.deviceId}/status`)
-      ).data;
-      if (deviceStatus.message === 'success') {
-        this.deviceStatus = deviceStatus;
+      this.deviceStatus = await this.platform.refreshStatus();
+      if (this.deviceStatus.message === 'success') {
         this.platform.log.debug(
           'Curtain %s refreshStatus -',
           this.accessory.displayName,

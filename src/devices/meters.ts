@@ -2,7 +2,7 @@ import { Service, PlatformAccessory, Units, CharacteristicValue, HAPStatus } fro
 import { SwitchBotPlatform } from '../platform';
 import { interval, Subject } from 'rxjs';
 import { skipWhile } from 'rxjs/operators';
-import { DeviceURL, device, deviceStatusResponse } from '../settings';
+import { device, deviceStatusResponse } from '../settings';
 
 /**
  * Platform Accessory
@@ -181,11 +181,8 @@ export class Meter {
    */
   async refreshStatus() {
     try {
-      const deviceStatus: deviceStatusResponse = (
-        await this.platform.axios.get(`${DeviceURL}/${this.device.deviceId}/status`)
-      ).data;
-      if (deviceStatus.message === 'success') {
-        this.deviceStatus = deviceStatus;
+      this.deviceStatus = await this.platform.refreshStatus();
+      if (this.deviceStatus.message === 'success') {
         this.platform.log.debug(
           'Meter %s refreshStatus -',
           this.accessory.displayName,

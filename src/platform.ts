@@ -42,6 +42,7 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
   });
 
   debugMode!: boolean;
+  device!: device | irdevice
 
   constructor(public readonly log: Logger, public readonly config: SwitchBotPlatformConfig, public readonly api: API) {
     this.log.debug('Finished initializing platform:', this.config.name);
@@ -366,6 +367,14 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
       this.log.debug(JSON.stringify(e));
     }
   }
+
+  async refreshStatus() {
+    const deviceStatus: deviceStatusResponse = (
+      await this.axios.get(`${DeviceURL}/${this.device.deviceId}/status`)
+    ).data;
+    return deviceStatus;
+  }
+
 
   private async createHumidifier(device: device) {
     const uuid = this.api.hap.uuid.generate(`${device.deviceName}-${device.deviceId}-${device.deviceType}`);
