@@ -15,10 +15,10 @@ export class Bot {
 
   On!: CharacteristicValue;
   OutletInUse!: CharacteristicValue;
-  deviceStatus!: any;
+  deviceStatus!: deviceStatusResponse;
 
   botUpdateInProgress!: boolean;
-  doBotUpdate!: any;
+  doBotUpdate!: Subject<unknown>;
 
   constructor(
     private readonly platform: SwitchBotPlatform,

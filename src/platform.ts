@@ -177,8 +177,8 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
     }
 
     if (!this.config.options.refreshRate) {
-      // default 300 seconds
-      this.config.options!.refreshRate! = 300;
+      // default 600 seconds (15 minutes)
+      this.config.options!.refreshRate! = 900;
       this.log.warn('Using Default Refresh Rate.');
     }
 

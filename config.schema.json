@@ -36,7 +36,7 @@
             "title": "Refresh Rate",
             "type": "number",
             "minimum": 120,
-            "placeholder": 300,
+            "placeholder": 900,
             "description": "Indicates the number of seconds between polls of SwitchBot API."
           },
           "pushRate": {

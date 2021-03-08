@@ -24,7 +24,7 @@ export class Meter {
   deviceStatus!: deviceStatusResponse;
 
   meterUpdateInProgress!: boolean;
-  doMeterUpdate!: any;
+  doMeterUpdate!: Subject<unknown>;
 
   constructor(
     private readonly platform: SwitchBotPlatform,
