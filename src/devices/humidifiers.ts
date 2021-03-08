@@ -2,7 +2,7 @@ import { Service, PlatformAccessory, CharacteristicValue, HAPStatus } from 'home
 import { SwitchBotPlatform } from '../platform';
 import { interval, Subject } from 'rxjs';
 import { debounceTime, skipWhile, tap } from 'rxjs/operators';
-import { DeviceURL, device } from '../settings';
+import { DeviceURL, device, deviceStatusResponse } from '../settings';
 import { AxiosResponse } from 'axios';
 
 /**
@@ -21,7 +21,7 @@ export class Humidifier {
   RelativeHumidityHumidifierThreshold!: CharacteristicValue;
   Active!: CharacteristicValue;
   WaterLevel!: CharacteristicValue;
-  deviceStatus;
+  deviceStatus!: deviceStatusResponse;
 
   humidifierUpdateInProgress!: boolean;
   doHumidifierUpdate!: any;
@@ -253,8 +253,11 @@ export class Humidifier {
    */
   async refreshStatus() {
     try {
-      this.deviceStatus = await this.platform.refreshStatus();
-      if (this.deviceStatus.message === 'success') {
+      const deviceStatus: deviceStatusResponse = (
+        await this.platform.axios.get(`${DeviceURL}/${this.device.deviceId}/status`)
+      ).data;
+      if (deviceStatus.message === 'success') {
+        this.deviceStatus = deviceStatus;
         this.platform.log.debug(
           'Humidifier %s refreshStatus -',
           this.accessory.displayName,
