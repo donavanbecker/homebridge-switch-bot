@@ -109,7 +109,7 @@ export class Plug {
 
   async refreshStatus() {
     try {
-      this.deviceStatus = await this.platform.refreshStatus(this.device);
+      this.deviceStatus = await this.platform.refreshStatus();
       if (this.deviceStatus.message === 'success') {
         this.platform.log.warn(
           'Plug %s refreshStatus -',

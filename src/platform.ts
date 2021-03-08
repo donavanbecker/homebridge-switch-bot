@@ -368,11 +368,11 @@ export class SwitchBotPlatform implements DynamicPlatformPlugin {
     }
   }
 
-  public async refreshStatus(device) {
-    this.device = (
-      await this.axios.get(`${DeviceURL}/${device.deviceId}/status`)
+  async refreshStatus() {
+    const deviceStatus: deviceStatusResponse = (
+      await this.axios.get(`${DeviceURL}/${this.device.deviceId}/status`)
     ).data;
-    return device;
+    return deviceStatus;
   }
 
 
