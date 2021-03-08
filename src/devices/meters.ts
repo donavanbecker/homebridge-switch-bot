@@ -181,7 +181,7 @@ export class Meter {
    */
   async refreshStatus() {
     try {
-      this.deviceStatus = await this.platform.refreshStatus();
+      this.deviceStatus = await this.platform.refreshStatus(this.device);
       if (this.deviceStatus.message === 'success') {
         this.platform.log.debug(
           'Meter %s refreshStatus -',
