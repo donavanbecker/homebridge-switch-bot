@@ -13,7 +13,7 @@ export class Plug {
   deviceStatus!: deviceStatusResponse;
 
   plugUpdateInProgress!: boolean;
-  doPlugUpdate!: Subject<unknown>;
+  doPlugUpdate;
 
   constructor(
     private readonly platform: SwitchBotPlatform,

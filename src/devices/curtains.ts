@@ -16,7 +16,7 @@ export class Curtain {
   setNewTargetTimer!: NodeJS.Timeout;
 
   curtainUpdateInProgress!: boolean;
-  doCurtainUpdate!: Subject<unknown>;
+  doCurtainUpdate;
 
   constructor(
     private readonly platform: SwitchBotPlatform,

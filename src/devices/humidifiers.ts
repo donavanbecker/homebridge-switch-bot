@@ -24,7 +24,7 @@ export class Humidifier {
   deviceStatus!: deviceStatusResponse;
 
   humidifierUpdateInProgress!: boolean;
-  doHumidifierUpdate!: Subject<unknown>;
+  doHumidifierUpdate;
 
   constructor(
     private readonly platform: SwitchBotPlatform,

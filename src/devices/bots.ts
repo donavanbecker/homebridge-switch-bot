@@ -18,7 +18,7 @@ export class Bot {
   deviceStatus!: deviceStatusResponse;
 
   botUpdateInProgress!: boolean;
-  doBotUpdate!: Subject<unknown>;
+  doBotUpdate;
 
   constructor(
     private readonly platform: SwitchBotPlatform,
