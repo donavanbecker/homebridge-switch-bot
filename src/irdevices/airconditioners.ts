@@ -261,7 +261,7 @@ export class AirConditioner {
     this.CurrentARMode = this.CurrentMode || 1;
     this.CurrentARFanSpeed = this.CurrentFanSpeed || 1;
     this.ARActive = this.Active === 1 ? 'on' : 'off';
-    payload.parameter = '%s,%s,%s,%s', this.CurrentARTemp, this.CurrentARMode, this.CurrentARFanSpeed, this.ARActive;
+    payload.parameter = `${this.CurrentARTemp},${this.CurrentARMode},${this.CurrentARFanSpeed},${this.ARActive}`;
 
 
     if (this.Active === 1) {
